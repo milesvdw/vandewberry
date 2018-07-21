@@ -1,11 +1,11 @@
 // tslint:disable:no-console
 import * as React from "react";
 import { Container } from "react-bootstrap/lib/Tab";
-import { Grid, Row, Col, Panel, Modal } from "react-bootstrap";
+import { Grid, Row, Col, Panel, Modal, Button } from "react-bootstrap";
 import { Recipe } from "../models/recipe";
 import { Material } from "../models/material";
 import { RecipeEditView } from "./recipeeditview";
-import { FaTimesCircle, FaPencil, FaPlusSquare } from "react-icons/lib/fa"
+import { FaTimesCircle, FaPencil, FaPlus } from "react-icons/lib/fa"
 import { IRecipeRepo } from "../FoodApp";
 
 export class RecipesView extends React.Component<{ repo: IRecipeRepo }, { editing: boolean, editRecipe: Recipe }> {
@@ -85,10 +85,9 @@ export class RecipesView extends React.Component<{ repo: IRecipeRepo }, { editin
                         <Col sm={6}>
                             <Panel>
                                 <Panel.Heading>
-                                    <div >
-                                        <FaPlusSquare size={25} height={40} className="pull-right"
-                                            onClick={() => this.setState({ editRecipe: new Recipe(), editing: true })} />
-                                    </div>
+                                    <Button style={{marginTop: '3px'}} bsStyle='success' bsSize='sm' onClick={() => this.setState({ editRecipe: new Recipe(), editing: true })} className="pull-right">
+                                        <FaPlus size={20} />
+                                    </Button>
                                     <h4>All Recipes</h4>
 
                                 </Panel.Heading>
