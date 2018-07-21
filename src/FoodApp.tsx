@@ -19,7 +19,7 @@ export interface IIngredientRepo {
 }
 
 export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredients: Ingredient[] }> implements IRecipeRepo, IIngredientRepo {
-    constructor(props: any) {
+    constructor(props: {}) {
         super(props);
         this.state = { recipes: [], ingredients: [] };
 
@@ -69,15 +69,15 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
     }
     
     public async purchaseIngredient(ingredient: Ingredient) {
-
+        console.log('not implemented');
     }
 
     public async useUpIngredient(ingredient: Ingredient) {
-
+        console.log('not implemented');
     }
 
     public async archiveIngredient(ingredient: Ingredient) {
-
+        console.log('not implemented');
     }
 
     public render() {
