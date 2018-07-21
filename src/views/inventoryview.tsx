@@ -16,7 +16,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo }, { 
     public render() {
         let rows = [] as JSX.Element[];
         return (
-            <Container id='recipes_container'>
+            <Container id='ingredient_container'>
                 <Grid>
                     <Modal show={this.state.editing} onHide={() => this.setState({ editing: false })}>
                         <Modal.Header>
@@ -50,7 +50,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo }, { 
                                     <Button style={{marginTop: '3px'}} bsStyle='success' bsSize='sm' onClick={() => this.setState({ editIngredient: new Ingredient(), editing: true })} className="pull-right">
                                         <FaPlus size={20} />
                                     </Button>
-                                    <h4>All Recipes</h4>
+                                    <h4>Shopping List</h4>
 
                                 </Panel.Heading>
                                 <Panel.Body>
