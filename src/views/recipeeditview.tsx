@@ -26,12 +26,22 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
     private updateMaterialFields(index: number) {
         return (event: any) => {
             const field = event.target.name;
+            console.log(field);
             const recipe = this.state.recipe;
             let val = event.target.value;
-            if (field === 'materials') { // hack to deal with zipped/unzipped material lists
-                val = val.split(', ').map((word: string) => new Ingredient({name: word}))
+            if (field === 'ingredients') { // hack to deal with zipped/unzipped material lists
+                val = val.split(', ').map((word: string) => new Ingredient({ name: word }))
             }
+
             recipe.materials[index][field] = val;
+            return this.setState({ recipe })
+        }
+    }
+
+    private toggleMaterialRequired(index: number) {
+        return (event: any) => {
+            const recipe = this.state.recipe;
+            recipe.materials[0].required = !recipe.materials[index].required
             return this.setState({ recipe })
         }
     }
@@ -46,21 +56,19 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
         return (
             <Row key={index}>
                 <Col sm={1}>
-                    <label htmlFor="required" className='label-cbx' >
-                        <input checked={material.required} className='invisible' onChange={this.updateMaterialFields(index)} />
-                        <div className="checkbox">
-                            <svg width="20px" height="20px" viewBox="0 0 20 20">
-                                <path d="M3,1 L17,1 L17,1 C18.1045695,1 19,1.8954305 19,3 L19,17 L19,17 C19,18.1045695 18.1045695,19 17,19 L3,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,3 L1,3 C1,1.8954305 1.8954305,1 3,1 Z" />
-                                <polyline points="4 11 8 15 16 6" />
-                            </svg>
+                    {/* NOTE: the below code uses the 'pretty-checkbox' npm package to deliver something good looking */}
+                    <div className='pretty p-default' style={ {marginTop: '10px', marginLeft: '4px'}}>
+                        <input type='checkbox' defaultChecked={material.required} name='required' onClick={this.toggleMaterialRequired(index)} />
+                        <div className='state p-danger' >
+                            <label />
                         </div>
-                    </label>
+                    </div>
                 </Col>
                 <Col sm={2}>
-                    <input type='text' className='form-control' value={material.quantity} onChange={this.updateMaterialFields(index)} />
+                    <input type='text' className='form-control' name='quantity' value={material.quantity} onChange={this.updateMaterialFields(index)} />
                 </Col>
                 <Col sm={8}>
-                    <input type='text' className='form-control' value={material.ingredients.map((ingredient: Ingredient) => ingredient.name).join(', ')} onChange={this.updateMaterialFields(index)} />
+                    <input type='text' className='form-control' name='ingredients' value={material.ingredients.map((ingredient: Ingredient) => ingredient.name).join(', ')} onChange={this.updateMaterialFields(index)} />
                 </Col>
                 <Col sm={1}>
                     <FaMinusCircle onClick={() => { this.removeMaterial(index); }} />

@@ -46,9 +46,7 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
     }
 
     public async saveRecipe(recipe: Recipe) {
-        console.log('here');
         let savedRecipe: Recipe = await recipe.Save();
-        console.log(savedRecipe);
         let recipes = this.state.recipes;
 
         let existingRecipeIndex: number | undefined = recipes.findIndex((searchRecipe: Recipe) => {

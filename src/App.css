@@ -105,9 +105,6 @@ checkbox {
   stroke-dashoffset: 18px;
   transition: all 0.3s ease;
 }
-.invisible {
-    float: left;
-}
 
 .no-border {
   border: transparent;

@@ -1,11 +1,11 @@
 // tslint:disable:no-console
 import * as React from "react";
 import { Container } from "react-bootstrap/lib/Tab";
-import { Grid, Row, Col, Panel, Button, Modal } from "react-bootstrap";
+import { Grid, Row, Col, Panel, Modal } from "react-bootstrap";
 import { Recipe } from "../models/recipe";
 import { Material } from "../models/material";
 import { RecipeEditView } from "./recipeeditview";
-import { FaTimesCircle, FaPencil } from "react-icons/lib/fa"
+import { FaTimesCircle, FaPencil, FaPlusSquare } from "react-icons/lib/fa"
 import { IRecipeRepo } from "../FoodApp";
 
 export class RecipesView extends React.Component<{ repo: IRecipeRepo }, { editing: boolean, editRecipe: Recipe }> {
@@ -79,16 +79,18 @@ export class RecipesView extends React.Component<{ repo: IRecipeRepo }, { editin
                                 </Panel.Heading>
                                 <Panel.Body>
                                     TODO
-                                            </Panel.Body>
+                                </Panel.Body>
                             </Panel>
                         </Col>
                         <Col sm={6}>
                             <Panel>
                                 <Panel.Heading>
-                                    <Button bsSize='small' bsStyle="success" className="pull-right icon-btn glyphicon btn-glyphicon glyphicon-plus img-circle text-success"
-                                        onClick={() => this.setState({ editing: true })}>+
-                                                </Button>
+                                    <div >
+                                        <FaPlusSquare size={25} height={40} className="pull-right"
+                                            onClick={() => this.setState({ editRecipe: new Recipe(), editing: true })} />
+                                    </div>
                                     <h4>All Recipes</h4>
+
                                 </Panel.Heading>
                                 <Panel.Body>
                                     {rows}

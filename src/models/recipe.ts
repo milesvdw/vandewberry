@@ -20,7 +20,6 @@ export class Recipe {
     }
 
     public Save(): Promise<Recipe> {
-        console.log('saving');
         return fetch('/api/recipes', {
             headers: {
                 'Accept': 'application/json',
@@ -28,13 +27,9 @@ export class Recipe {
             },
             body: JSON.stringify(this),
             method: 'post',
-        }).then((data: any) => {
-            console.log('parsing');
-            return data.json();
-        }).then((json: any) => {
-            console.log(json)
-            this._id = json._id;
-            return this;  
+        }).then(async (data: any) => {
+            this._id = await data.json()
+            return this;
         });
     }
 

@@ -30,13 +30,14 @@ MongoClient.connect(uri, (err, client) => {
   });
 
   app.post('/api/recipes', (req, res) => {
-    console.log('got post');
-    req.body._id = ObjectId(req.body._id)
+    req.body._id = ObjectId(req.body._id);
     db.collection('recipes').save(req.body, (getErr, result) => {
       if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
         res.json(result.ops[0]._id);
-      } else {
+      } else if(result.result.upserted) {
         res.json(result.result.upserted[0]._id);
+      } else {
+        res.json(req.body._id);
       }
     });
   });
