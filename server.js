@@ -11,11 +11,11 @@ const uri = process.env.MONGODB_URI;
 const MongoClient = require('mongodb').MongoClient;
 
 
-MongoClient.connect(uri, async (err, client) => {
+MongoClient.connect(uri, (err, client) => {
   if (err) {
     throw err;
   }
-  
+
   let db = client.db('heroku_6ftkk7t9');
 
   app.get('/api/inventory', (req, res) => {
@@ -26,13 +26,17 @@ MongoClient.connect(uri, async (err, client) => {
 
   app.delete('/api/recipes', (req, res) => {
     db.collection('recipes').remove({ "_id": ObjectId(req.body._id) });
+    res.send();
   });
 
   app.post('/api/recipes', (req, res) => {
+    console.log('got post');
     req.body._id = ObjectId(req.body._id)
     db.collection('recipes').save(req.body, (getErr, result) => {
-      if(result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
+      if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
         res.json(result.ops[0]._id);
+      } else {
+        res.json(result.result.upserted[0]._id);
       }
     });
   });

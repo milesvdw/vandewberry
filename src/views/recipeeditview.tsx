@@ -4,6 +4,7 @@ import { Recipe } from "../models/recipe";
 import { IRecipeRepo } from "../FoodApp";
 import { Material } from "../models/material";
 import { FaMinusCircle } from "react-icons/lib/fa"
+import { Ingredient } from "src/models/ingredient";
 
 export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRecipeRepo, onSave: () => void }, { recipe: Recipe }> {
     constructor(props: { recipe: Recipe, repo: IRecipeRepo, onSave: () => void }) {
@@ -12,10 +13,10 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
             recipe: props.recipe
         }
         this.updateFields = this.updateFields.bind(this);
+        this.updateMaterialFields = this.updateMaterialFields.bind(this);
     }
 
     private updateFields(event: any) {
-        console.log('changed');
         const field = event.target.name;
         const recipe = this.state.recipe;
         recipe[field] = event.target.value;
@@ -28,7 +29,7 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
             const recipe = this.state.recipe;
             let val = event.target.value;
             if (field === 'materials') { // hack to deal with zipped/unzipped material lists
-                val = val.split(', ')
+                val = val.split(', ').map((word: string) => new Ingredient({name: word}))
             }
             recipe.materials[index][field] = val;
             return this.setState({ recipe })
@@ -42,7 +43,6 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
     }
 
     private MaterialEditView(material: Material, index: number) {
-        console.log(material.ingredients);
         return (
             <Row key={index}>
                 <Col sm={1}>
@@ -60,7 +60,7 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
                     <input type='text' className='form-control' value={material.quantity} onChange={this.updateMaterialFields(index)} />
                 </Col>
                 <Col sm={8}>
-                    <input type='text' className='form-control' value={material.ingredients.join(', ')} onChange={this.updateMaterialFields(index)} />
+                    <input type='text' className='form-control' value={material.ingredients.map((ingredient: Ingredient) => ingredient.name).join(', ')} onChange={this.updateMaterialFields(index)} />
                 </Col>
                 <Col sm={1}>
                     <FaMinusCircle onClick={() => { this.removeMaterial(index); }} />
