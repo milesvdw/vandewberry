@@ -23,17 +23,19 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
         super(props);
         this.state = { recipes: [], ingredients: [] };
 
-        Database.GetRecipes().then((data: any) => {
-            this.setState({
-                recipes: data.map((item: any) => new Recipe(item))
+        Database.GetRecipes()
+            .then((data: any) => {
+                this.setState({
+                    recipes: data.map((item: any) => new Recipe(item))
+                });
             });
-        });
 
-        Database.GetInventory().then((data: any) => {
-            this.setState({
-                ingredients: data.map((item: any) => new Ingredient(item))
+        Database.GetInventory()
+            .then((data: any) => {
+                this.setState({
+                    ingredients: data.map((item: any) => new Ingredient(item))
+                });
             });
-        });
 
         this.deleteRecipe = this.deleteRecipe.bind(this);
         this.saveRecipe = this.saveRecipe.bind(this);
@@ -59,15 +61,15 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
         let existingRecipeIndex: number | undefined = recipes.findIndex((searchRecipe: Recipe) => {
             return searchRecipe._id === savedRecipe._id;
         })
-        if(existingRecipeIndex >= 0) {
+        if (existingRecipeIndex >= 0) {
             recipes.splice(existingRecipeIndex, 1);
         }
 
         recipes.push(savedRecipe);
 
-        this.setState({recipes});
+        this.setState({ recipes });
     }
-    
+
     public async purchaseIngredient(ingredient: Ingredient) {
         console.log('not implemented');
     }
