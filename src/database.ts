@@ -6,8 +6,8 @@ export class Database {
         let url: string = "/recipes/delete/"
             + "?id="
             + id;
-        let response = await fetch(url);
-        return response.json()
+        return fetch(url)
+            .then((data: any) => data.json())
     }
 
     public static async GetRecipes(): Promise<Recipe[]> {
@@ -19,9 +19,8 @@ export class Database {
 
     public static async GetInventory(): Promise<Ingredient[]> {
         let url: string = "/api/inventory";
-        let response = await fetch(url);
-        return response.json().then((data: any) => {
-            return data.map((item: any) => new Ingredient(item))
-        })
+        return fetch(url)
+            .then((response: any) => response.json())
+            .then((json: any) => json.map((item: any) => new Ingredient(item)))
     }
 }
