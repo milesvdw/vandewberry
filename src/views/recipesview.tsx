@@ -8,15 +8,18 @@ import { RecipeEditView } from "./recipeeditview";
 import { FaTimesCircle, FaPencil, FaPlus, FaSearch } from "react-icons/lib/fa"
 import { IRecipeRepo, IIngredientRepo } from "../FoodApp";
 
-export class RecipesView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { editing: boolean, editRecipe: Recipe }> {
+export class RecipesView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { editing: boolean, editRecipe: Recipe, searchQuery: string }> {
 
     constructor(props: { repo: IIngredientRepo & IRecipeRepo }) {
         super(props);
-        this.state = { editing: false, editRecipe: new Recipe() };
+        this.state = { editing: false, editRecipe: new Recipe(), searchQuery: "" };
 
-        this.getAllRecipes.bind(this);
-        this.getAvailableRecipes.bind(this);
-        this.mapRecipesToRows.bind(this);
+        this.displayMaterials = this.displayMaterials.bind(this);
+        this.getAllRecipes = this.getAllRecipes.bind(this);
+        this.getAvailableRecipes = this.getAvailableRecipes.bind(this);
+        this.mapRecipesToRows = this.mapRecipesToRows.bind(this);
+        this.getAllSearchedRecipes = this.getAllSearchedRecipes.bind(this);
+        this.searchRecipes = this.searchRecipes.bind(this);
     }
 
     private searchInput: any;
@@ -97,8 +100,23 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
         return this.mapRecipesToRows(availableRecipes);
     }
 
+    private getAllSearchedRecipes() {
+        if (this.state.searchQuery.length > 0) {
+            return this.props.repo.state.recipes
+                .filter((recipe: Recipe) => {
+                    return recipe.name.toLowerCase().indexOf(this.state.searchQuery.toLowerCase()) >= 0;
+                });
+        } else {
+            return this.props.repo.state.recipes;
+        }
+    }
+
     private getAllRecipes() {
-        return this.mapRecipesToRows(this.props.repo.state.recipes);
+        return this.mapRecipesToRows(this.getAllSearchedRecipes());
+    }
+
+    private searchRecipes(event: any) {
+        this.setState({ searchQuery: event.target.value });
     }
 
     public render() {
@@ -159,7 +177,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                                         }}
                                         className="pull-right btn-circle classy-btn search-btn">
 
-                                        <input placeholder="search" ref={(input) => { this.searchInput = input }} />
+                                        <input placeholder="search" ref={(input) => { this.searchInput = input }} onChange={this.searchRecipes} />
                                         <FaSearch size={15} className="pull-right" style={{ marginRight: '7px' }} />
                                     </Button>
                                     <h4>All Recipes</h4>
