@@ -4,6 +4,7 @@ import { Recipe } from "./models/recipe";
 import * as React from "react";
 import { Database } from "./database";
 import { RecipesView } from "./views/recipesview";
+import { InventoryView } from "src/views/inventoryview";
 
 export interface IRecipeRepo {
     state: { recipes: Recipe[] };
@@ -16,6 +17,7 @@ export interface IIngredientRepo {
     archiveIngredient(ingredient: Ingredient): void;
     purchaseIngredient(ingredient: Ingredient): void;
     useUpIngredient(ingredient: Ingredient): void;
+    saveIngredient(ingredient: Ingredient): void;
 }
 
 export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredients: Ingredient[] }> implements IRecipeRepo, IIngredientRepo {
@@ -70,6 +72,22 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
         this.setState({ recipes });
     }
 
+    public async saveIngredient(ingredient: Ingredient) {
+        let savedRecipe: Ingredient = await ingredient.Save();
+        let ingredients = this.state.ingredients;
+
+        let existingIngredientIndex: number | undefined = ingredients.findIndex((searchIngredient: Ingredient) => {
+            return searchIngredient._id === savedRecipe._id;
+        })
+        if (existingIngredientIndex >= 0) {
+            ingredients.splice(existingIngredientIndex, 1);
+        }
+
+        ingredients.push(savedRecipe);
+
+        this.setState({ ingredients });
+    }
+
     public async purchaseIngredient(ingredient: Ingredient) {
         console.log('not implemented');
     }
@@ -85,9 +103,11 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
     public render() {
         return (
             <div>
-                {/* <Route path="inventory">
-                  <InventoryView />
-                </Route> */}
+                <Route path="/inventory"
+                    component={() =>
+                        <InventoryView repo={this} />
+                    }
+                />
                 <Route path="/recipes"
                     component={() =>
                         <RecipesView repo={this} />

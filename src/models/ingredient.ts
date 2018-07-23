@@ -11,12 +11,17 @@ export class Ingredient {
         Object.assign(this, init);
     }
 
-    public Save(then: (x: any) => void): void {
-        $.ajax({
-            url: "/inventory",
-            dataType: "json",
-            data: JSON.stringify(this),
-            method: 'post'
-        }).then((data: any) => then(data));
-    };
+    public Save(): Promise<Ingredient> {
+        return fetch('/api/inventory', {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this),
+            method: 'post',
+        }).then(async (data: any) => {
+            this._id = await data.json()
+            return this;
+        });
+    }
 }

@@ -14,6 +14,9 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
         }
         this.updateFields = this.updateFields.bind(this);
         this.updateMaterialFields = this.updateMaterialFields.bind(this);
+        this.toggleMaterialRequired = this.toggleMaterialRequired.bind(this);
+        this.removeMaterial = this.removeMaterial.bind(this);
+        this.MaterialEditView = this.MaterialEditView.bind(this);
     }
 
     private updateFields(event: any) {
@@ -57,7 +60,7 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
             <Row key={index}>
                 <Col sm={1}>
                     {/* NOTE: the below code uses the 'pretty-checkbox' npm package to deliver something good looking */}
-                    <div className='pretty p-default' style={ {marginTop: '10px', marginLeft: '4px'}}>
+                    <div className='pretty p-rotate p-default' style={ {marginTop: '10px', marginLeft: '4px'}}>
                         <input type='checkbox' defaultChecked={material.required} name='required' onClick={this.toggleMaterialRequired(index)} />
                         <div className='state p-danger' >
                             <label />
@@ -89,17 +92,17 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
                             <label htmlFor="name">
                                 Recipe Name
                         </label>
-                            <input type='text' id='name' name='name' className='form-control' value={this.state.recipe.name} onChange={this.updateFields} />
+                            <input type='text' name='name' className='form-control' value={this.state.recipe.name} onChange={this.updateFields} />
                         </FormGroup>
                     </Col>
                 </Row>
                 <Row>
                     <Col sm={12}>
                         <FormGroup>
-                            <label htmlFor="name">
+                            <label htmlFor="description">
                                 Recipe Description/Instructions
                             </label>
-                            <textarea id='name' name='description' className='form-control' value={this.state.recipe.description} onChange={this.updateFields} />
+                            <textarea name='description' className='form-control' value={this.state.recipe.description} onChange={this.updateFields} />
                         </FormGroup>
                     </Col>
                 </Row>

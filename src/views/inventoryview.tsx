@@ -5,6 +5,7 @@ import { Grid, Row, Col, Panel, Modal, Button } from "react-bootstrap";
 import { FaPlus } from "react-icons/lib/fa"
 import { IIngredientRepo } from "../FoodApp";
 import { Ingredient } from "src/models/ingredient";
+import { IngredientEditView } from "src/views/ingredienteditview";
 
 export class InventoryView extends React.Component<{ repo: IIngredientRepo }, { editing: boolean, editIngredient: Ingredient }> {
 
@@ -14,47 +15,94 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo }, { 
     }
 
     public render() {
-        let rows = [] as JSX.Element[];
+        let rowProducer = (ingredient: Ingredient) => {
+            return (<Row key={ingredient._id}> Foo </Row>)
+        }
+
+        let archivedRows = this.props.repo.state.ingredients
+            .filter((ingredient: Ingredient) => ingredient.status === 'archive')
+            .map(rowProducer);
+
+        let shoppingRows = this.props.repo.state.ingredients
+            .filter((ingredient: Ingredient) => ingredient.status === 'shopping')
+            .map(rowProducer);
+
+        let inventoryRows = this.props.repo.state.ingredients
+            .filter((ingredient: Ingredient) => ingredient.status === 'inventory')
+            .map(rowProducer);
+
+
         return (
             <Container id='ingredient_container'>
                 <Grid>
                     <Modal show={this.state.editing} onHide={() => this.setState({ editing: false })}>
                         <Modal.Header>
-                            <Modal.Title className="text-center">Create Recipe</Modal.Title>
+                            <Modal.Title className="text-center">Add Item</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                             <Row>
                                 <Col sm={12} id='new_ingredient'>
-                                    {/* <IngredientEditView
-                                        recipe={this.state.editIngredient}
+                                    <IngredientEditView
+                                        ingredient={this.state.editIngredient}
                                         repo={this.props.repo}
-                                        onSave={() => { this.setState({ editing: false }) }} /> */}
+                                        onSave={() => { this.setState({ editing: false }) }} />
                                 </Col>
                             </Row>
                         </Modal.Body>
                     </Modal>
                     <Row>
-                        <Col sm={6}>
+                        <Col sm={4}>
                             <Panel>
                                 <Panel.Heading>
-                                    <h4>Current Possibilities</h4>
+                                    <Button style={{ marginTop: '3px' }} bsStyle='success' bsSize='sm' onClick={() => {
+                                        let ingredient = new Ingredient();
+                                        ingredient.status = 'inventory';
+                                        this.setState({ editIngredient: ingredient, editing: true })
+                                    }} className="pull-right">
+                                        <FaPlus size={20} />
+                                    </Button>
+                                    <h4>Inventory</h4>
                                 </Panel.Heading>
                                 <Panel.Body>
-                                    TODO
+                                    {inventoryRows}
                                 </Panel.Body>
                             </Panel>
                         </Col>
-                        <Col sm={6}>
+                        <Col sm={4}>
                             <Panel>
                                 <Panel.Heading>
-                                    <Button style={{marginTop: '3px'}} bsStyle='success' bsSize='sm' onClick={() => this.setState({ editIngredient: new Ingredient(), editing: true })} className="pull-right">
+
+                                    <Button style={{ marginTop: '3px' }} bsStyle='success' bsSize='sm' onClick={() => {
+                                        let ingredient = new Ingredient();
+                                        ingredient.status = 'shopping';
+                                        this.setState({ editIngredient: ingredient, editing: true })
+                                    }} className="pull-right">
                                         <FaPlus size={20} />
                                     </Button>
                                     <h4>Shopping List</h4>
 
                                 </Panel.Heading>
                                 <Panel.Body>
-                                    {rows}
+                                    {shoppingRows}
+                                </Panel.Body>
+                            </Panel>
+                        </Col>
+                        <Col sm={4}>
+                            <Panel>
+                                <Panel.Heading>
+
+                                    <Button style={{ marginTop: '3px' }} bsStyle='success' bsSize='sm' onClick={() => {
+                                        let ingredient = new Ingredient();
+                                        ingredient.status = 'archive';
+                                        this.setState({ editIngredient: ingredient, editing: true })
+                                    }} className="pull-right">
+                                        <FaPlus size={20} />
+                                    </Button>
+                                    <h4>Archived</h4>
+
+                                </Panel.Heading>
+                                <Panel.Body>
+                                    {archivedRows}
                                 </Panel.Body>
                             </Panel>
                         </Col>

@@ -20,7 +20,24 @@ MongoClient.connect(uri, (err, client) => {
 
   app.get('/api/inventory', (req, res) => {
     db.collection('inventory').find().toArray((geterr, items) => {
+      console.log(items);
       res.send(items);
+    });
+  });
+
+  app.post('/api/inventory', (req, res) => {
+    req.body._id = ObjectId(req.body._id);
+    db.collection('inventory').save(req.body, (getErr, result) => {
+      if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
+        console.log(result.ops[0]._id)
+        res.json(result.ops[0]._id);
+      } else if (result.result.upserted) {
+        console.log(result.result.upserted[0]._id)
+        res.json(result.result.upserted[0]._id);
+      } else {
+        console.log(req.body._id)
+        res.json(req.body._id);
+      }
     });
   });
 
@@ -34,7 +51,7 @@ MongoClient.connect(uri, (err, client) => {
     db.collection('recipes').save(req.body, (getErr, result) => {
       if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
         res.json(result.ops[0]._id);
-      } else if(result.result.upserted) {
+      } else if (result.result.upserted) {
         res.json(result.result.upserted[0]._id);
       } else {
         res.json(req.body._id);
