@@ -110,3 +110,57 @@ checkbox {
   border: transparent;
   box-shadow: none;
 }
+
+.btn-circle.btn-xl {
+  width: 70px;
+  height: 70px;
+  padding: 10px 16px;
+  border-radius: 35px;
+  font-size: 24px;
+  line-height: 1.33;
+}
+
+.btn-circle {
+  width: 30px;
+  height: 30px;
+  padding: 6px 0px;
+  border-radius: 15px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.42857;
+}
+
+.classy-btn {
+  margin-left: 15px;
+  background-color: #353D45;
+  color: #EFEFEF;
+  border: none;
+  background-image: linear-gradient(to bottom,#353D45 0,#353D45 100%);
+}
+
+.classy-btn:hover, .classy-btn:focus {
+  background-color: #353D45;
+  color: #EFEFEF;
+}
+
+.search-btn.active.focus, .search-btn.active:focus, .search-btn.active:hover, .search-btn:active.focus, .search-btn:active:focus, .search-btn:active:hover, .open>.dropdown-toggle.search-btn.focus, .open>.dropdown-toggle.search-btn:focus, .open>.dropdown-toggle.search-btn:hover
+{
+  background-color: #353D45;
+  color: #EFEFEF;
+}
+
+.search-btn > input {
+  display: none;
+  background-color: #353D45;
+  color: white;
+  border: none;
+  outline: none;
+}
+
+.search-btn:hover > input {
+  display: inline-block;
+}
+
+.search-btn:hover {
+  width: 300px;
+}

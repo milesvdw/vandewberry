@@ -5,7 +5,7 @@ import { Grid, Row, Col, Panel, Modal, Button } from "react-bootstrap";
 import { Recipe } from "../models/recipe";
 import { Material } from "../models/material";
 import { RecipeEditView } from "./recipeeditview";
-import { FaTimesCircle, FaPencil, FaPlus } from "react-icons/lib/fa"
+import { FaTimesCircle, FaPencil, FaPlus, FaSearch } from "react-icons/lib/fa"
 import { IRecipeRepo, IIngredientRepo } from "../FoodApp";
 
 export class RecipesView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { editing: boolean, editRecipe: Recipe }> {
@@ -18,6 +18,8 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
         this.getAvailableRecipes.bind(this);
         this.mapRecipesToRows.bind(this);
     }
+
+    private searchInput: any;
 
     private displayMaterials(materials: Material[]) {
         return materials
@@ -143,13 +145,22 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                             <Panel>
                                 <Panel.Heading>
                                     <Button style={{ marginTop: '3px' }}
-                                        bsStyle='success'
-                                        bsSize='sm'
+                                        bsSize='small'
                                         onClick={() => {
                                             this.setState({ editRecipe: new Recipe(), editing: true });
                                         }}
-                                        className="pull-right">
-                                        <FaPlus size={20} />
+                                        className="pull-right btn-circle classy-btn">
+                                        <FaPlus size={15} />
+                                    </Button>
+                                    <Button style={{ marginTop: '3px' }}
+                                        bsSize='small'
+                                        onClick={() => {
+                                            this.searchInput.focus();
+                                        }}
+                                        className="pull-right btn-circle classy-btn search-btn">
+
+                                        <input placeholder="search" ref={(input) => { this.searchInput = input }} />
+                                        <FaSearch size={15} className="pull-right" style={{ marginRight: '7px' }} />
                                     </Button>
                                     <h4>All Recipes</h4>
 
