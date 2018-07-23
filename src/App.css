@@ -138,6 +138,11 @@ checkbox {
   background-image: linear-gradient(to bottom,#353D45 0,#353D45 100%);
 }
 
+.search-btn {
+  -webkit-transition: width .35s ease-in-out;
+  transition: width .35s ease-in-out;
+}
+
 .classy-btn:hover, .classy-btn:focus {
   background-color: #353D45;
   color: #EFEFEF;
@@ -150,15 +155,18 @@ checkbox {
 }
 
 .search-btn > input {
-  display: none;
   background-color: #353D45;
   color: white;
   border: none;
   outline: none;
+  width: 0px;
+  -webkit-transition: width .35s ease-in-out;
+  transition: width .35s ease-in-out;
 }
 
 .search-btn:hover > input {
   display: inline-block;
+  width: 250px;
 }
 
 .search-btn:hover {
