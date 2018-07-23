@@ -29,13 +29,10 @@ MongoClient.connect(uri, (err, client) => {
     req.body._id = ObjectId(req.body._id);
     db.collection('inventory').save(req.body, (getErr, result) => {
       if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
-        console.log(result.ops[0]._id)
         res.json(result.ops[0]._id);
       } else if (result.result.upserted) {
-        console.log(result.result.upserted[0]._id)
         res.json(result.result.upserted[0]._id);
       } else {
-        console.log(req.body._id)
         res.json(req.body._id);
       }
     });

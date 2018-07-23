@@ -3,13 +3,13 @@ import * as React from "react";
 import { Container } from "react-bootstrap/lib/Tab";
 import { Grid, Row, Col, Panel, Modal, Button } from "react-bootstrap";
 import { FaPlus } from "react-icons/lib/fa"
-import { IIngredientRepo } from "../FoodApp";
+import { IIngredientRepo, IRecipeRepo } from "../FoodApp";
 import { Ingredient } from "src/models/ingredient";
 import { IngredientEditView } from "src/views/ingredienteditview";
 
-export class InventoryView extends React.Component<{ repo: IIngredientRepo }, { editing: boolean, editIngredient: Ingredient }> {
+export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { editing: boolean, editIngredient: Ingredient }> {
 
-    constructor(props: { repo: IIngredientRepo }) {
+    constructor(props: { repo: IIngredientRepo & IRecipeRepo }) {
         super(props);
         this.state = { editing: false, editIngredient: new Ingredient() };
     }
