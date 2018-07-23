@@ -16,7 +16,13 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo }, { 
 
     public render() {
         let rowProducer = (ingredient: Ingredient) => {
-            return (<Row key={ingredient._id}> Foo </Row>)
+            return (
+                <Row key={ingredient._id}>
+                    <span className="btn btn-block btn-secondary">
+                        {ingredient.name}
+                    </span>
+                </Row>
+            )
         }
 
         let archivedRows = this.props.repo.state.ingredients
