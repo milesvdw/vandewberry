@@ -19,24 +19,24 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
     private renderShoppingRow(ingredient: Ingredient) {
         return (<Row key={ingredient._id}>
             <span className="btn btn-block btn-secondary">
-                <Button style={{ marginTop: '3px', marginLeft: '2px' }}
-                    bsSize='small'
+                <Button style={{ marginTop: '0px', marginLeft: '2px' }}
+                    bsSize='xsmall'
                     onClick={() => {
                         this.props.repo.purchaseIngredient(ingredient)
                     }}
                     className="pull-left btn-circle classy-btn">
-                    <FaPlus size={15} />
+                    <FaPlus size={10} />
                 </Button>
                 {ingredient.name}
 
 
-                <Button style={{ marginTop: '3px', marginRight: '2px' }}
-                    bsSize='small'
+                <Button style={{ marginTop: '0px', marginRight: '2px' }}
+                    bsSize='xsmall'
                     onClick={() => {
                         this.props.repo.archiveIngredient(ingredient)
                     }}
                     className="pull-right btn-circle classy-btn">
-                    <FaFolder size={15} />
+                    <FaFolder size={10} />
                 </Button>
             </span>
         </Row>)
@@ -46,13 +46,13 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
         return (<Row key={ingredient._id}>
             <span className="btn btn-block btn-secondary">
 
-                <Button style={{ marginTop: '3px', marginLeft: '2px' }}
-                    bsSize='small'
+                <Button style={{ marginTop: '0px', marginLeft: '2px' }}
+                    bsSize='xsmall'
                     onClick={() => {
                         this.props.repo.useUpIngredient(ingredient)
                     }}
                     className="pull-left btn-circle classy-btn">
-                    <FaShoppingCart size={15} />
+                    <FaShoppingCart size={10} />
                 </Button>
                 {ingredient.name}
             </span>
@@ -64,13 +64,13 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
             <span className="btn btn-block btn-secondary">
                 {ingredient.name}
 
-                <Button style={{ marginTop: '3px', marginRight: '2px' }}
-                    bsSize='small'
+                <Button style={{ marginTop: '0px', marginRight: '2px' }}
+                    bsSize='xsmall'
                     onClick={() => {
                         this.props.repo.useUpIngredient(ingredient)
                     }}
                     className="pull-right btn-circle classy-btn">
-                    <FaShoppingCart size={15} />
+                    <FaShoppingCart size={10} />
                 </Button>
             </span>
         </Row>)
@@ -141,7 +141,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                                             this.setState({ editIngredient: ingredient, editing: true })
                                         }}
                                         className="pull-right btn-circle classy-btn">
-                                        <FaPlus size={15} />
+                                        <FaShoppingCart size={15} />
                                     </Button>
                                     <h4>Shopping List</h4>
 
@@ -162,7 +162,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                                             this.setState({ editIngredient: ingredient, editing: true })
                                         }}
                                         className="pull-right btn-circle classy-btn">
-                                        <FaPlus size={15} />
+                                        <FaFolder size={15} />
                                     </Button>
                                     <h4>Archived</h4>
 

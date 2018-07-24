@@ -130,6 +130,17 @@ checkbox {
   line-height: 1.42857;
 }
 
+.btn-circle.btn-xs {
+  width: 20px;
+  height: 20px;
+  padding: 3px 0px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 10px;
+  line-height: 1.42857;
+  margin-top: 25%;
+}
+
 .classy-btn {
   margin-left: 15px;
   background-color: #353D45;
