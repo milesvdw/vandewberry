@@ -146,6 +146,13 @@ checkbox {
 .classy-btn:hover, .classy-btn:focus {
   background-color: #353D45;
   color: #EFEFEF;
+  outline: none;
+}
+
+.classy-btn.active.focus, .classy-btn.active:focus, .classy-btn.active:hover, .classy-btn:active.focus, .classy-btn:active:focus, .classy-btn:active:hover, .open>.dropdown-toggle.classy-btn.focus, .open>.dropdown-toggle.classy-btn:focus, .open>.dropdown-toggle.classy-btn:hover {
+  outline: none;
+  color: #EFEFEF;
+  background-color: rgb(117, 122, 128);
 }
 
 .search-btn.active.focus, .search-btn.active:focus, .search-btn.active:hover, .search-btn:active.focus, .search-btn:active:focus, .search-btn:active:hover, .open>.dropdown-toggle.search-btn.focus, .open>.dropdown-toggle.search-btn:focus, .open>.dropdown-toggle.search-btn:hover

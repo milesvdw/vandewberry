@@ -2,7 +2,7 @@
 import * as React from "react";
 import { Container } from "react-bootstrap/lib/Tab";
 import { Grid, Row, Col, Panel, Modal, Button } from "react-bootstrap";
-import { FaPlus } from "react-icons/lib/fa"
+import { FaPlus, FaShoppingCart, FaFolder } from "react-icons/lib/fa"
 import { IIngredientRepo, IRecipeRepo } from "../FoodApp";
 import { Ingredient } from "src/models/ingredient";
 import { IngredientEditView } from "src/views/ingredienteditview";
@@ -12,30 +12,82 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
     constructor(props: { repo: IIngredientRepo & IRecipeRepo }) {
         super(props);
         this.state = { editing: false, editIngredient: new Ingredient() };
+
+        this.renderShoppingRow = this.renderShoppingRow.bind(this);
+    }
+
+    private renderShoppingRow(ingredient: Ingredient) {
+        return (<Row key={ingredient._id}>
+            <span className="btn btn-block btn-secondary">
+                <Button style={{ marginTop: '3px' }}
+                    bsStyle='success' bsSize='xsmall'
+                    onClick={() =>
+                        this.props.repo.purchaseIngredient(ingredient)
+                    }
+                    className="pull-left">
+                    <FaPlus size={20} />
+                </Button>
+                {ingredient.name}
+                <Button
+                    style={{ marginTop: '3px' }}
+                    bsStyle='danger' bsSize='xsmall'
+                    onClick={() =>
+                        this.props.repo.archiveIngredient(ingredient)
+                    }
+                    className="pull-right">
+                    <FaFolder size={20} />
+                </Button>
+            </span>
+        </Row>)
+    }
+
+    private renderArchiveRow(ingredient: Ingredient) {
+        return (<Row key={ingredient._id}>
+            <span className="btn btn-block btn-secondary">      
+                <Button
+                        style={{ marginTop: '3px' }}
+                        bsStyle='warning' bsSize='xsmall'
+                        onClick={() =>
+                            this.props.repo.useUpIngredient(ingredient)
+                        }
+                        className="pull-left">
+                        <FaShoppingCart size={20} />
+                    </Button>
+                {ingredient.name}
+            </span>
+        </Row>)
+    }
+    
+    private renderInventoryRow(ingredient: Ingredient) {
+        return (<Row key={ingredient._id}>
+            <span className="btn btn-block btn-secondary">
+                {ingredient.name}
+                <Button
+                        style={{ marginTop: '3px' }}
+                        bsStyle='warning' bsSize='xsmall'
+                        onClick={() =>
+                            this.props.repo.useUpIngredient(ingredient)
+                        }
+                        className="pull-right">
+                        <FaShoppingCart size={20} />
+                    </Button>
+            </span>
+        </Row>)
     }
 
     public render() {
-        let rowProducer = (ingredient: Ingredient) => {
-            return (
-                <Row key={ingredient._id}>
-                    <span className="btn btn-block btn-secondary">
-                        {ingredient.name}
-                    </span>
-                </Row>
-            )
-        }
 
         let archivedRows = this.props.repo.state.ingredients
-            .filter((ingredient: Ingredient) => ingredient.status === 'archive')
-            .map(rowProducer);
+            .filter((ingredient: Ingredient) => ingredient.status === 'archived')
+            .map((ingredient) => this.renderArchiveRow(ingredient));
 
         let shoppingRows = this.props.repo.state.ingredients
             .filter((ingredient: Ingredient) => ingredient.status === 'shopping')
-            .map(rowProducer);
+            .map((ingredient) => this.renderShoppingRow(ingredient));
 
         let inventoryRows = this.props.repo.state.ingredients
             .filter((ingredient: Ingredient) => ingredient.status === 'inventory')
-            .map(rowProducer);
+            .map((ingredient) => this.renderInventoryRow(ingredient));
 
 
         return (
@@ -99,7 +151,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
 
                                     <Button style={{ marginTop: '3px' }} bsStyle='success' bsSize='sm' onClick={() => {
                                         let ingredient = new Ingredient();
-                                        ingredient.status = 'archive';
+                                        ingredient.status = 'archived';
                                         this.setState({ editIngredient: ingredient, editing: true })
                                     }} className="pull-right">
                                         <FaPlus size={20} />

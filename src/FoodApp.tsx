@@ -89,15 +89,18 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
     }
 
     public async purchaseIngredient(ingredient: Ingredient) {
-        console.log('not implemented');
+        ingredient.status = 'inventory';
+        this.saveIngredient(ingredient);
     }
 
     public async useUpIngredient(ingredient: Ingredient) {
-        console.log('not implemented');
+        ingredient.status = 'shopping';
+        this.saveIngredient(ingredient);
     }
 
     public async archiveIngredient(ingredient: Ingredient) {
-        console.log('not implemented');
+        ingredient.status = 'archived';
+        this.saveIngredient(ingredient);
     }
 
     public render() {
