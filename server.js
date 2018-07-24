@@ -6,10 +6,18 @@ let bodyParser = require('body-parser');
 // parse application/json
 app.use(bodyParser.json());
 
-const port = 5001; // process.env.PORT || 
+let port = 5001; // process.env.PORT || 
+
 const uri = process.env.MONGODB_URI;
+
 const MongoClient = require('mongodb').MongoClient;
 
+let testProd = false;
+
+if (process.env.NODE_ENV === 'production' || testProd) {
+  app.use(express.static('build'));
+  port = 5000;
+}
 
 MongoClient.connect(uri, (err, client) => {
   if (err) {

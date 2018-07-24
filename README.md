@@ -6,6 +6,7 @@ You can find the most recent version of this guide [here](https://github.com/fac
 ## Table of Contents
 
 - [Deploying to Production](#deploying-to-production)
+- [Running Locally](#running-locally)
 
 ## Deploying To Production
 
@@ -21,3 +22,17 @@ git add *
 git commit -m "ran build"
 heroku git:remote -a project
 git push heroku master
+
+## Running Locally
+you'll need two command windows
+
+in one, run:
+npm start
+
+in the other, run:
+nodemon server.js
+
+One will start the create-react-app fanciness for local development of the client; the other will
+start nodemon for local development of the server. In production, only the server is run and it
+serves a statically generated build of the client. Locally, package.json defines a proxy for port 5001
+that goes to the server, while all main requests are routed through the create-react-app system.
