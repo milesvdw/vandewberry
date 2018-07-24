@@ -26,9 +26,14 @@ MongoClient.connect(uri, (err, client) => {
 
   let db = client.db('heroku_6ftkk7t9');
 
+  app.get('/api/photos', (req, res) => {
+    db.collection('photos').find().toArray((geterr, items) => {
+      res.send(items);
+    });
+  });
+
   app.get('/api/inventory', (req, res) => {
     db.collection('inventory').find().toArray((geterr, items) => {
-      console.log(items);
       res.send(items);
     });
   });

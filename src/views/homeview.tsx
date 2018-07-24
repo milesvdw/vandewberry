@@ -1,19 +1,27 @@
 import * as React from "react";
-import logo from '../logo.svg';
 
 export class HomeView extends React.Component {
 
     public render() {
 
 
-        return (<div>
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <h1 className="App-title">Welcome to React</h1>
-            </header>
-            <p className="App-intro">
-                To get started, edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        </div>);
+        return (
+            <div>
+                <div className="main-photo-container">
+                    <span className="closebtn">&times;</span>
+
+                    {/* <img style={{ width: '100%' }} src={this.props.repo.mainImage} /> */}
+
+                    <div className="imgtext" />
+                </div>
+                <div className="photo-grid">
+                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/71829/mona-lisa.jpg" alt="Mona Lisa" />
+                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/71829/mona-lisa.jpg" alt="Mona Lisa" />
+                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/71829/mona-lisa.jpg" alt="Mona Lisa" />
+                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/71829/mona-lisa.jpg" alt="Mona Lisa" />
+                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/71829/mona-lisa.jpg" alt="Mona Lisa" />
+                </div>
+            </div>
+        );
     }
 }

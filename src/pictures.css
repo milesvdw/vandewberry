@@ -1,0 +1,39 @@
+.photo-grid { 
+  display: grid;
+  grid-template-columns: repeat(auto-fill,20vh);
+  margin: 5vh auto;
+  width: 90vh;
+  grid-gap: 20px;
+  align-items: center;
+  justify-items: center;
+}
+
+.photo-grid img {
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 6px 0px  rgba(0,0,0,0.3);
+  max-width: 100%;
+}
+
+.main-photo-container {
+  position: relative;
+  display: none;
+}
+
+/* Expanding image text */
+.imgtext {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  color: white;
+  font-size: 20px;
+}
+
+/* Closable button inside the image */
+.closebtn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  color: white;
+  font-size: 35px;
+  cursor: pointer;
+}
