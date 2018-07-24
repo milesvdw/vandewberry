@@ -19,23 +19,24 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
     private renderShoppingRow(ingredient: Ingredient) {
         return (<Row key={ingredient._id}>
             <span className="btn btn-block btn-secondary">
-                <Button style={{ marginTop: '3px' }}
-                    bsStyle='success' bsSize='xsmall'
-                    onClick={() =>
+                <Button style={{ marginTop: '3px', marginLeft: '2px' }}
+                    bsSize='small'
+                    onClick={() => {
                         this.props.repo.purchaseIngredient(ingredient)
-                    }
-                    className="pull-left">
-                    <FaPlus size={20} />
+                    }}
+                    className="pull-left btn-circle classy-btn">
+                    <FaPlus size={15} />
                 </Button>
                 {ingredient.name}
-                <Button
-                    style={{ marginTop: '3px' }}
-                    bsStyle='danger' bsSize='xsmall'
-                    onClick={() =>
+
+
+                <Button style={{ marginTop: '3px', marginRight: '2px' }}
+                    bsSize='small'
+                    onClick={() => {
                         this.props.repo.archiveIngredient(ingredient)
-                    }
-                    className="pull-right">
-                    <FaFolder size={20} />
+                    }}
+                    className="pull-right btn-circle classy-btn">
+                    <FaFolder size={15} />
                 </Button>
             </span>
         </Row>)
@@ -43,34 +44,34 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
 
     private renderArchiveRow(ingredient: Ingredient) {
         return (<Row key={ingredient._id}>
-            <span className="btn btn-block btn-secondary">      
-                <Button
-                        style={{ marginTop: '3px' }}
-                        bsStyle='warning' bsSize='xsmall'
-                        onClick={() =>
-                            this.props.repo.useUpIngredient(ingredient)
-                        }
-                        className="pull-left">
-                        <FaShoppingCart size={20} />
-                    </Button>
+            <span className="btn btn-block btn-secondary">
+
+                <Button style={{ marginTop: '3px', marginLeft: '2px' }}
+                    bsSize='small'
+                    onClick={() => {
+                        this.props.repo.useUpIngredient(ingredient)
+                    }}
+                    className="pull-left btn-circle classy-btn">
+                    <FaShoppingCart size={15} />
+                </Button>
                 {ingredient.name}
             </span>
         </Row>)
     }
-    
+
     private renderInventoryRow(ingredient: Ingredient) {
         return (<Row key={ingredient._id}>
             <span className="btn btn-block btn-secondary">
                 {ingredient.name}
-                <Button
-                        style={{ marginTop: '3px' }}
-                        bsStyle='warning' bsSize='xsmall'
-                        onClick={() =>
-                            this.props.repo.useUpIngredient(ingredient)
-                        }
-                        className="pull-right">
-                        <FaShoppingCart size={20} />
-                    </Button>
+
+                <Button style={{ marginTop: '3px', marginRight: '2px' }}
+                    bsSize='small'
+                    onClick={() => {
+                        this.props.repo.useUpIngredient(ingredient)
+                    }}
+                    className="pull-right btn-circle classy-btn">
+                    <FaShoppingCart size={15} />
+                </Button>
             </span>
         </Row>)
     }
@@ -112,12 +113,15 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                         <Col sm={4}>
                             <Panel>
                                 <Panel.Heading>
-                                    <Button style={{ marginTop: '3px' }} bsStyle='success' bsSize='sm' onClick={() => {
-                                        let ingredient = new Ingredient();
-                                        ingredient.status = 'inventory';
-                                        this.setState({ editIngredient: ingredient, editing: true })
-                                    }} className="pull-right">
-                                        <FaPlus size={20} />
+                                    <Button style={{ marginTop: '3px' }}
+                                        bsSize='small'
+                                        onClick={() => {
+                                            let ingredient = new Ingredient();
+                                            ingredient.status = 'inventory';
+                                            this.setState({ editIngredient: ingredient, editing: true })
+                                        }}
+                                        className="pull-right btn-circle classy-btn">
+                                        <FaPlus size={15} />
                                     </Button>
                                     <h4>Inventory</h4>
                                 </Panel.Heading>
@@ -129,13 +133,15 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                         <Col sm={4}>
                             <Panel>
                                 <Panel.Heading>
-
-                                    <Button style={{ marginTop: '3px' }} bsStyle='success' bsSize='sm' onClick={() => {
-                                        let ingredient = new Ingredient();
-                                        ingredient.status = 'shopping';
-                                        this.setState({ editIngredient: ingredient, editing: true })
-                                    }} className="pull-right">
-                                        <FaPlus size={20} />
+                                    <Button style={{ marginTop: '3px' }}
+                                        bsSize='small'
+                                        onClick={() => {
+                                            let ingredient = new Ingredient();
+                                            ingredient.status = 'shopping';
+                                            this.setState({ editIngredient: ingredient, editing: true })
+                                        }}
+                                        className="pull-right btn-circle classy-btn">
+                                        <FaPlus size={15} />
                                     </Button>
                                     <h4>Shopping List</h4>
 
@@ -148,13 +154,15 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                         <Col sm={4}>
                             <Panel>
                                 <Panel.Heading>
-
-                                    <Button style={{ marginTop: '3px' }} bsStyle='success' bsSize='sm' onClick={() => {
-                                        let ingredient = new Ingredient();
-                                        ingredient.status = 'archived';
-                                        this.setState({ editIngredient: ingredient, editing: true })
-                                    }} className="pull-right">
-                                        <FaPlus size={20} />
+                                    <Button style={{ marginTop: '3px' }}
+                                        bsSize='small'
+                                        onClick={() => {
+                                            let ingredient = new Ingredient();
+                                            ingredient.status = 'archived';
+                                            this.setState({ editIngredient: ingredient, editing: true })
+                                        }}
+                                        className="pull-right btn-circle classy-btn">
+                                        <FaPlus size={15} />
                                     </Button>
                                     <h4>Archived</h4>
 

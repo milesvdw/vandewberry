@@ -16,7 +16,7 @@ let testProd = false;
 
 if (process.env.NODE_ENV === 'production' || testProd) {
   app.use(express.static('build'));
-  port = 5000;
+  port = process.env.PORT || 5000;
 }
 
 MongoClient.connect(uri, (err, client) => {
