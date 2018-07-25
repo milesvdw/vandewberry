@@ -6,20 +6,44 @@ import { Banner } from './banner';
 import { HashRouter, Route, Switch } from "react-router-dom"
 import { HomeView } from './views/homeview';
 import { FoodApp } from './FoodApp';
+import { Login } from './Login';
 
-class App extends React.Component {
+class App extends React.Component<{}, { error: boolean, authenticated: boolean, user: string }> {
+  constructor(props: {}) {
+    super(props);
+    this.state = { error: false, authenticated: false, user: "" }
+
+    this.authenticate = this.authenticate.bind(this);
+  }
+
+  private authenticate(user: string) {
+    this.setState({ authenticated: true, user })
+  }
+
+
 
   public render() {
+    let showIfLoggedIn = (
+      <div id='protected'>
+        <FoodApp />
+        <Route path="/home"
+          component={() =>
+            <HomeView />
+          }
+        />
+      </div>
+    )
     return (
       <div>
         <Banner />
         <HashRouter>
           <Switch>
             <div>
-              <FoodApp />
-              <Route path="/home"
+              {this.state.authenticated && showIfLoggedIn}
+              <Route path="/login"
                 component={() =>
-                  <HomeView />
+                  <Login authenticate={this.authenticate} />
+
                 }
               />
             </div>

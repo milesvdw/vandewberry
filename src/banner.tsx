@@ -7,6 +7,9 @@ export class Banner extends React.Component {
         return (
             <Navbar>
                 <Nav>
+                    <NavItem eventKey={1} href="#login">
+                        Login
+                    </NavItem>
                     <NavItem eventKey={1} href="#home">
                         Home
                     </NavItem>

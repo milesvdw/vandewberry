@@ -1,18 +1,45 @@
 // tslint:disable:no-console
 const express = require('express');
-var ObjectId = require('mongodb').ObjectID;
-const app = express();
-let bodyParser = require('body-parser');
+const ObjectId = require('mongodb').ObjectID;
+const passport = require('passport')
+const bcrypt = require('bcrypt')
+const LocalStrategy = require('passport-local').Strategy
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const MongoClient = require('mongodb').MongoClient;
+const MongoStore = require('connect-mongo')(session);
 // parse application/json
+
+// TODO: Salting technique
+// const saltRounds = 10
+// const myPlaintextPassword = 'foobar'
+// const salt = bcrypt.genSaltSync(saltRounds)
+// const passwordHash = bcrypt.hashSync(myPlaintextPassword, salt)
+
+const app = express();
 app.use(bodyParser.json());
+
+
+let ApiResponse = (authenticated, payload) => {
+  return { authenticated, payload };
+}
+
 
 let port = 5001; // process.env.PORT || 
 
 const uri = process.env.MONGODB_URI;
 
-const MongoClient = require('mongodb').MongoClient;
-
 let testProd = false;
+
+let authenticationMiddleware = () => {
+  return function (req, res, next) {
+    if (req.isAuthenticated()) {
+      return next()
+    }
+    res.send(ApiResponse(false, null));
+  }
+}
+
 
 if (process.env.NODE_ENV === 'production' || testProd) {
   app.use(express.static('build'));
@@ -26,53 +53,106 @@ MongoClient.connect(uri, (err, client) => {
 
   let db = client.db('heroku_6ftkk7t9');
 
-  app.get('/api/photos', (req, res) => {
+  app.use(session({
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.SECRET,
+    store: new MongoStore({
+      db
+    })
+  }))
+
+  app.use(passport.initialize())
+  app.use(passport.session())
+
+  passport.use(new LocalStrategy(
+    async (username, password, done) => {
+      users = await db.collection('users').find({ user: username }).toArray()
+
+      if (users.length === 1) {
+        // Always use hashed passwords and fixed time comparison
+        bcrypt.compare(password, users[0].passwordHash, (cryptErr, isValid) => {
+          if (cryptErr) {
+            return done(cryptErr)
+          }
+          if (!isValid) {
+            return done(null, false)
+          }
+          return done(null, users[0])
+        })
+      } else {
+
+        return done(null, false)
+
+      }
+    }))
+
+  passport.authenticationMiddleware = authenticationMiddleware
+
+  app.get('/api/photos', passport.authenticationMiddleware(), (req, res) => {
     db.collection('photos').find().toArray((geterr, items) => {
-      res.send(items);
+      res.send(ApiResponse(true, items));
     });
   });
 
-  app.get('/api/inventory', (req, res) => {
+  app.get('/api/inventory', passport.authenticationMiddleware(), (req, res) => {
     db.collection('inventory').find().toArray((geterr, items) => {
-      res.send(items);
+      res.send(ApiResponse(true, items));
     });
   });
 
-  app.post('/api/inventory', (req, res) => {
+  app.post('/api/inventory', passport.authenticationMiddleware(), (req, res) => {
     req.body._id = ObjectId(req.body._id);
     db.collection('inventory').save(req.body, (getErr, result) => {
       if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
-        res.json(result.ops[0]._id);
+        res.json(ApiResponse(true, result.ops[0]._id));
       } else if (result.result.upserted) {
-        res.json(result.result.upserted[0]._id);
+        res.json(ApiResponse(true, result.result.upserted[0]._id));
       } else {
-        res.json(req.body._id);
+        res.json(ApiResponse(true, req.body._id));
       }
     });
   });
 
-  app.delete('/api/recipes', (req, res) => {
+  app.delete('/api/recipes', passport.authenticationMiddleware(), (req, res) => {
     db.collection('recipes').remove({ "_id": ObjectId(req.body._id) });
-    res.send();
+    res.send(ApiResponse(true, items));
   });
 
-  app.post('/api/recipes', (req, res) => {
+  app.post('/api/recipes', passport.authenticationMiddleware(), (req, res) => {
     req.body._id = ObjectId(req.body._id);
     db.collection('recipes').save(req.body, (getErr, result) => {
       if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
-        res.json(result.ops[0]._id);
+        res.json(ApiResponse(true, result.ops[0]._id));
       } else if (result.result.upserted) {
-        res.json(result.result.upserted[0]._id);
+        res.json(ApiResponse(true, result.result.upserted[0]._id));
       } else {
-        res.json(req.body._id);
+        res.json(ApiResponse(true, req.body._id));
       }
     });
   });
 
-  app.get('/api/recipes', (req, res) => {
+  app.get('/api/recipes', passport.authenticationMiddleware(), (req, res) => {
     db.collection('recipes').find().toArray((geterr, items) => {
-      res.send(items);
+      res.send(ApiResponse(true, items));
     });
+  });
+
+  app.post('/api/login', (req, res) => {
+    passport.authenticate('local', (authErr, user) => {
+      if (authErr) {
+        res.send(ApiResponse(false, null));
+        return;
+      }
+
+      if (!user) {
+        res.send(ApiResponse(false, null));
+        return;
+      }
+
+      res.send(ApiResponse(true, null));
+
+    })(req, res);
   });
 
   app.listen(port, () => console.log(`Listening on port ${port}`));
