@@ -1,5 +1,4 @@
 import * as React from "react";
-import { FormGroup } from "react-bootstrap";
 import { Database } from "./database";
 import { Redirect } from "react-router-dom";
 
@@ -38,7 +37,7 @@ export class Login extends React.Component<{ authenticate: (user: string) => voi
         return (
             <div>
                 {this.state.authenticated && <Redirect to={'/home'} />}
-                <FormGroup>
+                <form className='form-button' onSubmit={this.attemptLogin}>
                     <label htmlFor="username">
                         Username
                             </label>
@@ -47,10 +46,11 @@ export class Login extends React.Component<{ authenticate: (user: string) => voi
                         Password
                             </label>
                     <input type='text' name='password' className='form-control' value={this.state.password} onChange={this.updateFields} />
-                </FormGroup>
+                    <button type="submit">login</button>
+                </form>
 
 
-                <button type="submit" onClick={this.attemptLogin} >login</button>
+                
 
                 {this.state.error && (
                     <p>Bad login information</p>
