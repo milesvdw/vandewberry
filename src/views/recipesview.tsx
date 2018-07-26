@@ -26,11 +26,12 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
     private searchInput: any;
 
     private displayMaterials(materials: Material[]) {
+        let inventory = this.props.repo.state.ingredients.filter((i: Ingredient) => i.status === 'inventory');
         return materials
             .map((material: Material, index: number) => {
 
                 let materialIsMissingMarker = "";
-                let available = material.isAvailable(this.props.repo.state.ingredients.filter((i: Ingredient) => i.status === 'inventory'));
+                let available = material.isAvailable(inventory);
                 if (material.required && !available) {
                     materialIsMissingMarker = "list-group-item-danger"
                 } else if (!material.required && !available) {
