@@ -17,15 +17,19 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
   }
 
   private authenticate(user: string) {
-    this.setState({ authenticated: true, user })
+    this.setState({ authenticated: true, user });
+    this.foodApp && this.foodApp.refresh();
   }
+
+  private foodApp: FoodApp | null;
+
 
 
 
   public render() {
     let showIfLoggedIn = (
       <div id='protected'>
-        <FoodApp />
+        <FoodApp ref={thing => { this.foodApp = thing }} />
         <Route path="/home"
           component={() =>
             <HomeView />
@@ -33,6 +37,7 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
         />
       </div>
     )
+
     return (
       <div>
         <Banner />
@@ -40,12 +45,12 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
           <Switch>
             <div>
               {this.state.authenticated && showIfLoggedIn}
-              <Route path="/login"
+              {!this.state.authenticated && (<Route path="/login"
                 component={() =>
                   <Login authenticate={this.authenticate} />
 
                 }
-              />
+              />)}
             </div>
           </Switch>
         </HashRouter>

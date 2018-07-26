@@ -7,7 +7,7 @@ const LocalStrategy = require('passport-local').Strategy
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoClient = require('mongodb').MongoClient;
-const MongoStore = require('connect-mongo')(session);
+const MongoStore = require('connect-mongo')(session)
 // parse application/json
 
 // TODO: Salting technique
@@ -17,7 +17,8 @@ const MongoStore = require('connect-mongo')(session);
 // const passwordHash = bcrypt.hashSync(myPlaintextPassword, salt)
 
 const app = express();
-app.use(bodyParser.json());
+
+
 
 
 let ApiResponse = (authenticated, payload) => {
@@ -54,16 +55,17 @@ MongoClient.connect(uri, (err, client) => {
   let db = client.db('heroku_6ftkk7t9');
 
   app.use(session({
-    resave: false,
-    saveUninitialized: false,
     secret: process.env.SECRET,
-    store: new MongoStore({
-      db
-    })
+    // store: new MongoStore({
+    //   db
+    // })
   }))
 
+  app.use(bodyParser.json());
   app.use(passport.initialize())
   app.use(passport.session())
+
+
 
   passport.use(new LocalStrategy(
     async (username, password, done) => {
@@ -86,6 +88,17 @@ MongoClient.connect(uri, (err, client) => {
 
       }
     }))
+
+  passport.serializeUser((user, done) => {
+    done(null, user._id);
+  });
+
+  passport.deserializeUser(async (id, done) => {
+    console.log('here');
+    users = await db.collection('users').find({ _id: ObjectId(id) }).toArray()
+    console.log(users);
+    done(err, users[0]);
+  });
 
   passport.authenticationMiddleware = authenticationMiddleware
 
@@ -119,7 +132,7 @@ MongoClient.connect(uri, (err, client) => {
     res.send(ApiResponse(true, items));
   });
 
-  app.post('/api/recipes', passport.authenticationMiddleware(), (req, res) => {
+  app.post('/api/recipes', passport.authenticationMiddleware, (req, res) => {
     req.body._id = ObjectId(req.body._id);
     db.collection('recipes').save(req.body, (getErr, result) => {
       if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
@@ -138,22 +151,12 @@ MongoClient.connect(uri, (err, client) => {
     });
   });
 
-  app.post('/api/login', (req, res) => {
-    passport.authenticate('local', (authErr, user) => {
-      if (authErr) {
-        res.send(ApiResponse(false, null));
-        return;
-      }
-
-      if (!user) {
-        res.send(ApiResponse(false, null));
-        return;
-      }
-
-      res.send(ApiResponse(true, null));
-
-    })(req, res);
-  });
+  app.post('/api/login',
+    passport.authenticate('local'),
+    (req, res) => {
+      res.send(ApiResponse(true, null))
+    }
+  );
 
   app.listen(port, () => console.log(`Listening on port ${port}`));
 

@@ -11,7 +11,7 @@ export class Database {
         let url: string = "/recipes/delete/"
             + "?id="
             + id;
-        return fetch(url)
+        return fetch(url, { credentials: 'include' })
             .then((data: any) => data.json())
             .then((data: IApiResponse) => {
                 if (data.authenticated) {
@@ -26,7 +26,7 @@ export class Database {
 
     public static GetRecipes(): Promise<Recipe[]> {
         let url: string = "/api/recipes";
-        return fetch(url)
+        return fetch(url, { credentials: 'include' })
             .then((data: any) => data.json())
             .then((data: IApiResponse) => {
                 if (data.authenticated) {
@@ -42,7 +42,7 @@ export class Database {
 
     public static GetInventory(): Promise<Ingredient[]> {
         let url: string = "/api/inventory";
-        return fetch(url)
+        return fetch(url, { credentials: 'include' })
             .then((data: any) => data.json())
             .then((data: IApiResponse) => {
                 if (data.authenticated) {
@@ -63,18 +63,15 @@ export class Database {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({ username: user, password }),
             method: 'post',
         })
-            .then((data: any) => data.json())
-            .then((data: IApiResponse) => {
-                if (data.authenticated) {
-                    return true;
-                }
-                else {
-                    window.location.hash = '/login'
-                    return false;
-                }
+            .then(() => {
+                return true;
+            }, () => {
+                window.location.hash = '/login'
+                return false;
             })
     }
 }
