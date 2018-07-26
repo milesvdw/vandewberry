@@ -7,6 +7,7 @@ import { Material } from "../models/material";
 import { RecipeEditView } from "./recipeeditview";
 import { FaTimesCircle, FaPencil, FaPlus, FaSearch } from "react-icons/lib/fa"
 import { IRecipeRepo, IIngredientRepo } from "../FoodApp";
+import { Ingredient } from "../models/ingredient";
 
 export class RecipesView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { editing: boolean, editRecipe: Recipe, searchQuery: string }> {
 
@@ -29,7 +30,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
             .map((material: Material, index: number) => {
 
                 let materialIsMissingMarker = "";
-                let available = material.isAvailable(this.props.repo.state.ingredients);
+                let available = material.isAvailable(this.props.repo.state.ingredients.filter((i: Ingredient) => i.status === 'inventory'));
                 if (material.required && !available) {
                     materialIsMissingMarker = "list-group-item-danger"
                 } else if (!material.required && !available) {
