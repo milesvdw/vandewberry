@@ -10,11 +10,11 @@ You can find the most recent version of this guide [here](https://github.com/fac
 
 ## Deploying To Production
 
-1. Merge master into dev:
+1. Merge master into prod:
 git checkout master
 git pull master
-git checkout dev
-git pull dev
+git checkout prod
+git pull prod
 git merge master
 *** resolve conflicts ***
 npm run build
