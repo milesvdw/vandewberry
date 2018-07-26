@@ -25,6 +25,12 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
         super(props);
         this.state = { recipes: [], ingredients: [] };
 
+        this.deleteRecipe = this.deleteRecipe.bind(this);
+        this.saveRecipe = this.saveRecipe.bind(this);
+        this.componentDidMount = this.componentDidMount.bind(this);
+    }
+
+    public componentDidMount() {
         Database.GetRecipes()
             .then((data: any) => {
                 this.setState({
@@ -38,9 +44,6 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
                     ingredients: data.map((item: any) => new Ingredient(item))
                 });
             });
-
-        this.deleteRecipe = this.deleteRecipe.bind(this);
-        this.saveRecipe = this.saveRecipe.bind(this);
     }
 
     public async deleteRecipe(recipe: Recipe) {

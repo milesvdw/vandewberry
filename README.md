@@ -27,10 +27,10 @@ git push heroku master
 you'll need two command windows
 
 in one, run:
-npm start
+npm run start
 
 in the other, run:
-nodemon server.js
+heroku local web
 
 One will start the create-react-app fanciness for local development of the client; the other will
 start nodemon for local development of the server. In production, only the server is run and it
