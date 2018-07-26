@@ -14,6 +14,14 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
     this.state = { error: false, authenticated: false, user: "" }
 
     this.authenticate = this.authenticate.bind(this);
+    this.logout = this.logout.bind(this);
+    
+  }
+
+  private logout(event: any) {
+    event.stopPropagation();
+    fetch('/api/logout');
+    this.setState({ authenticated: false, user: "" });
   }
 
   private authenticate(user: string) {
@@ -40,17 +48,17 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
 
     return (
       <div>
-        <Banner />
+        <Banner authenticated={this.state.authenticated} logout={this.logout} />
         <HashRouter>
           <Switch>
             <div>
               {this.state.authenticated && showIfLoggedIn}
-              {!this.state.authenticated && (<Route path="/login"
+              <Route path="/login"
                 component={() =>
                   <Login authenticate={this.authenticate} />
 
                 }
-              />)}
+              />
             </div>
           </Switch>
         </HashRouter>

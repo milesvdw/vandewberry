@@ -71,6 +71,12 @@ MongoClient.connect(uri, (err, client) => {
     async (username, password, done) => {
       users = await db.collection('users').find({ user: username }).toArray()
 
+      const saltRounds = 10
+      const myPlaintextPassword = 'foobar'
+      const salt = bcrypt.genSaltSync(saltRounds)
+      const passwordHash = bcrypt.hashSync(myPlaintextPassword, salt)
+      console.log(passwordHash);
+
       if (users.length === 1) {
         // Always use hashed passwords and fixed time comparison
         bcrypt.compare(password, users[0].passwordHash, (cryptErr, isValid) => {
@@ -157,6 +163,12 @@ MongoClient.connect(uri, (err, client) => {
       res.send(ApiResponse(true, null))
     }
   );
+
+  app.get('/api/logout',
+  (req, res) => {
+    req.logout();
+  }
+);
 
   app.listen(port, () => console.log(`Listening on port ${port}`));
 
