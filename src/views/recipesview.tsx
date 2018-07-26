@@ -5,7 +5,7 @@ import { Grid, Row, Col, Panel, Modal, Button } from "react-bootstrap";
 import { Recipe } from "../models/recipe";
 import { Material } from "../models/material";
 import { RecipeEditView } from "./recipeeditview";
-import { FaTimesCircle, FaPencil, FaPlus, FaSearch } from "react-icons/lib/fa"
+import { FaTimesCircle, FaPencil, FaPlus, FaSearch, FaShoppingCart } from "react-icons/lib/fa"
 import { IRecipeRepo, IIngredientRepo } from "../FoodApp";
 
 export class RecipesView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { editing: boolean, editRecipe: Recipe, searchQuery: string }> {
@@ -20,6 +20,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
         this.mapRecipesToRows = this.mapRecipesToRows.bind(this);
         this.getAllSearchedRecipes = this.getAllSearchedRecipes.bind(this);
         this.searchRecipes = this.searchRecipes.bind(this);
+        this.addIngredientsToCart = this.addIngredientsToCart.bind(this);
     }
 
     private searchInput: any;
@@ -45,6 +46,15 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                 );
             });
     }
+
+    private addIngredientsToCart(materials: Material[]) {
+        materials.map((material: Material) => {
+            let ingredient = material.ingredients[0];
+            console.log(ingredient);
+            if(ingredient.status === 'archive') {this.props.repo.useUpIngredient(ingredient);}
+        });
+    }
+
     private mapRecipesToRows(recipes: Recipe[]) {
         return recipes
             .sort((recipe1: Recipe, recipe2: Recipe) => {
@@ -66,6 +76,10 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                                     }} />
                                 {/* <a className="pull-left glyphicon glyphicon-pencil glyph-button" data-bind="click: function() {edit_recipe($data.id)}" data-target="#add_recipe_modal"
                                 data-toggle="modal"></a> */}
+                                <FaShoppingCart
+                                    className="pull-left"
+                                    onClick={() => {this.addIngredientsToCart(recipe.materials)}}
+                                />
                                 {recipe.name}
                                 <FaTimesCircle className="pull-right" onClick={() => { this.props.repo.deleteRecipe(recipe) }} />
                             </Panel.Toggle>
