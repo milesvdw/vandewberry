@@ -37,7 +37,7 @@ export class Login extends React.Component<{ authenticate: (user: string) => voi
         return (
             <div>
                 {this.state.authenticated && <Redirect to={'/home'} />}
-                <form className='form-button' onSubmit={this.attemptLogin}>
+                <form className='form-group' onSubmit={this.attemptLogin}>
                     <label htmlFor="username">
                         Username
                             </label>
