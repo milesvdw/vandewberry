@@ -1,5 +1,7 @@
+import { Database } from "../database";
+
 export class Ingredient {
-    public _id?: number;
+    public _id?: string;
     public name: string = "";
     public category: string = "";
     public last_purchased: any; // TODO: figure out what this should be
@@ -12,15 +14,15 @@ export class Ingredient {
     }
 
     public Save(): Promise<Ingredient> {
-        return fetch('/api/inventory', {
+        return Database.ApiCall('/api/inventory', {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(this),
             method: 'post',
-        }).then(async (data: any) => {
-            this._id = await data.json()
+        }).then(async (id: string) => {
+            this._id = id;
             return this;
         });
     }

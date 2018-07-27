@@ -1,5 +1,6 @@
 import { Material } from "./material";
 import { Ingredient } from "./ingredient";
+import { Database } from "../database";
 
 export class Recipe {
     public _id?: string;
@@ -20,15 +21,15 @@ export class Recipe {
     }
 
     public Save(): Promise<Recipe> {
-        return fetch('/api/recipes', {
+        return Database.ApiCall('/api/recipes', {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(this),
             method: 'post',
-        }).then(async (data: any) => {
-            this._id = await data.json()
+        }).then(async (id: string) => {
+            this._id = id;
             return this;
         });
     }

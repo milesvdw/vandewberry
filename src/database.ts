@@ -11,38 +11,26 @@ export class Database {
         let url: string = "/recipes/delete/"
             + "?id="
             + id;
-        return fetch(url, { credentials: 'include' })
-            .then((data: any) => data.json())
-            .then((data: IApiResponse) => {
-                if (data.authenticated) {
-                    return data.payload;
-                }
-                else {
-                    window.location.hash = '/login'
-                    return Promise.reject('not authenticated');
-                }
-            })
+        return this.ApiCall(url)
     }
 
     public static GetRecipes(): Promise<Recipe[]> {
         let url: string = "/api/recipes";
-        return fetch(url, { credentials: 'include' })
-            .then((data: any) => data.json())
-            .then((data: IApiResponse) => {
-                if (data.authenticated) {
-                    return data.payload;
-                }
-                else {
-                    window.location.hash = '/login'
-                    return Promise.reject('not authenticated');
-                }
-            })
+        return this.ApiCall(url)
             .then((json: any) => json.map((item: any) => new Recipe(item)))
     }
 
     public static GetInventory(): Promise<Ingredient[]> {
         let url: string = "/api/inventory";
-        return fetch(url, { credentials: 'include' })
+        return this.ApiCall(url)
+            .then((payload: any) => {
+                return payload.map((item: any) => new Ingredient(item))
+            })
+    }
+
+    public static ApiCall(url: string, options: any = {}) {
+        options.credentials = 'include';
+        return fetch(url, options)
             .then((data: any) => data.json())
             .then((data: IApiResponse) => {
                 if (data.authenticated) {
@@ -52,10 +40,7 @@ export class Database {
                     window.location.hash = '/login'
                     return Promise.reject('not authenticated');
                 }
-            })
-            .then((payload: any) => {
-                return payload.map((item: any) => new Ingredient(item))
-            })
+            });
     }
 
     public static Login(user: string, password: string): Promise<boolean> {
