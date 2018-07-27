@@ -21,7 +21,7 @@ npm run build
 git add *
 git commit -m "ran build"
 heroku git:remote -a project
-git push heroku master
+git push heroku prod:master
 
 ## Running Locally
 you'll need two command windows
