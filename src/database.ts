@@ -1,7 +1,7 @@
 import { Ingredient } from "./models/ingredient";
 import { Recipe } from "./models/recipe";
 
-interface IApiResponse {
+export interface IApiResponse {
     authenticated: boolean
     payload: any
 }
@@ -53,7 +53,9 @@ export class Database {
                     return Promise.reject('not authenticated');
                 }
             })
-            .then((json: any) => json.map((item: any) => new Ingredient(item)))
+            .then((payload: any) => {
+                return payload.map((item: any) => new Ingredient(item))
+            })
     }
 
     public static Login(user: string, password: string): Promise<boolean> {
@@ -67,8 +69,15 @@ export class Database {
             body: JSON.stringify({ username: user, password }),
             method: 'post',
         })
-            .then(() => {
-                return true;
+            .then((data: any) => {
+                return data.json();
+            }).then((response: IApiResponse) => {
+                if (response.authenticated) {
+                    return true;
+                } else {
+                    window.location.hash = '/login'
+                    return false;
+                }
             }, () => {
                 window.location.hash = '/login'
                 return false;

@@ -37,7 +37,7 @@ let authenticationMiddleware = () => {
     if (req.isAuthenticated()) {
       return next()
     }
-    res.send(ApiResponse(false, null));
+    res.json(ApiResponse(false, null));
   }
 }
 
@@ -94,9 +94,7 @@ MongoClient.connect(uri, (err, client) => {
   });
 
   passport.deserializeUser(async (id, done) => {
-    console.log('here');
     users = await db.collection('users').find({ _id: ObjectId(id) }).toArray()
-    console.log(users);
     done(err, users[0]);
   });
 
@@ -157,6 +155,24 @@ MongoClient.connect(uri, (err, client) => {
       res.send(ApiResponse(true, null))
     }
   );
+
+  app.get('/api/logout',
+    (req, res, next) => {
+      req.logout();
+      req.session.destroy(function (logerr) {
+        if (!logerr) {
+          res.clearCookie('connect.sid').send();
+        } else {
+          res.send();
+        }
+
+      });
+    }
+  );
+
+  app.get('/api/checkSession', authenticationMiddleware(), (req, res, next) => {
+    res.json(ApiResponse(true, req.user.name));
+  })
 
   app.listen(port, () => console.log(`Listening on port ${port}`));
 
