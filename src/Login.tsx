@@ -33,7 +33,6 @@ export class Login extends React.Component<{ authenticate: (user: string) => voi
     }
 
     public render() {
-        console.log(this.state.authenticated);
         return (
             <div>
                 {this.state.authenticated && <Redirect to={'/home'} />}

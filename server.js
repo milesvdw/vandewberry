@@ -37,7 +37,7 @@ let authenticationMiddleware = () => {
     if (req.isAuthenticated()) {
       return next()
     }
-    res.send(ApiResponse(false, null));
+    res.json(ApiResponse(false, null));
   }
 }
 
@@ -71,12 +71,6 @@ MongoClient.connect(uri, (err, client) => {
     async (username, password, done) => {
       users = await db.collection('users').find({ user: username }).toArray()
 
-      const saltRounds = 10
-      const myPlaintextPassword = 'foobar'
-      const salt = bcrypt.genSaltSync(saltRounds)
-      const passwordHash = bcrypt.hashSync(myPlaintextPassword, salt)
-      console.log(passwordHash);
-
       if (users.length === 1) {
         // Always use hashed passwords and fixed time comparison
         bcrypt.compare(password, users[0].passwordHash, (cryptErr, isValid) => {
@@ -100,9 +94,7 @@ MongoClient.connect(uri, (err, client) => {
   });
 
   passport.deserializeUser(async (id, done) => {
-    console.log('here');
     users = await db.collection('users').find({ _id: ObjectId(id) }).toArray()
-    console.log(users);
     done(err, users[0]);
   });
 
@@ -165,10 +157,22 @@ MongoClient.connect(uri, (err, client) => {
   );
 
   app.get('/api/logout',
-  (req, res) => {
-    req.logout();
-  }
-);
+    (req, res, next) => {
+      req.logout();
+      req.session.destroy(function (logerr) {
+        if (!logerr) {
+          res.clearCookie('connect.sid').send();
+        } else {
+          res.send();
+        }
+
+      });
+    }
+  );
+
+  app.get('/api/checkSession', authenticationMiddleware(), (req, res, next) => {
+    res.json(ApiResponse(true, req.user.name));
+  })
 
   app.listen(port, () => console.log(`Listening on port ${port}`));
 

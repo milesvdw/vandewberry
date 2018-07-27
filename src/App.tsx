@@ -7,6 +7,7 @@ import { HashRouter, Route, Switch } from "react-router-dom"
 import { HomeView } from './views/homeview';
 import { FoodApp } from './FoodApp';
 import { Login } from './Login';
+import { IApiResponse } from './database';
 
 class App extends React.Component<{}, { error: boolean, authenticated: boolean, user: string }> {
   constructor(props: {}) {
@@ -15,13 +16,26 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
 
     this.authenticate = this.authenticate.bind(this);
     this.logout = this.logout.bind(this);
-    
+
+    fetch('/api/checkSession', { credentials: 'include' })
+      .then((data: any) => {
+        console.log(data);
+        return data.json();
+      })
+      .then((response: IApiResponse) => {
+        if (response.authenticated) {
+          this.authenticate(response.payload);
+        }
+      });
+
   }
 
   private logout(event: any) {
     event.stopPropagation();
-    fetch('/api/logout');
-    this.setState({ authenticated: false, user: "" });
+    fetch('/api/logout', { credentials: 'include' }).then(() => {
+      this.setState({ authenticated: false, user: "" });
+    });
+
   }
 
   private authenticate(user: string) {
