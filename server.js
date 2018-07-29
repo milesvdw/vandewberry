@@ -130,7 +130,7 @@ MongoClient.connect(uri, (err, client) => {
     res.send(ApiResponse(true, items));
   });
 
-  app.post('/api/recipes', passport.authenticationMiddleware, (req, res) => {
+  app.post('/api/recipes', passport.authenticationMiddleware(), (req, res) => {
     req.body._id = ObjectId(req.body._id);
     db.collection('recipes').save(req.body, (getErr, result) => {
       if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
