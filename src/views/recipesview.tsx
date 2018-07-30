@@ -109,7 +109,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                                     onClick={() => {this.addIngredientsToCart(recipe.materials)}}
                                 />
                                 {recipe.name}
-                                <FaTimesCircle className="pull-right" onClick={() => { this.props.repo.deleteRecipe(recipe) }} />
+                                <FaTimesCircle className="pull-right" onClick={() => { if(confirm('Delete this recipe?')) {this.props.repo.deleteRecipe(recipe)} }} />
                             </Panel.Toggle>
                             <Panel.Collapse>
                                 <div id={'possible_recipe_details_' + recipe._id}>
