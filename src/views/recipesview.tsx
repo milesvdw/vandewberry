@@ -217,7 +217,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                                         onClick={() => {
                                             this.searchInput.focus();
                                         }}
-                                        className="pull-right btn-circle classy-btn search-btn">
+                                        className={"pull-right btn-circle classy-btn search-btn" + ((this.state.searchQuery.length > 0) ? " search-btn-open" : "")}>
 
                                         <input placeholder="search" ref={(input) => { this.searchInput = input }} onChange={this.searchRecipes} />
                                         <FaSearch size={15} className="pull-right" style={{ marginRight: '7px' }} />
