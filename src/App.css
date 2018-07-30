@@ -172,7 +172,7 @@ checkbox {
   color: #EFEFEF;
 }
 
-.search-btn > input {
+.search-btn.search-btn-open > input, .search-btn > input {
   background-color: #353D45;
   color: white;
   border: none;
@@ -182,11 +182,11 @@ checkbox {
   transition: width .35s ease-in-out;
 }
 
-.search-btn:hover > input {
+.search-btn.search-btn-open > input, .search-btn:hover > input {
   display: inline-block;
   width: 250px;
 }
 
-.search-btn:hover {
+.search-btn.search-btn-open, .search-btn:hover {
   width: 300px;
 }
