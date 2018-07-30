@@ -35,7 +35,7 @@ export class Recipe {
     }
 
     public Delete(): Promise<boolean> {
-        return fetch('/api/recipes', {
+        return Database.ApiCall('/api/recipes', {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
