@@ -83,7 +83,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
         });
     }
 
-    private mapRecipesToRows(recipes: Recipe[]) {
+    private mapRecipesToRows(recipes: Recipe[], side: string) {
         return recipes
             .sort((recipe1: Recipe, recipe2: Recipe) => {
                 return recipe1.name.localeCompare(recipe2.name);
@@ -109,9 +109,18 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                                     onClick={() => {this.addIngredientsToCart(recipe.materials)}}
                                 />
                                 {recipe.name}
-                                <FaTimesCircle className="pull-right" onClick={() => { if(confirm('Delete this recipe?')) {this.props.repo.deleteRecipe(recipe)} }} />
+                                <FaTimesCircle 
+                                    className="pull-right hidden"
+                                    id={'delete'+side+recipe._id}
+                                    onClick={() => {
+                                        if(confirm('Delete this recipe?'))
+                                        {this.props.repo.deleteRecipe(recipe)}
+                                }}/>
                             </Panel.Toggle>
-                            <Panel.Collapse>
+                            <Panel.Collapse
+                                onEnter={() => {let bt=document.getElementById('delete'+side+recipe._id); bt && bt.classList.remove('hidden')}}
+                                onExit={() => {let bt=document.getElementById('delete'+side+recipe._id); bt && bt.classList.add('hidden')}}
+                            >
                                 <div id={'possible_recipe_details_' + recipe._id}>
                                     <ul className="list-group well">
                                         <li className="list-group-item list-group-item-info">
@@ -139,7 +148,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                 return !(missingMaterials.length > 0);
             });
 
-        return this.mapRecipesToRows(availableRecipes);
+        return this.mapRecipesToRows(availableRecipes, 'l');
     }
 
     private getAllSearchedRecipes() {
@@ -154,7 +163,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
     }
 
     private getAllRecipes() {
-        return this.mapRecipesToRows(this.getAllSearchedRecipes());
+        return this.mapRecipesToRows(this.getAllSearchedRecipes(), 'r');
     }
 
     private searchRecipes(event: any) {

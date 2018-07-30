@@ -190,3 +190,7 @@ checkbox {
 .search-btn.search-btn-open, .search-btn:hover {
   width: 300px;
 }
+
+.hidden{
+  display: none;
+}
