@@ -5,7 +5,7 @@ import { Grid, Row, Col, Panel, Modal, Button } from "react-bootstrap";
 import { Recipe } from "../models/recipe";
 import { Material } from "../models/material";
 import { RecipeEditView } from "./recipeeditview";
-import { FaPencil, FaPlus, FaSearch, FaShoppingCart} from "react-icons/lib/fa"
+import { FaTimesCircle, FaPencil, FaPlus, FaSearch, FaShoppingCart } from "react-icons/lib/fa"
 import { IRecipeRepo, IIngredientRepo } from "../FoodApp";
 import { Ingredient } from "../models/ingredient";
 import { compareIngredients } from "../utils/utils";
@@ -105,10 +105,11 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                                 {/* <a className="pull-left glyphicon glyphicon-pencil glyph-button" data-bind="click: function() {edit_recipe($data.id)}" data-target="#add_recipe_modal"
                                 data-toggle="modal"></a> */}
                                 <FaShoppingCart
-                                    className="pull-right"
+                                    className="pull-left"
                                     onClick={() => {this.addIngredientsToCart(recipe.materials)}}
                                 />
                                 {recipe.name}
+                                <FaTimesCircle className="pull-right" onClick={() => { this.props.repo.deleteRecipe(recipe) }} />
                             </Panel.Toggle>
                             <Panel.Collapse>
                                 <div id={'possible_recipe_details_' + recipe._id}>
@@ -117,9 +118,6 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                                             {recipe.description}
                                         </li>
                                         {materials}
-                                        <button className="btn-row" onClick={() => { if(confirm('Delete the item?')) {this.props.repo.deleteRecipe(recipe)} }}>
-                                            DELETE
-                                        </button>
                                     </ul>
                                 </div>
                             </Panel.Collapse>

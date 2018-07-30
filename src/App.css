@@ -120,17 +120,6 @@ checkbox {
   line-height: 1.33;
 }
 
-.btn-row{
-  text-align: center;
-  font-weight: bold;
-  background-color: #20C2E0;
-  color: #FFF;
-  width: 100%;
-  border: #EFEFEF 1px;
-  padding: 10px;
-  margin-top: 10px;
-}
-
 .btn-circle {
   width: 30px;
   height: 30px;
