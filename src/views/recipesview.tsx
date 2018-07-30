@@ -117,7 +117,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                                             {recipe.description}
                                         </li>
                                         {materials}
-                                        <button className="btn-row" onClick={() => { this.props.repo.deleteRecipe(recipe) }}>
+                                        <button className="btn-row" onClick={() => { if(confirm('Delete the item?')) {this.props.repo.deleteRecipe(recipe)} }}>
                                             DELETE
                                         </button>
                                     </ul>
