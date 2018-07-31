@@ -100,9 +100,9 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
     }
 
     private contextMenu = (
-        <Popover id="popover-positioned-right" title="Options">
+        <Popover id="popover-positioned-right" title="Options" style={{padding: 0}}>
             <Clearfix>
-                <ul>
+                <ul style={{padding: 0}}>
                     <MenuItem eventKey="1" onClick={() => {
                         let ingredient = new Ingredient();
                         ingredient.status = 'inventory';
