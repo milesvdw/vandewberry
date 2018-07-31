@@ -19,6 +19,7 @@ export interface IIngredientRepo {
     purchaseIngredient(ingredient: Ingredient): void;
     useUpIngredient(ingredient: Ingredient): void;
     saveIngredient(ingredient: Ingredient): void;
+    deleteIngredient(ingredient: Ingredient): void;
     refresh(): void;
 }
 
@@ -28,6 +29,7 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
         this.state = { recipes: [], ingredients: [] };
 
         this.deleteRecipe = this.deleteRecipe.bind(this);
+        this.deleteIngredient = this.deleteIngredient.bind(this);
         this.saveRecipe = this.saveRecipe.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
         this.refresh = this.refresh.bind(this);
@@ -51,6 +53,19 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
                     ingredients: data.map((item: any) => new Ingredient(item))
                 });
             });
+    }
+
+    public async deleteIngredient(ingredient: Ingredient) {
+        ingredient.Delete();
+        let ingredients = this.state.ingredients;
+
+        let existingIngredientIndex: number = ingredients.findIndex((searchIngredient: Ingredient) => {
+            return searchIngredient._id === ingredient._id;
+        })
+        if (existingIngredientIndex >= 0) {
+            ingredients.splice(existingIngredientIndex, 1);
+            this.setState({ ingredients });
+        }
     }
 
     public async deleteRecipe(recipe: Recipe) {

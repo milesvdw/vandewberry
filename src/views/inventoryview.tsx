@@ -1,8 +1,9 @@
 // tslint:disable:no-console
 import * as React from "react";
 import { Container } from "react-bootstrap/lib/Tab";
-import { Grid, Row, Col, Panel, Modal, Button } from "react-bootstrap";
-import { FaPlus, FaShoppingCart, FaFolder } from "react-icons/lib/fa"
+import { Grid, Row, Col, Panel, Modal, Button, Popover, OverlayTrigger, MenuItem, Clearfix } from "react-bootstrap";
+import { FaPlus, FaEllipsisV, FaShoppingCart, FaFolder } from "react-icons/lib/fa"
+// FaTrash, FaPencil,
 import { IIngredientRepo, IRecipeRepo } from "../FoodApp";
 import { Ingredient } from "src/models/ingredient";
 import { IngredientEditView } from "src/views/ingredienteditview";
@@ -42,6 +43,36 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
         </Row>)
     }
 
+    // private editIngredient(ingredient: Ingredient) {
+
+    // }
+
+    // private renderEditButton(ingredient: Ingredient) {
+    //     return (
+    //         <Button style={{ marginTop: '0px', marginLeft: '2px' }}
+    //             bsSize='xsmall'
+    //             onClick={() => {
+    //                 this.editIngredient(ingredient)
+    //             }}
+    //             className="pull-left btn-circle classy-btn">
+    //             <FaPencil size={10} />
+    //         </Button>
+    //     )
+    // }
+
+    // private renderDeleteButton(ingredient: Ingredient) {
+    //     return (
+    //         <Button style={{ marginTop: '0px', marginLeft: '2px' }}
+    //             bsSize='xsmall'
+    //             onClick={() => {
+    //                 this.props.repo.deleteIngredient(ingredient)
+    //             }}
+    //             className="pull-left btn-circle classy-btn">
+    //             <FaTrash size={10} />
+    //         </Button>
+    //     )
+    // }
+
     private renderArchiveRow(ingredient: Ingredient) {
         return (<Row key={ingredient._id}>
             <span className="btn btn-block btn-secondary">
@@ -54,6 +85,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                     className="pull-left btn-circle classy-btn">
                     <FaShoppingCart size={10} />
                 </Button>
+
                 {ingredient.name}
             </span>
         </Row>)
@@ -75,6 +107,22 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
             </span>
         </Row>)
     }
+
+    private contextMenu = (
+        <Popover id="popover-positioned-right" title="Options">
+            <Clearfix>
+                <ul>
+                    <MenuItem eventKey="1" onClick={() => {
+                        let ingredient = new Ingredient();
+                        ingredient.status = 'inventory';
+                        this.setState({ editIngredient: ingredient, editing: true });
+                        document.body.click(); // HACK ALERT! This manually closes the popover after the user has selected an option
+                    }}>Add item</MenuItem>
+                    <MenuItem eventKey="2">Edit item</MenuItem>
+                    <MenuItem eventKey="2">Delete items</MenuItem>
+                </ul>
+            </Clearfix>
+        </Popover>)
 
     public render() {
 
@@ -113,16 +161,14 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                         <Col sm={4}>
                             <Panel>
                                 <Panel.Heading>
-                                    <Button style={{ marginTop: '3px' }}
-                                        bsSize='small'
-                                        onClick={() => {
-                                            let ingredient = new Ingredient();
-                                            ingredient.status = 'inventory';
-                                            this.setState({ editIngredient: ingredient, editing: true })
-                                        }}
-                                        className="pull-right btn-circle classy-btn">
-                                        <FaPlus size={15} />
-                                    </Button>
+
+                                    <OverlayTrigger rootClose={true} trigger="click" placement="right" overlay={this.contextMenu}>
+                                        <Button style={{ marginTop: '3px', marginLeft: '0px', marginRight: '15px' }}
+                                            bsSize='small'
+                                            className="pull-right btn-circle classy-btn">
+                                            <FaEllipsisV size={15} />
+                                        </Button>
+                                    </OverlayTrigger>
                                     <h4>Inventory</h4>
                                 </Panel.Heading>
                                 <Panel.Body>

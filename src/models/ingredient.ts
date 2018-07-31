@@ -26,4 +26,17 @@ export class Ingredient {
             return this;
         });
     }
+
+    public Delete(): Promise<boolean> {
+        return Database.ApiCall('/api/inventory', {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this),
+            method: 'delete',
+        }).then((data: any) => {
+            return true;
+        });
+    }
 }
