@@ -2,108 +2,99 @@
 import * as React from "react";
 import { Container } from "react-bootstrap/lib/Tab";
 import { Grid, Row, Col, Panel, Modal, Button, Popover, OverlayTrigger, MenuItem, Clearfix } from "react-bootstrap";
-import { FaPlus, FaEllipsisV, FaShoppingCart, FaFolder } from "react-icons/lib/fa"
+import { FaPlus, FaTrash, FaEllipsisV, FaShoppingCart, FaFolder } from "react-icons/lib/fa"
 // FaTrash, FaPencil,
 import { IIngredientRepo, IRecipeRepo } from "../FoodApp";
 import { Ingredient } from "src/models/ingredient";
 import { IngredientEditView } from "src/views/ingredienteditview";
 
-export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { editing: boolean, editIngredient: Ingredient }> {
+// NOTE: mode should be 'editing' 'deleting' or 'choosingEdit'
+export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { editIngredient: Ingredient, mode: string }> {
 
     constructor(props: { repo: IIngredientRepo & IRecipeRepo }) {
         super(props);
-        this.state = { editing: false, editIngredient: new Ingredient() };
+        this.state = { editIngredient: new Ingredient(), mode: "" };
 
         this.renderShoppingRow = this.renderShoppingRow.bind(this);
+        this.showTransferButtons = this.showTransferButtons.bind(this);
+        this.renderArchiveRow = this.renderArchiveRow.bind(this);
+        this.renderDeleteButton = this.renderDeleteButton.bind(this);
+        this.renderInventoryRow = this.renderInventoryRow.bind(this);
     }
+
+    private showTransferButtons = () => this.state.mode === "" || this.state.mode === 'editing';
 
     private renderShoppingRow(ingredient: Ingredient) {
         return (<Row key={ingredient._id}>
             <span className="btn btn-block btn-secondary">
-                <Button style={{ marginTop: '0px', marginLeft: '2px' }}
+                {this.showTransferButtons() && <Button style={{ marginTop: '0px', marginLeft: '2px' }}
                     bsSize='xsmall'
                     onClick={() => {
                         this.props.repo.purchaseIngredient(ingredient)
                     }}
                     className="pull-left btn-circle classy-btn">
                     <FaPlus size={10} />
-                </Button>
+                </Button>}
                 {ingredient.name}
 
 
-                <Button style={{ marginTop: '0px', marginRight: '2px' }}
+                {this.showTransferButtons() && <Button style={{ marginTop: '0px', marginRight: '2px' }}
                     bsSize='xsmall'
                     onClick={() => {
                         this.props.repo.archiveIngredient(ingredient)
                     }}
                     className="pull-right btn-circle classy-btn">
                     <FaFolder size={10} />
-                </Button>
+                </Button>}
             </span>
         </Row>)
     }
-
-    // private editIngredient(ingredient: Ingredient) {
-
-    // }
-
-    // private renderEditButton(ingredient: Ingredient) {
-    //     return (
-    //         <Button style={{ marginTop: '0px', marginLeft: '2px' }}
-    //             bsSize='xsmall'
-    //             onClick={() => {
-    //                 this.editIngredient(ingredient)
-    //             }}
-    //             className="pull-left btn-circle classy-btn">
-    //             <FaPencil size={10} />
-    //         </Button>
-    //     )
-    // }
-
-    // private renderDeleteButton(ingredient: Ingredient) {
-    //     return (
-    //         <Button style={{ marginTop: '0px', marginLeft: '2px' }}
-    //             bsSize='xsmall'
-    //             onClick={() => {
-    //                 this.props.repo.deleteIngredient(ingredient)
-    //             }}
-    //             className="pull-left btn-circle classy-btn">
-    //             <FaTrash size={10} />
-    //         </Button>
-    //     )
-    // }
 
     private renderArchiveRow(ingredient: Ingredient) {
         return (<Row key={ingredient._id}>
             <span className="btn btn-block btn-secondary">
 
-                <Button style={{ marginTop: '0px', marginLeft: '2px' }}
+                {this.showTransferButtons() && <Button style={{ marginTop: '0px', marginLeft: '2px' }}
                     bsSize='xsmall'
                     onClick={() => {
                         this.props.repo.useUpIngredient(ingredient)
                     }}
                     className="pull-left btn-circle classy-btn">
                     <FaShoppingCart size={10} />
-                </Button>
+                </Button>}
 
                 {ingredient.name}
             </span>
         </Row>)
     }
 
+    private renderDeleteButton(ingredient: Ingredient) {
+        return (
+            this.state.mode === 'deleting' && <Button style={{ marginTop: '0px', marginRight: '2px' }}
+                bsSize='xsmall'
+                onClick={() => {
+                    this.props.repo.deleteIngredient(ingredient)
+                }}
+                className="pull-right btn-circle classy-btn">
+                <FaTrash size={10} />
+            </Button>
+        )
+    }
+
     private renderInventoryRow(ingredient: Ingredient) {
         return (<Row key={ingredient._id}>
             <span className="btn btn-block btn-secondary">
-                {ingredient.name}
 
-                <Button style={{ marginTop: '0px', marginRight: '2px' }}
+                {ingredient.name}
+                {this.renderDeleteButton(ingredient)}
+                {this.showTransferButtons() && <Button style={{ marginTop: '0px', marginRight: '2px' }}
                     bsSize='xsmall'
                     onClick={() => {
                         this.props.repo.useUpIngredient(ingredient)
                     }}
                     className="pull-right btn-circle classy-btn">
                     <FaShoppingCart size={10} />
-                </Button>
+                </Button>}
             </span>
         </Row>)
     }
@@ -115,11 +106,14 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                     <MenuItem eventKey="1" onClick={() => {
                         let ingredient = new Ingredient();
                         ingredient.status = 'inventory';
-                        this.setState({ editIngredient: ingredient, editing: true });
+                        this.setState({ editIngredient: ingredient, mode: "editing" });
                         document.body.click(); // HACK ALERT! This manually closes the popover after the user has selected an option
                     }}>Add item</MenuItem>
                     <MenuItem eventKey="2">Edit item</MenuItem>
-                    <MenuItem eventKey="2">Delete items</MenuItem>
+                    <MenuItem eventKey="2" onClick={() => {
+                        this.setState({ mode: "deleting" });
+                        document.body.click(); // HACK ALERT! This manually closes the popover after the user has selected an option
+                    }}>Delete items</MenuItem>
                 </ul>
             </Clearfix>
         </Popover>)
@@ -142,7 +136,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
         return (
             <Container id='ingredient_container'>
                 <Grid>
-                    <Modal show={this.state.editing} onHide={() => this.setState({ editing: false })}>
+                    <Modal show={this.state.mode === "editing"} onHide={() => this.setState({ mode: "" })}>
                         <Modal.Header>
                             <Modal.Title className="text-center">Add Item</Modal.Title>
                         </Modal.Header>
@@ -152,7 +146,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                                     <IngredientEditView
                                         ingredient={this.state.editIngredient}
                                         repo={this.props.repo}
-                                        onSave={() => { this.setState({ editing: false }) }} />
+                                        onSave={() => { this.setState({ mode: "" }) }} />
                                 </Col>
                             </Row>
                         </Modal.Body>
@@ -184,7 +178,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                                         onClick={() => {
                                             let ingredient = new Ingredient();
                                             ingredient.status = 'shopping';
-                                            this.setState({ editIngredient: ingredient, editing: true })
+                                            this.setState({ editIngredient: ingredient, mode: "editing" })
                                         }}
                                         className="pull-right btn-circle classy-btn">
                                         <FaShoppingCart size={15} />
@@ -205,7 +199,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                                         onClick={() => {
                                             let ingredient = new Ingredient();
                                             ingredient.status = 'archived';
-                                            this.setState({ editIngredient: ingredient, editing: true })
+                                            this.setState({ editIngredient: ingredient, mode: "editing" })
                                         }}
                                         className="pull-right btn-circle classy-btn">
                                         <FaFolder size={15} />
