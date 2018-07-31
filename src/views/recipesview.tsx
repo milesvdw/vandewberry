@@ -102,25 +102,25 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                                 <div id={'possible_recipe_details_' + recipe._id}>
                                     <ul className="list-group well">
                                         <li className="button-container">
-                                            <button className='btn-row'>
-                                                <FaPencil
-                                                    onClick={(e: any) => {
-                                                        e.stopPropagation();
-                                                        this.setState({ editRecipe: recipe, editing: true })
-                                                    }} 
-                                                />
+                                            <button className='btn-row'
+                                                onClick={(e: any) => {
+                                                    e.stopPropagation();
+                                                    this.setState({ editRecipe: recipe, editing: true })
+                                            }}>
+                                                <FaPencil/>
                                             </button>
-                                            <button className='btn-row'>
-                                                <FaShoppingCart
-                                                    onClick={() => {this.addIngredientsToCart(recipe.materials)}}
-                                                />
+                                            <button className='btn-row'
+                                                onClick={() => {this.addIngredientsToCart(recipe.materials)}}
+                                            >
+                                                <FaShoppingCart/>
                                             </button>
-                                            <button className='btn-row'>
+                                            <button className='btn-row'
+                                                onClick={() => {
+                                                    if(confirm('Delete this recipe?'))
+                                                    {this.props.repo.deleteRecipe(recipe)}
+                                            }}>
                                                 <FaTimesCircle 
-                                                    onClick={() => {
-                                                        if(confirm('Delete this recipe?'))
-                                                        {this.props.repo.deleteRecipe(recipe)}
-                                                }}/>
+                                                    />
                                             </button>
                                         </li>
                                         <li className="list-group-item list-group-item-info">
