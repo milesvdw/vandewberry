@@ -18,11 +18,14 @@ export class Banner extends React.Component<{ authenticated: boolean, logout: (e
                         <NavItem eventKey={1} href="#login">
                             Login
                         </NavItem>
-                        }
+                    }
 
 
                     <NavItem eventKey={1} href="#home">
                         Home
+                    </NavItem>
+                    <NavItem eventKey={1} href="#photos">
+                        Photos
                     </NavItem>
                     <NavItem eventKey={1} href="#recipes">
                         Recipes

@@ -55,7 +55,11 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
     let showIfLoggedIn = (
       <div id='protected'>
         <FoodApp ref={thing => { this.foodApp = thing }} />
-        <PhotosApp ref={thing => {this.photoApp = thing }} />
+        <Route path="/photos"
+          component={() =>
+            <PhotosApp ref={thing => {this.photoApp = thing }} />
+          }
+        />
         <Route path="/home"
           component={() =>
             <HomeView />
