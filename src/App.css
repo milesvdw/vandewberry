@@ -1,3 +1,7 @@
+ul {
+  list-style-type: none;
+}
+
 .App {
   text-align: center;
 }
@@ -111,6 +115,11 @@ checkbox {
   box-shadow: none;
 }
 
+.button-container{
+  display: flex;
+  margin-bottom: 10px;
+}
+
 .btn-circle.btn-xl {
   width: 70px;
   height: 70px;
@@ -128,6 +137,15 @@ checkbox {
   text-align: center;
   font-size: 12px;
   line-height: 1.42857;
+}
+
+.btn-row{
+  flex: 1;
+  margin: 5px;
+  background-color: #FFF;
+  color: #337ab7;
+  box-shadow: none;
+  border: 1px solid #337ab7;
 }
 
 .btn-circle.btn-xs {

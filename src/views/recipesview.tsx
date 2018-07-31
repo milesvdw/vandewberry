@@ -83,7 +83,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
         });
     }
 
-    private mapRecipesToRows(recipes: Recipe[], side: string) {
+    private mapRecipesToRows(recipes: Recipe[]) {
         return recipes
             .sort((recipe1: Recipe, recipe2: Recipe) => {
                 return recipe1.name.localeCompare(recipe2.name);
@@ -96,33 +96,33 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                     <Row className="recipe-row" key={recipe._id}>
                         <Panel defaultExpanded={false} className='no-border'>
                             <Panel.Toggle componentClass="a" className="no-border btn btn-block btn-secondary">
-                                <FaPencil
-                                    className="pull-left"
-                                    onClick={(e: any) => {
-                                        e.stopPropagation();
-                                        this.setState({ editRecipe: recipe, editing: true })
-                                    }} />
-                                {/* <a className="pull-left glyphicon glyphicon-pencil glyph-button" data-bind="click: function() {edit_recipe($data.id)}" data-target="#add_recipe_modal"
-                                data-toggle="modal"></a> */}
-                                <FaShoppingCart
-                                    className="pull-left"
-                                    onClick={() => {this.addIngredientsToCart(recipe.materials)}}
-                                />
                                 {recipe.name}
-                                <FaTimesCircle 
-                                    className="pull-right hidden"
-                                    id={'delete'+side+recipe._id}
-                                    onClick={() => {
-                                        if(confirm('Delete this recipe?'))
-                                        {this.props.repo.deleteRecipe(recipe)}
-                                }}/>
                             </Panel.Toggle>
-                            <Panel.Collapse
-                                onEnter={() => {let bt=document.getElementById('delete'+side+recipe._id); bt && bt.classList.remove('hidden')}}
-                                onExit={() => {let bt=document.getElementById('delete'+side+recipe._id); bt && bt.classList.add('hidden')}}
-                            >
+                            <Panel.Collapse>  
                                 <div id={'possible_recipe_details_' + recipe._id}>
                                     <ul className="list-group well">
+                                        <li className="button-container">
+                                            <button className='btn-row'>
+                                                <FaPencil
+                                                    onClick={(e: any) => {
+                                                        e.stopPropagation();
+                                                        this.setState({ editRecipe: recipe, editing: true })
+                                                    }} 
+                                                />
+                                            </button>
+                                            <button className='btn-row'>
+                                                <FaShoppingCart
+                                                    onClick={() => {this.addIngredientsToCart(recipe.materials)}}
+                                                />
+                                            </button>
+                                            <button className='btn-row'>
+                                                <FaTimesCircle 
+                                                    onClick={() => {
+                                                        if(confirm('Delete this recipe?'))
+                                                        {this.props.repo.deleteRecipe(recipe)}
+                                                }}/>
+                                            </button>
+                                        </li>
                                         <li className="list-group-item list-group-item-info">
                                             {recipe.description}
                                         </li>
@@ -148,7 +148,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                 return !(missingMaterials.length > 0);
             });
 
-        return this.mapRecipesToRows(availableRecipes, 'l');
+        return this.mapRecipesToRows(availableRecipes);
     }
 
     private getAllSearchedRecipes() {
@@ -163,7 +163,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
     }
 
     private getAllRecipes() {
-        return this.mapRecipesToRows(this.getAllSearchedRecipes(), 'r');
+        return this.mapRecipesToRows(this.getAllSearchedRecipes());
     }
 
     private searchRecipes(event: any) {
