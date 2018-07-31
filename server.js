@@ -125,6 +125,11 @@ MongoClient.connect(uri, (err, client) => {
     });
   });
 
+  app.delete('/api/inventory', passport.authenticationMiddleware(), (req, res) => {
+    db.collection('inventory').remove({ "_id": ObjectId(req.body._id) });
+    res.json(ApiResponse(true, null));
+  });
+
   app.delete('/api/recipes', passport.authenticationMiddleware(), (req, res) => {
     db.collection('recipes').remove({ "_id": ObjectId(req.body._id) });
     res.json(ApiResponse(true, null));
