@@ -8,6 +8,7 @@ import { HomeView } from './views/homeview';
 import { FoodApp } from './FoodApp';
 import { Login } from './Login';
 import { IApiResponse } from './database';
+import { PhotosApp } from 'src/views/photosview';
 
 class App extends React.Component<{}, { error: boolean, authenticated: boolean, user: string }> {
   constructor(props: {}) {
@@ -41,9 +42,11 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
   private authenticate(user: string) {
     this.setState({ authenticated: true, user });
     this.foodApp && this.foodApp.refresh();
+    this.photoApp && this.photoApp.refresh();
   }
 
   private foodApp: FoodApp | null;
+  private photoApp: PhotosApp | null;
 
 
 
@@ -52,6 +55,7 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
     let showIfLoggedIn = (
       <div id='protected'>
         <FoodApp ref={thing => { this.foodApp = thing }} />
+        <PhotosApp ref={thing => {this.photoApp = thing }} />
         <Route path="/home"
           component={() =>
             <HomeView />
