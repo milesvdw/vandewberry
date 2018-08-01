@@ -2,7 +2,7 @@
 import * as React from "react";
 import { Container } from "react-bootstrap/lib/Tab";
 import { Grid, Row, Col, Panel, Modal, Button, Popover, OverlayTrigger, MenuItem, Clearfix } from "react-bootstrap";
-import { FaPlus, FaTrash, FaEllipsisV, FaShoppingCart, FaFolder } from "react-icons/lib/fa"
+import { FaPlus, FaTrash, FaEllipsisV, FaShoppingCart, FaFolder, FaPencil } from "react-icons/lib/fa"
 // FaTrash, FaPencil,
 import { IIngredientRepo, IRecipeRepo } from "../FoodApp";
 import { Ingredient } from "src/models/ingredient";
@@ -19,10 +19,17 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
         this.showTransferButtons = this.showTransferButtons.bind(this);
         this.renderArchiveRow = this.renderArchiveRow.bind(this);
         this.renderDeleteButton = this.renderDeleteButton.bind(this);
+        this.renderEditButton = this.renderEditButton.bind(this);
         this.renderInventoryRow = this.renderInventoryRow.bind(this);
+        this.editIngredient = this.editIngredient.bind(this);
+
     }
 
     private showTransferButtons = () => this.state.mode === "" || this.state.mode === 'editing';
+
+    private editIngredient(ingredient: Ingredient) {
+        this.setState({ editIngredient: ingredient, mode: "editing" });
+    }
 
     private renderShoppingRow(ingredient: Ingredient) {
         return (<Row key={ingredient._id}>
@@ -35,6 +42,8 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                     className="pull-left btn-circle classy-btn">
                     <FaPlus size={10} />
                 </Button>}
+                {this.renderDeleteButton(ingredient)}
+                {this.renderEditButton(ingredient)}
                 {ingredient.name}
 
 
@@ -64,6 +73,8 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                 </Button>}
 
                 {ingredient.name}
+                {this.renderDeleteButton(ingredient)}
+                {this.renderEditButton(ingredient)}
             </span>
         </Row>)
     }
@@ -81,12 +92,26 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
         )
     }
 
+    private renderEditButton(ingredient: Ingredient) {
+        return (
+            this.state.mode === 'choosingEdit' && <Button style={{ marginTop: '0px', marginRight: '2px' }}
+                bsSize='xsmall'
+                onClick={() => {
+                    this.editIngredient(ingredient)
+                }}
+                className="pull-right btn-circle classy-btn">
+                <FaPencil size={10} />
+            </Button>
+        )
+    }
+
     private renderInventoryRow(ingredient: Ingredient) {
         return (<Row key={ingredient._id}>
             <span className="btn btn-block btn-secondary">
 
                 {ingredient.name}
                 {this.renderDeleteButton(ingredient)}
+                {this.renderEditButton(ingredient)}
                 {this.showTransferButtons() && <Button style={{ marginTop: '0px', marginRight: '2px' }}
                     bsSize='xsmall'
                     onClick={() => {
@@ -100,16 +125,19 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
     }
 
     private contextMenu = (
-        <Popover id="popover-positioned-right" title="Options" style={{padding: 0}}>
+        <Popover id="popover-positioned-right" title="Options" style={{ padding: 0 }}>
             <Clearfix>
-                <ul style={{padding: 0}}>
+                <ul style={{ padding: 0 }}>
                     <MenuItem eventKey="1" onClick={() => {
                         let ingredient = new Ingredient();
                         ingredient.status = 'inventory';
                         this.setState({ editIngredient: ingredient, mode: "editing" });
                         document.body.click(); // HACK ALERT! This manually closes the popover after the user has selected an option
                     }}>Add</MenuItem>
-                    <MenuItem eventKey="2">Edit</MenuItem>
+                    <MenuItem eventKey="2" onClick={() => {
+                        this.setState({ mode: "choosingEdit" });
+                        document.body.click(); // HACK ALERT! This manually closes the popover after the user has selected an option
+                    }}>Edit</MenuItem>
                     <MenuItem eventKey="2" onClick={() => {
                         this.setState({ mode: "deleting" });
                         document.body.click(); // HACK ALERT! This manually closes the popover after the user has selected an option
