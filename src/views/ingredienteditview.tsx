@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Row, Col, FormGroup, Button } from "react-bootstrap";
-import { IIngredientRepo } from "src/FoodApp";
-import { Ingredient } from "src/models/ingredient";
+import { IIngredientRepo } from "../FoodApp";
+import { Ingredient } from "../models/ingredient";
 
 export class IngredientEditView extends React.Component<{ ingredient: Ingredient, repo: IIngredientRepo, onSave: () => void }, { ingredient: Ingredient }> {
     constructor(props: { ingredient: Ingredient, repo: IIngredientRepo, onSave: () => void }) {

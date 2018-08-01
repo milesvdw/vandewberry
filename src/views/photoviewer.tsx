@@ -1,20 +1,14 @@
 import * as React from "react";
 import { Image } from "../models/image";
 
-export class PhotosApp extends React.Component<{}, { selectedImage: Image | null }> {
+export class PhotoViewer extends React.Component<{}, { selectedImage: Image | null }> {
     constructor(props: {}) {
         super(props);
 
         this.state = { selectedImage: null }
     }
 
-    public refresh() {
-        return;
-    }
-
     public render() {
-
-
         return (
             <div>
                 <div className="main-photo-container" style={{ display: this.state.selectedImage ? "block" : "none" }}>
@@ -31,7 +25,7 @@ export class PhotosApp extends React.Component<{}, { selectedImage: Image | null
                     </div>
                 </div>
                 <div className="photo-grid">
-                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/71829/mona-lisa.jpg" alt="Mona Lisa"
+                    <img src="https://www.dropbox.com/s/t25ot1u8dp6iyug/segovia_aqueduct.jpg?raw=1" alt="Mona Lisa"
                         onClick={() => { this.setState({ selectedImage: { url: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/71829/mona-lisa.jpg", description: "image 1" } }) }} />
                     <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/71829/mona-lisa.jpg" alt="Mona Lisa"
                         onClick={() => { this.setState({ selectedImage: { url: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/71829/mona-lisa.jpg", description: "image 2" } }) }} />
@@ -40,6 +34,6 @@ export class PhotosApp extends React.Component<{}, { selectedImage: Image | null
                     <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/71829/mona-lisa.jpg" alt="Mona Lisa" />
                 </div>
             </div>
-        );
+        )
     }
 }

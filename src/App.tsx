@@ -8,7 +8,7 @@ import { HomeView } from './views/homeview';
 import { FoodApp } from './FoodApp';
 import { Login } from './Login';
 import { IApiResponse } from './database';
-import { PhotosApp } from 'src/views/photosview';
+import { PhotosApp } from './views/photosapp';
 
 class App extends React.Component<{}, { error: boolean, authenticated: boolean, user: string }> {
   constructor(props: {}) {

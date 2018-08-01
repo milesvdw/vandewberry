@@ -4,7 +4,7 @@ import { Recipe } from "../models/recipe";
 import { IRecipeRepo } from "../FoodApp";
 import { Material } from "../models/material";
 import { FaMinusCircle } from "react-icons/lib/fa"
-import { Ingredient } from "src/models/ingredient";
+import { Ingredient } from "../models/ingredient";
 
 export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRecipeRepo, onSave: () => void }, { recipe: Recipe }> {
     constructor(props: { recipe: Recipe, repo: IRecipeRepo, onSave: () => void }) {

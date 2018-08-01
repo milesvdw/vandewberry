@@ -4,7 +4,7 @@ import { Recipe } from "./models/recipe";
 import * as React from "react";
 import { Database } from "./database";
 import { RecipesView } from "./views/recipesview";
-import { InventoryView } from "src/views/inventoryview";
+import { InventoryView } from "./views/inventoryview";
 
 export interface IRecipeRepo {
     state: { recipes: Recipe[] };
