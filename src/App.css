@@ -212,6 +212,11 @@ checkbox {
   display: none;
 }
 
+.transparent{
+  background: rgba(0,0,0,0);
+  box-shadow: none;
+}
+
 .popover-title{
   padding: 10px;
 }

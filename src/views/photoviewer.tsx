@@ -3,7 +3,7 @@ import { Image } from "../models/image";
 import { Modal, Row, Col, Button } from "react-bootstrap";
 import { PhotoEditView } from "./photoeditview";
 import { IPhotoRepo } from "./photosapp";
-import { FaPlus } from "react-icons/lib/fa";
+import { FaPlus, FaTimesCircle, FaCaretLeft, FaCaretRight } from "react-icons/lib/fa";
 
 export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selectedImage: Image | null, mode: string, editImage: Image }> {
     constructor(props: { repo: IPhotoRepo }) {
@@ -50,18 +50,49 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
                     className="btn-circle classy-btn">
                     <FaPlus size={15} />
                 </Button>
-                <div className="main-photo-container" style={{ display: this.state.selectedImage ? "block" : "none" }}>
+                <Modal className='transparent' show={this.state.selectedImage != null} onHide={() => this.setState({mode: ""})}>
+                    <Modal.Body className='transparent'>
+                        <Button
+                            bsSize='xsmall'
+                            onClick={() => {
+                                this.setState({ selectedImage: null})
+                            }}
+                            className="btn-circle classy-btn">
+                            <FaTimesCircle size={15} />
+                        </Button>
+                        <Button
+                            bsSize='xsmall'
+                            onClick={() => {
+                                let val = this.props.repo.state.photos.findIndex((a: Image) => a === this.state.selectedImage) - 1;
+                                let index = val>0? val: this.props.repo.state.photos.length-1;
+                                this.setState({ selectedImage: this.props.repo.state.photos[index]})                            }}
+                            className="btn-circle classy-btn pull-left">
+                            <FaCaretLeft size={15} />
+                        </Button>
+                        <Button
+                            bsSize='xsmall'
+                            onClick={() => {
+                                let val = this.props.repo.state.photos.findIndex((a: Image) => a === this.state.selectedImage) + 1;
+                                let index = val<this.props.repo.state.photos.length? val: 0;
+                                this.setState({ selectedImage: this.props.repo.state.photos[index]})
+                            }}
+                            className="btn-circle classy-btn pull-right">
+                            <FaCaretRight size={15} />
+                        </Button>
+                        <div className="main-photo-container" style={{ display: this.state.selectedImage ? "block" : "none" }}>
 
 
-                    <div style={{ maxWidth: '50vw', maxHeight: '55vh', margin: 'auto', display: 'block', }}>
-                        <img style={{ maxWidth: '50vw', maxHeight: '50vh', margin: 'auto', display: 'block', }} src={this.state.selectedImage ? this.state.selectedImage.url : ""} />
+                            <div style={{ maxWidth: '50vw', maxHeight: '55vh', margin: 'auto', display: 'block', }}>
+                                <img style={{ maxWidth: '50vw', maxHeight: '50vh', margin: 'auto', display: 'block', }} src={this.state.selectedImage ? this.state.selectedImage.url : ""} />
 
-                        <p className="imgtext" style={{ width: '100%', textAlign: 'center', maxHeight: '5vh', margin: 'auto', display: 'inline-block' }}>
-                            {this.state.selectedImage && this.state.selectedImage.description}
-                        </p>
+                                <p className="imgtext" style={{ width: '100%', textAlign: 'center', maxHeight: '5vh', margin: 'auto', display: 'inline-block' }}>
+                                    {this.state.selectedImage && this.state.selectedImage.description}
+                                </p>
 
-                    </div>
-                </div>
+                            </div>
+                        </div>
+                    </Modal.Body>                        
+                </Modal>
                 <div className="photo-grid">
                     {photos}
                 </div>
