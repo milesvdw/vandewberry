@@ -125,6 +125,19 @@ MongoClient.connect(uri, (err, client) => {
     });
   });
 
+  app.post('/api/photos', passport.authenticationMiddleware(), (req, res) => {
+    req.body._id = ObjectId(req.body._id);
+    db.collection('photos').save(req.body, (getErr, result) => {
+      if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
+        res.json(ApiResponse(true, result.ops[0]._id));
+      } else if (result.result.upserted) {
+        res.json(ApiResponse(true, result.result.upserted[0]._id));
+      } else {
+        res.json(ApiResponse(true, req.body._id));
+      }
+    });
+  });
+
   app.delete('/api/inventory', passport.authenticationMiddleware(), (req, res) => {
     db.collection('inventory').remove({ "_id": ObjectId(req.body._id) });
     res.json(ApiResponse(true, null));
@@ -145,6 +158,12 @@ MongoClient.connect(uri, (err, client) => {
       } else {
         res.json(ApiResponse(true, req.body._id));
       }
+    });
+  });
+
+  app.get('/api/photos', passport.authenticationMiddleware(), (req, res) => {
+    db.collection('photos').find().toArray((geterr, items) => {
+      res.send(ApiResponse(true, items));
     });
   });
 

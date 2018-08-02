@@ -1,18 +1,56 @@
 import * as React from "react";
 import { Image } from "../models/image";
+import { Modal, Row, Col, Button } from "react-bootstrap";
+import { PhotoEditView } from "./photoeditview";
+import { IPhotoRepo } from "./photosapp";
+import { FaPlus } from "react-icons/lib/fa";
 
-export class PhotoViewer extends React.Component<{}, { selectedImage: Image | null }> {
-    constructor(props: {}) {
+export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selectedImage: Image | null, mode: string, editImage: Image }> {
+    constructor(props: { repo: IPhotoRepo }) {
         super(props);
 
-        this.state = { selectedImage: null }
+        this.state = { selectedImage: null, mode: "", editImage: new Image() }
     }
 
     public render() {
+
+        let photos = this.props.repo.state.photos.map((image: Image) => {
+            return (
+                <img
+                    key={image._id}
+                    src={image.url}
+                    alt={image.title}
+                    onClick={() => { this.setState({ selectedImage: image }) }} />)
+
+        });
         return (
             <div>
+                <Modal show={this.state.mode === "editing"} onHide={() => this.setState({ mode: "" })}>
+                    <Modal.Header>
+                        <Modal.Title className="text-center">Add Item</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Row>
+                            <Col sm={12} id='new_ingredient'>
+                                <PhotoEditView
+                                    photo={this.state.editImage}
+                                    repo={this.props.repo}
+                                    onSave={() => { this.setState({ mode: "" }) }} />
+                            </Col>
+                        </Row>
+                    </Modal.Body>
+                </Modal>
+
+                <Button style={{ marginTop: '3px' }}
+                    bsSize='small'
+                    onClick={() => {
+                        let photo = new Image();
+                        this.setState({ editImage: photo, mode: "editing" })
+                    }}
+                    className="btn-circle classy-btn">
+                    <FaPlus size={15} />
+                </Button>
                 <div className="main-photo-container" style={{ display: this.state.selectedImage ? "block" : "none" }}>
-                    <span className="closebtn" onClick={() => { this.setState({ selectedImage: null }) }} > &times;</span>
 
 
                     <div style={{ maxWidth: '50vw', maxHeight: '55vh', margin: 'auto', display: 'block', }}>
@@ -25,13 +63,7 @@ export class PhotoViewer extends React.Component<{}, { selectedImage: Image | nu
                     </div>
                 </div>
                 <div className="photo-grid">
-                    <img src="https://www.dropbox.com/s/t25ot1u8dp6iyug/segovia_aqueduct.jpg?raw=1" alt="Mona Lisa"
-                        onClick={() => { this.setState({ selectedImage: { url: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/71829/mona-lisa.jpg", description: "image 1" } }) }} />
-                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/71829/mona-lisa.jpg" alt="Mona Lisa"
-                        onClick={() => { this.setState({ selectedImage: { url: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/71829/mona-lisa.jpg", description: "image 2" } }) }} />
-                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/71829/mona-lisa.jpg" alt="Mona Lisa" />
-                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/71829/mona-lisa.jpg" alt="Mona Lisa" />
-                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/71829/mona-lisa.jpg" alt="Mona Lisa" />
+                    {photos}
                 </div>
             </div>
         )

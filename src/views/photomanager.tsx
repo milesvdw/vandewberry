@@ -5,7 +5,7 @@ export class PhotoManager extends React.Component {
     public render() {
         return (
             <div>
-                Manage
+                Coming soon
             </div>
         )
     }

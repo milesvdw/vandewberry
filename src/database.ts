@@ -1,5 +1,6 @@
 import { Ingredient } from "./models/ingredient";
 import { Recipe } from "./models/recipe";
+import { Image } from "./models/image";
 
 export interface IApiResponse {
     authenticated: boolean
@@ -12,6 +13,12 @@ export class Database {
             + "?id="
             + id;
         return this.ApiCall(url)
+    }
+
+    public static GetPhotos(): Promise<Image[]> {
+        let url: string = "/api/photos";
+        return this.ApiCall(url)
+            .then((json: any) => json.map((item: any) => new Image(item)))
     }
 
     public static GetRecipes(): Promise<Recipe[]> {

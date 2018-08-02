@@ -5,8 +5,8 @@ import { Grid, Row, Col, Panel, Modal, Button, Popover, OverlayTrigger, MenuItem
 import { FaPlus, FaTrash, FaEllipsisV, FaShoppingCart, FaFolder, FaPencil } from "react-icons/lib/fa"
 // FaTrash, FaPencil,
 import { IIngredientRepo, IRecipeRepo } from "../FoodApp";
-import { Ingredient } from "src/models/ingredient";
-import { IngredientEditView } from "src/views/ingredienteditview";
+import { Ingredient } from "../models/ingredient";
+import { IngredientEditView } from "./ingredienteditview";
 
 // NOTE: mode should be 'editing' 'deleting' or 'choosingEdit'
 export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { editIngredient: Ingredient, mode: string }> {
