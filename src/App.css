@@ -215,6 +215,17 @@ checkbox {
 .transparent{
   background: rgba(0,0,0,0);
   box-shadow: none;
+  border: none;
+}
+
+.modal-backdrop.dark{
+  opacity: .8;
+}
+
+.modal-dialog .modal-content{
+  background: rgba(0,0,0,0);
+  box-shadow: none;
+  border: none;
 }
 
 .popover-title{
