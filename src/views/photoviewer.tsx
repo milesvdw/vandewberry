@@ -50,7 +50,7 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
                     className="btn-circle classy-btn">
                     <FaPlus size={15} />
                 </Button>
-                <Modal backdropClassName='dark' dialogClassName='transparent' show={this.state.selectedImage != null} onHide={() => this.setState({ mode: "" })}>
+                <Modal backdropClassName='dark' dialogClassName='transparent' show={this.state.selectedImage != null} onHide={() => this.setState({ selectedImage: null })}>
                     <Modal.Body className='transparent'>
 
                         <div className="main-photo-container" style={{ display: this.state.selectedImage ? "block" : "none" }}>
@@ -72,7 +72,7 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
                                         let index = val > 0 ? val : this.props.repo.state.photos.length - 1;
                                         this.setState({ selectedImage: this.props.repo.state.photos[index] })
                                     }}
-                                    className="btn-circle classy-btn">
+                                    className="prev">
                                     <FaCaretLeft size={15} />
                                 </Button>
                                 <Button
@@ -82,7 +82,7 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
                                         let index = val < this.props.repo.state.photos.length ? val : 0;
                                         this.setState({ selectedImage: this.props.repo.state.photos[index] })
                                     }}
-                                    className="btn-circle classy-btn">
+                                    className="next">
                                     <FaCaretRight size={15} />
                                 </Button>
                                 <img style={{ maxWidth: '50vw', maxHeight: '50vh', margin: 'auto', display: 'block', }} src={this.state.selectedImage ? this.state.selectedImage.url : ""} />
