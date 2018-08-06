@@ -24,7 +24,7 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
 
         });
         return (
-            <div>
+            <div className='photo-viewer'>
                 <Modal show={this.state.mode === "editing"} onHide={() => this.setState({ mode: "" })}>
                     <Modal.Header>
                         <Modal.Title className="text-center">Add Item</Modal.Title>
@@ -65,7 +65,7 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
                                 <FaTimesCircle size={30} />
                             </Button>
 
-                            <div style={{ maxWidth: '50vw', maxHeight: '55vh', margin: 'auto', display: 'block', }}>
+                            <div style={{ width: '60vw', maxHeight: '55vh', margin: 'auto', display: 'block', }}>
                                 <Button
                                     bsSize='xsmall'
                                     onClick={() => {

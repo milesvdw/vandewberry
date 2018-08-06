@@ -83,3 +83,24 @@ div .prev:focus, .next:focus{
 .next:hover {
   background-color: rgba(0, 0, 0, 0.8);
 }
+
+.transparent{
+  background: rgba(0,0,0,0);
+  box-shadow: none;
+  border: none;
+}
+
+.modal-backdrop.dark{
+  opacity: .9;
+}
+
+.transparent.modal-dialog {
+  width: 60vw;
+}
+
+.transparent.modal-dialog .modal-content{
+  background: rgba(0,0,0,0);
+  width: 60vw;
+  box-shadow: none;
+  border: none;
+}
