@@ -9,11 +9,11 @@ import { Ingredient } from "../models/ingredient";
 import { IngredientEditView } from "./ingredienteditview";
 
 // NOTE: mode should be 'editing' 'deleting' or 'choosingEdit'
-export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { editIngredient: Ingredient, mode: string }> {
+export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { editIngredient: Ingredient, mode: string, groupByCategory: boolean }> {
 
     constructor(props: { repo: IIngredientRepo & IRecipeRepo }) {
         super(props);
-        this.state = { editIngredient: new Ingredient(), mode: "" };
+        this.state = { editIngredient: new Ingredient(), mode: "", groupByCategory: true };
 
         this.renderShoppingRow = this.renderShoppingRow.bind(this);
         this.showTransferButtons = this.showTransferButtons.bind(this);
@@ -146,15 +146,54 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
             </Clearfix>
         </Popover>)
 
+    // Returns a block of html to be dropped in to the appropriate column,
+    // with a block for each group, outlined in a color,
+    // with a row for each ingredient in that group
+    private renderGroups(ingredients: Ingredient[]) {
+        let groups = ingredients.map((i: Ingredient) => i.category).unique();
+
+        let renderedGroups = [] as any[];
+
+        groups.forEach((g: string) => {
+            let groupRows = ingredients
+                .filter((i: Ingredient) => i.category === g)
+                .map((gr: Ingredient) => {
+                    return this.renderShoppingRow(gr);
+                });
+            renderedGroups.push(
+                <Row className="groupBox">
+                    <Col sm={12}>
+                        <ul className="list-group well">
+                            <li className="list-group-item list-group-item-info" style={{ textAlign: 'center' }}>
+                                {g === "" ? "uncategorized" : g}
+                            </li>
+                            {groupRows}
+                        </ul>
+                    </Col>
+                </Row>
+            )
+        });
+        return renderedGroups;
+    }
+
+
     public render() {
 
         let archivedRows = this.props.repo.state.ingredients
             .filter((ingredient: Ingredient) => ingredient.status === 'archived')
             .map((ingredient) => this.renderArchiveRow(ingredient));
 
-        let shoppingRows = this.props.repo.state.ingredients
-            .filter((ingredient: Ingredient) => ingredient.status === 'shopping')
-            .map((ingredient) => this.renderShoppingRow(ingredient));
+        let shoppingRows;
+        if (this.state.groupByCategory) {
+
+            shoppingRows = this.renderGroups(this.props.repo.state.ingredients
+                .filter((ingredient: Ingredient) => ingredient.status === 'shopping'));
+        } else {
+            shoppingRows = this.props.repo.state.ingredients
+                .filter((ingredient: Ingredient) => ingredient.status === 'shopping')
+                .map((ingredient) => this.renderShoppingRow(ingredient));
+        }
+
 
         let inventoryRows = this.props.repo.state.ingredients
             .filter((ingredient: Ingredient) => ingredient.status === 'inventory')
@@ -194,12 +233,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                                     <h4>Inventory</h4>
                                 </Panel.Heading>
                                 <Panel.Body>
-                                    <div className="vertical-bar">
-                                        Test123
-                                    </div>
-                                    <div className="ingredient-block">
-                                        {inventoryRows}
-                                    </div>
+                                    {inventoryRows}
                                 </Panel.Body>
                             </Panel>
                         </Col>
