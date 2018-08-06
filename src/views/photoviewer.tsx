@@ -55,16 +55,17 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
 
                         <div className="main-photo-container" style={{ display: this.state.selectedImage ? "block" : "none" }}>
 
+                            <Button
+                                bsSize='small'
+                                style={{padding: 0}}
+                                onClick={() => {
+                                    this.setState({ selectedImage: null })
+                                }}
+                                className="btn-circle classy-btn pull-right">
+                                <FaTimesCircle size={30} />
+                            </Button>
 
                             <div style={{ maxWidth: '50vw', maxHeight: '55vh', margin: 'auto', display: 'block', }}>
-                                <Button
-                                    bsSize='xsmall'
-                                    onClick={() => {
-                                        this.setState({ selectedImage: null })
-                                    }}
-                                    className="btn-circle classy-btn">
-                                    <FaTimesCircle size={15} />
-                                </Button>
                                 <Button
                                     bsSize='xsmall'
                                     onClick={() => {
