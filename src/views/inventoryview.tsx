@@ -194,7 +194,12 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                                     <h4>Inventory</h4>
                                 </Panel.Heading>
                                 <Panel.Body>
-                                    {inventoryRows}
+                                    <div className="vertical-bar">
+                                        Test123
+                                    </div>
+                                    <div className="ingredient-block">
+                                        {inventoryRows}
+                                    </div>
                                 </Panel.Body>
                             </Panel>
                         </Col>
