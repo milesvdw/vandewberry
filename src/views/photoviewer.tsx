@@ -3,7 +3,7 @@ import { Image } from "../models/image";
 import { Modal, Row, Col, Button } from "react-bootstrap";
 import { PhotoEditView } from "./photoeditview";
 import { IPhotoRepo } from "./photosapp";
-import { FaPlus, FaTimesCircle, FaCaretLeft, FaCaretRight } from "react-icons/lib/fa";
+import { FaPlus, FaCaretLeft, FaCaretRight } from "react-icons/lib/fa";
 
 export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selectedImage: Image | null, mode: string, editImage: Image }> {
     constructor(props: { repo: IPhotoRepo }) {
@@ -55,17 +55,7 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
 
                         <div className="main-photo-container" style={{ display: this.state.selectedImage ? "block" : "none" }}>
 
-                            <Button
-                                bsSize='small'
-                                style={{padding: 0}}
-                                onClick={() => {
-                                    this.setState({ selectedImage: null })
-                                }}
-                                className="btn-circle classy-btn pull-right">
-                                <FaTimesCircle size={30} />
-                            </Button>
-
-                            <div style={{ width: '60vw', maxHeight: '55vh', margin: 'auto', display: 'block', }}>
+                            <div style={{ maxHeight: '55vh', margin: 'auto', display: 'block', }}>
                                 <Button
                                     bsSize='xsmall'
                                     onClick={() => {
