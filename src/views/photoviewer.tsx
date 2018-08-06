@@ -70,7 +70,7 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
                                     bsSize='xsmall'
                                     onClick={() => {
                                         let val = this.props.repo.state.photos.findIndex((a: Image) => a === this.state.selectedImage) - 1;
-                                        let index = val > 0 ? val : this.props.repo.state.photos.length - 1;
+                                        let index = val > -1 ? val : this.props.repo.state.photos.length - 1;
                                         this.setState({ selectedImage: this.props.repo.state.photos[index] })
                                     }}
                                     className="prev">
