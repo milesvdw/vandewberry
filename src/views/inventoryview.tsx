@@ -139,6 +139,11 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                         document.body.click(); // HACK ALERT! This manually closes the popover after the user has selected an option
                     }}>Edit</MenuItem>
                     <MenuItem eventKey="2" onClick={() => {
+                        let newState = !this.state.groupByCategory;
+                        this.setState({ groupByCategory: newState });
+                        document.body.click(); // HACK ALERT! This manually closes the popover after the user has selected an option
+                    }}>Group</MenuItem>
+                    <MenuItem eventKey="2" onClick={() => {
                         this.setState({ mode: "deleting" });
                         document.body.click(); // HACK ALERT! This manually closes the popover after the user has selected an option
                     }}>Delete</MenuItem>
