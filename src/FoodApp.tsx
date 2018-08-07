@@ -115,11 +115,11 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
             ingredients.splice(existingIngredientIndex, 1);
         }
 
+        ingredients.push(savedRecipe);
+
         ingredients = ingredients.sort((a: Ingredient, b: Ingredient) => {
             return a.name.localeCompare(b.name);
         })
-
-        ingredients.push(savedRecipe);
 
         this.setState({ ingredients });
     }
