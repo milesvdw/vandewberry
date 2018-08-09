@@ -36,7 +36,7 @@ export class Login extends React.Component<{ authenticate: (user: string) => voi
         return (
             <div>
                 {this.state.authenticated && <Redirect to={'/home'} />}
-                <form className='form-group' onSubmit={this.attemptLogin}>
+                <form className='form-group' style={{padding: '10px'}} onSubmit={this.attemptLogin}>
                     <label htmlFor="username">
                         Username
                             </label>
@@ -45,7 +45,7 @@ export class Login extends React.Component<{ authenticate: (user: string) => voi
                         Password
                             </label>
                     <input type='text' name='password' className='form-control' value={this.state.password} onChange={this.updateFields} />
-                    <button type="submit">login</button>
+                    <button type="submit" style={{margin: '5px'}} >login</button>
                 </form>
 
 
