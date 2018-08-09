@@ -4,6 +4,7 @@ import { Modal, Row, Col, Button } from "react-bootstrap";
 import { PhotoEditView } from "./photoeditview";
 import { IPhotoRepo } from "./photosapp";
 import { FaPlus, FaCaretLeft, FaCaretRight } from "react-icons/lib/fa";
+import { Rotation } from "../models/rotation";
 
 export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selectedImage: Image | null, mode: string, editImage: Image }> {
     constructor(props: { repo: IPhotoRepo }) {
@@ -15,12 +16,21 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
     public render() {
 
         let photos = this.props.repo.state.photos.map((image: Image) => {
+            let previewRotationClass;
+            if(image.rotation === Rotation.LEFT) {
+                previewRotationClass = "rotate270";
+            } else if(image.rotation === Rotation.RIGHT) {
+                previewRotationClass = "rotate90";
+            } else if(image.rotation === Rotation.FLIP) {
+                previewRotationClass = "rotate180";
+            }
             return (
                 <img
                     key={image._id}
                     src={image.url}
                     alt={image.title}
-                    onClick={() => { this.setState({ selectedImage: image }) }} />)
+                    onClick={() => { this.setState({ selectedImage: image }) }} 
+                    className={previewRotationClass}/>)
 
         });
         return (
@@ -55,7 +65,7 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
 
                         <div className="main-photo-container" style={{ display: this.state.selectedImage ? "block" : "none" }}>
 
-                            <div style={{ maxHeight: '55vh', margin: 'auto', display: 'block', }}>
+                            <div style={{ height: '55vh', margin: 'auto', display: 'block', }}>
                                 <Button
                                     bsSize='xsmall'
                                     onClick={() => {
