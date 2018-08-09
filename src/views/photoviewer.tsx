@@ -17,11 +17,11 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
 
         let photos = this.props.repo.state.photos.map((image: Image) => {
             let previewRotationClass;
-            if(image.rotation === Rotation.LEFT) {
+            if (image.rotation === Rotation.LEFT) {
                 previewRotationClass = "rotate270";
-            } else if(image.rotation === Rotation.RIGHT) {
+            } else if (image.rotation === Rotation.RIGHT) {
                 previewRotationClass = "rotate90";
-            } else if(image.rotation === Rotation.FLIP) {
+            } else if (image.rotation === Rotation.FLIP) {
                 previewRotationClass = "rotate180";
             }
             return (
@@ -29,10 +29,19 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
                     key={image._id}
                     src={image.url}
                     alt={image.title}
-                    onClick={() => { this.setState({ selectedImage: image }) }} 
-                    className={previewRotationClass}/>)
+                    onClick={() => { this.setState({ selectedImage: image }) }}
+                    className={previewRotationClass} />)
 
         });
+
+        let selectedImageRotationClass;
+        if (this.state.selectedImage && this.state.selectedImage.rotation === Rotation.LEFT) {
+            selectedImageRotationClass = "rotate270";
+        } else if (this.state.selectedImage && this.state.selectedImage.rotation === Rotation.RIGHT) {
+            selectedImageRotationClass = "rotate90";
+        } else if (this.state.selectedImage && this.state.selectedImage.rotation === Rotation.FLIP) {
+            selectedImageRotationClass = "rotate180";
+        }
         return (
             <div className='photo-viewer'>
                 <Modal show={this.state.mode === "editing"} onHide={() => this.setState({ mode: "" })}>
@@ -65,7 +74,7 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
 
                         <div className="main-photo-container" style={{ display: this.state.selectedImage ? "block" : "none" }}>
 
-                            <div style={{ maxHeight: '55vh', margin: 'auto', display: 'block', textAlign: 'center' }}>
+                            <div style={{ height: '55vh', margin: 'auto', display: 'block', textAlign: 'center' }}>
                                 <Button
                                     bsSize='xsmall'
                                     onClick={() => {
@@ -97,7 +106,10 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
                                         <FaPaintBrush size={15} />
                                     </Button>
 
-                                    <img style={{ maxWidth: '50vw', maxHeight: '50vh', margin: 'auto', display: 'block', }} src={this.state.selectedImage ? this.state.selectedImage.url : ""} />
+                                    <img
+                                        style={{ maxWidth: '50vw', maxHeight: '50vh', margin: 'auto', display: 'block', }}
+                                        src={this.state.selectedImage ? this.state.selectedImage.url : ""} 
+                                        className={selectedImageRotationClass}/>
                                 </div>
                                 <p className="imgtext" style={{ width: '100%', textAlign: 'center', maxHeight: '5vh', margin: 'auto', display: 'inline-block' }}>
                                     {this.state.selectedImage && this.state.selectedImage.description}
