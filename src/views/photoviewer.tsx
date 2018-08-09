@@ -31,7 +31,7 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
                     </Modal.Header>
                     <Modal.Body>
                         <Row>
-                            <Col sm={12} id='new_ingredient'>
+                            <Col sm={12}>
                                 <PhotoEditView
                                     photo={this.state.editImage}
                                     repo={this.props.repo}

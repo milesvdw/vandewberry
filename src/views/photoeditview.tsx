@@ -1,13 +1,13 @@
 import * as React from "react";
 import { Row, Col, FormGroup, Button } from "react-bootstrap";
 import { Image } from "../models/image";
+import { Rotation } from "../models/rotation";
 import { IPhotoRepo } from "./photosapp";
+import { FaRotateLeft, FaRepeat, FaClose, FaArrowsH } from "react-icons/lib/fa";
 
 export class PhotoEditView extends React.Component<{ photo: Image, repo: IPhotoRepo, onSave: () => void }, { photo: Image }> {
     constructor(props: { photo: Image, repo: IPhotoRepo, onSave: () => void }) {
         super(props);
-        console.log("PHOTO")
-        console.log(props.photo);
         this.state = {
             photo: props.photo
         }
@@ -15,6 +15,8 @@ export class PhotoEditView extends React.Component<{ photo: Image, repo: IPhotoR
     }
 
     private updateFields(event: any) {
+        console.log("Field: " + event.target.name);
+        console.log("Value: " + event.target.value);
         const field = event.target.name;
         const photo = this.state.photo;
         photo[field] = event.target.value;
@@ -22,6 +24,16 @@ export class PhotoEditView extends React.Component<{ photo: Image, repo: IPhotoR
     }
 
     public render() {
+        let previewRotationClass;
+        if(this.state.photo.rotation === Rotation.LEFT) {
+            previewRotationClass = "rotate270";
+        } else if(this.state.photo.rotation === Rotation.RIGHT) {
+            previewRotationClass = "rotate90";
+        } else if(this.state.photo.rotation === Rotation.FLIP) {
+            previewRotationClass = "rotate180";
+        }
+
+
         return (
             <div>
                 <Row>
@@ -46,6 +58,15 @@ export class PhotoEditView extends React.Component<{ photo: Image, repo: IPhotoR
                 </Row>
                 <Row>
                     <Col sm={12}>
+                        <img
+                            key={this.state.photo._id}
+                            src={this.state.photo.url}
+                            alt={this.state.photo.title} 
+                            className={previewRotationClass}/>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col sm={12}>
                         <FormGroup>
                             <label htmlFor="description">
                                 Description
@@ -62,6 +83,40 @@ export class PhotoEditView extends React.Component<{ photo: Image, repo: IPhotoR
                                 this.props.onSave();
                             }}>Save</Button>
                     </Col>
+                </Row>
+                <Row>
+                    <Col sm={4}>
+                        <label htmlFor="rotation">
+                            Rotation
+                        </label>
+                    </Col>
+                    <Col sm={8}>
+                        <div className="pretty p-default p-round">
+                            <input type="radio" name="rotation" value={Rotation.NONE} checked={this.state.photo.rotation === Rotation.NONE} onChange={this.updateFields} />
+                            <div className="state p-info-o p-off">
+                                <FaClose />
+                            </div>
+                        </div>
+                        <div className="pretty p-default p-round">
+                            <input type="radio" name="rotation" value={Rotation.LEFT} checked={this.state.photo.rotation === Rotation.LEFT} onChange={this.updateFields} />
+                            <div className="state p-info-o p-off">
+                                <FaRotateLeft />
+                            </div>
+                        </div>
+                        <div className="pretty p-default p-round">
+                            <input type="radio" name="rotation" value={Rotation.RIGHT} checked={this.state.photo.rotation === Rotation.RIGHT} onChange={this.updateFields} />
+                            <div className="state p-info-o p-off">
+                                <FaRepeat />
+                            </div>
+                        </div>
+                        <div className="pretty p-default p-round">
+                            <input type="radio" name="rotation" value={Rotation.FLIP} checked={this.state.photo.rotation === Rotation.FLIP} onChange={this.updateFields} />
+                            <div className="state p-info-o p-off">
+                                <FaArrowsH />
+                            </div>
+                        </div>
+                    </Col>
+
                 </Row>
             </div>
 
