@@ -2,18 +2,18 @@
 import * as React from "react";
 import { Container } from "react-bootstrap/lib/Tab";
 import { Grid, Row, Col, Panel, Modal, Button, Popover, OverlayTrigger, MenuItem, Clearfix } from "react-bootstrap";
-import { FaPlus, FaTrash, FaEllipsisV, FaShoppingCart, FaFolder, FaPencil } from "react-icons/lib/fa"
+import { FaPlus, FaTrash, FaEllipsisV, FaShoppingCart, FaFolder, FaPencil, FaSearch } from "react-icons/lib/fa"
 // FaTrash, FaPencil,
 import { IIngredientRepo, IRecipeRepo } from "../FoodApp";
 import { Ingredient } from "../models/ingredient";
 import { IngredientEditView } from "./ingredienteditview";
 
 // NOTE: mode should be 'editing' 'deleting' or 'choosingEdit'
-export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { editIngredient: Ingredient, mode: string, groupByCategory: boolean }> {
+export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { editIngredient: Ingredient, mode: string, groupByCategory: boolean, inventorySearchQuery: string, shoppingSearchQuery: string, archiveSearchQuery: string }> {
 
     constructor(props: { repo: IIngredientRepo & IRecipeRepo }) {
         super(props);
-        this.state = { editIngredient: new Ingredient(), mode: "", groupByCategory: true };
+        this.state = { editIngredient: new Ingredient(), mode: "", groupByCategory: true, inventorySearchQuery: '', shoppingSearchQuery: '', archiveSearchQuery: '' };
 
         this.renderShoppingRow = this.renderShoppingRow.bind(this);
         this.showTransferButtons = this.showTransferButtons.bind(this);
@@ -22,8 +22,18 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
         this.renderEditButton = this.renderEditButton.bind(this);
         this.renderInventoryRow = this.renderInventoryRow.bind(this);
         this.editIngredient = this.editIngredient.bind(this);
+        this.getAllSearchedIngredients = this.getAllSearchedIngredients.bind(this);
+        this.searchInventoryIngredients = this.searchInventoryIngredients.bind(this);
+        this.searchShoppingIngredients = this.searchShoppingIngredients.bind(this);
+        this.searchArchiveIngredients = this.searchArchiveIngredients.bind(this);
 
     }
+
+    private inventorySearchInput: any;
+
+    private shoppingSearchInput: any;
+
+    private archiveSearchInput: any;
 
     private showTransferButtons = () => this.state.mode === "" || this.state.mode === 'editing';
 
@@ -181,26 +191,47 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
         return renderedGroups;
     }
 
+    private getAllSearchedIngredients(input: string, ingredients: Ingredient[]) {
+        if(input.length >0) {
+            return ingredients
+                .filter((ingredient: Ingredient) => {
+                    return ingredient.name.toLowerCase().indexOf(input.toLowerCase()) >=0;
+                });
+        } else {
+            return ingredients;
+        }
+    }
+
+    private searchInventoryIngredients(event: any) {
+        this.setState({ inventorySearchQuery: event.target.value });
+    }
+    private searchShoppingIngredients(event: any) {
+        this.setState({ shoppingSearchQuery: event.target.value });
+    }
+    private searchArchiveIngredients(event: any) {
+        this.setState({ archiveSearchQuery: event.target.value });
+    }
+
 
     public render() {
 
-        let archivedRows = this.props.repo.state.ingredients
+        let archivedRows = this.getAllSearchedIngredients(this.state.archiveSearchQuery, this.props.repo.state.ingredients)
             .filter((ingredient: Ingredient) => ingredient.status === 'archived')
             .map((ingredient) => this.renderArchiveRow(ingredient));
 
         let shoppingRows;
         if (this.state.groupByCategory) {
 
-            shoppingRows = this.renderGroups(this.props.repo.state.ingredients
+            shoppingRows = this.renderGroups(this.getAllSearchedIngredients(this.state.shoppingSearchQuery, this.props.repo.state.ingredients)
                 .filter((ingredient: Ingredient) => ingredient.status === 'shopping'));
         } else {
-            shoppingRows = this.props.repo.state.ingredients
+            shoppingRows = this.getAllSearchedIngredients(this.state.shoppingSearchQuery, this.props.repo.state.ingredients)
                 .filter((ingredient: Ingredient) => ingredient.status === 'shopping')
                 .map((ingredient) => this.renderShoppingRow(ingredient));
         }
 
 
-        let inventoryRows = this.props.repo.state.ingredients
+        let inventoryRows = this.getAllSearchedIngredients(this.state.inventorySearchQuery, this.props.repo.state.ingredients)
             .filter((ingredient: Ingredient) => ingredient.status === 'inventory')
             .map((ingredient) => this.renderInventoryRow(ingredient));
 
@@ -227,6 +258,16 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                         <Col sm={4}>
                             <Panel>
                                 <Panel.Heading>
+                                    <Button style={{ marginTop: '3px' }}
+                                        bsSize='small'
+                                        onClick={() => {
+                                            this.inventorySearchInput.focus();
+                                        }}
+                                        className={"pull-right btn-circle classy-btn search-btn" + ((this.state.inventorySearchQuery.length > 0) ? " search-btn-open" : "")}>
+
+                                        <input placeholder="search" ref={(input) => { this.inventorySearchInput = input }} onChange={this.searchInventoryIngredients} />
+                                        <FaSearch size={15} className="pull-right" style={{ marginRight: '7px' }} />
+                                    </Button>
 
                                     <OverlayTrigger rootClose={true} trigger="click" placement="right" overlay={this.contextMenu}>
                                         <Button style={{ marginTop: '3px', marginLeft: '0px', marginRight: '15px' }}
@@ -248,6 +289,16 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                                     <Button style={{ marginTop: '3px' }}
                                         bsSize='small'
                                         onClick={() => {
+                                            this.shoppingSearchInput.focus();
+                                        }}
+                                        className={"pull-right btn-circle classy-btn search-btn" + ((this.state.shoppingSearchQuery.length > 0) ? " search-btn-open" : "")}>
+
+                                        <input placeholder="search" ref={(input) => { this.shoppingSearchInput = input }} onChange={this.searchShoppingIngredients} />
+                                        <FaSearch size={15} className="pull-right" style={{ marginRight: '7px' }} />
+                                    </Button>
+                                    <Button style={{ marginTop: '3px' }}
+                                        bsSize='small'
+                                        onClick={() => {
                                             let ingredient = new Ingredient();
                                             ingredient.status = 'shopping';
                                             this.setState({ editIngredient: ingredient, mode: "editing" })
@@ -266,6 +317,16 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                         <Col sm={4}>
                             <Panel>
                                 <Panel.Heading>
+                                    <Button style={{ marginTop: '3px' }}
+                                        bsSize='small'
+                                        onClick={() => {
+                                            this.archiveSearchInput.focus();
+                                        }}
+                                        className={"pull-right btn-circle classy-btn search-btn" + ((this.state.archiveSearchQuery.length > 0) ? " search-btn-open" : "")}>
+
+                                        <input placeholder="search" ref={(input) => { this.archiveSearchInput = input }} onChange={this.searchArchiveIngredients} />
+                                        <FaSearch size={15} className="pull-right" style={{ marginRight: '7px' }} />
+                                    </Button>
                                     <Button style={{ marginTop: '3px' }}
                                         bsSize='small'
                                         onClick={() => {
