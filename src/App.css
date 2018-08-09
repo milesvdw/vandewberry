@@ -46,6 +46,11 @@ ul {
   margin-top: 25%;
 }
 
+.tight{
+  display: inline-block;
+  width: min-content;
+}
+
 checkbox {
   display: table;
   width: 100%;

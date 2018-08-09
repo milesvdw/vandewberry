@@ -3,7 +3,7 @@ import { Image } from "../models/image";
 import { Modal, Row, Col, Button } from "react-bootstrap";
 import { PhotoEditView } from "./photoeditview";
 import { IPhotoRepo } from "./photosapp";
-import { FaPlus, FaCaretLeft, FaCaretRight } from "react-icons/lib/fa";
+import { FaPlus, FaCaretLeft, FaCaretRight, FaPaintBrush } from "react-icons/lib/fa";
 
 export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selectedImage: Image | null, mode: string, editImage: Image }> {
     constructor(props: { repo: IPhotoRepo }) {
@@ -55,7 +55,7 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
 
                         <div className="main-photo-container" style={{ display: this.state.selectedImage ? "block" : "none" }}>
 
-                            <div style={{ maxHeight: '55vh', margin: 'auto', display: 'block', }}>
+                            <div style={{ maxHeight: '55vh', margin: 'auto', display: 'block', textAlign: 'center' }}>
                                 <Button
                                     bsSize='xsmall'
                                     onClick={() => {
@@ -76,8 +76,19 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
                                     className="next">
                                     <FaCaretRight size={15} />
                                 </Button>
-                                <img style={{ maxWidth: '50vw', maxHeight: '50vh', margin: 'auto', display: 'block', }} src={this.state.selectedImage ? this.state.selectedImage.url : ""} />
+                                <div className="tight">
+                                    <Button
+                                        bsSize='small'
+                                        onClick={() => {
+                                            this.setState({ mode: "editing" });
+                                            this.state.selectedImage && this.setState({ editImage: this.state.selectedImage });
+                                        }}
+                                        className='inside'>
+                                        <FaPaintBrush size={15} />
+                                    </Button>
 
+                                    <img style={{ maxWidth: '50vw', maxHeight: '50vh', margin: 'auto', display: 'block', }} src={this.state.selectedImage ? this.state.selectedImage.url : ""} />
+                                </div>
                                 <p className="imgtext" style={{ width: '100%', textAlign: 'center', maxHeight: '5vh', margin: 'auto', display: 'inline-block' }}>
                                     {this.state.selectedImage && this.state.selectedImage.description}
                                 </p>
