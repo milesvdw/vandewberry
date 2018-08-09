@@ -50,7 +50,9 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
         Database.GetInventory()
             .then((data: any) => {
                 this.setState({
-                    ingredients: data.map((item: any) => new Ingredient(item))
+                    ingredients: data.map((item: any) => new Ingredient(item)).sort((a: Ingredient, b: Ingredient) => {
+                        return a.name.localeCompare(b.name);
+                    })
                 });
             });
     }
@@ -94,6 +96,10 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
 
         recipes.push(savedRecipe);
 
+        recipes = recipes.sort((a: Recipe, b: Recipe) => {
+            return a.name.localeCompare(b.name);
+        })
+
         this.setState({ recipes });
     }
 
@@ -104,11 +110,16 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
         let existingIngredientIndex: number | undefined = ingredients.findIndex((searchIngredient: Ingredient) => {
             return searchIngredient._id === savedRecipe._id;
         })
+        
         if (existingIngredientIndex >= 0) {
             ingredients.splice(existingIngredientIndex, 1);
         }
 
         ingredients.push(savedRecipe);
+
+        ingredients = ingredients.sort((a: Ingredient, b: Ingredient) => {
+            return a.name.localeCompare(b.name);
+        })
 
         this.setState({ ingredients });
     }
