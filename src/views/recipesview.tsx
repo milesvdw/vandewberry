@@ -10,11 +10,11 @@ import { IRecipeRepo, IIngredientRepo } from "../FoodApp";
 import { Ingredient } from "../models/ingredient";
 import { compareIngredients } from "../utils/utils";
 
-export class RecipesView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { editing: boolean, editRecipe: Recipe, searchQuery: string }> {
+export class RecipesView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { editing: boolean, editRecipe: Recipe, searchQuery: string, currentSearchQuery: string }> {
 
     constructor(props: { repo: IIngredientRepo & IRecipeRepo }) {
         super(props);
-        this.state = { editing: false, editRecipe: new Recipe(), searchQuery: "" };
+        this.state = { editing: false, editRecipe: new Recipe(), searchQuery: "", currentSearchQuery: "" };
 
         this.displayMaterials = this.displayMaterials.bind(this);
         this.getAllRecipes = this.getAllRecipes.bind(this);
@@ -22,8 +22,11 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
         this.mapRecipesToRows = this.mapRecipesToRows.bind(this);
         this.getAllSearchedRecipes = this.getAllSearchedRecipes.bind(this);
         this.searchRecipes = this.searchRecipes.bind(this);
+        this.searchCurrentRecipes = this.searchCurrentRecipes.bind(this);
         this.addIngredientsToCart = this.addIngredientsToCart.bind(this);
     }
+
+    private currentSearchInput: any;
 
     private searchInput: any;
 
@@ -148,26 +151,30 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                 return !(missingMaterials.length > 0);
             });
 
-        return this.mapRecipesToRows(availableRecipes);
+        return this.mapRecipesToRows(this.getAllSearchedRecipes(this.state.currentSearchQuery, availableRecipes));
     }
 
-    private getAllSearchedRecipes() {
-        if (this.state.searchQuery.length > 0) {
-            return this.props.repo.state.recipes
+    private getAllSearchedRecipes(input: string, recipes: Recipe[]) {
+        if (input.length > 0) {
+            return recipes
                 .filter((recipe: Recipe) => {
-                    return recipe.name.toLowerCase().indexOf(this.state.searchQuery.toLowerCase()) >= 0;
+                    return recipe.name.toLowerCase().indexOf(input.toLowerCase()) >= 0;
                 });
         } else {
-            return this.props.repo.state.recipes;
+            return recipes;
         }
     }
 
     private getAllRecipes() {
-        return this.mapRecipesToRows(this.getAllSearchedRecipes());
+        return this.mapRecipesToRows(this.getAllSearchedRecipes(this.state.searchQuery, this.props.repo.state.recipes));
     }
 
     private searchRecipes(event: any) {
         this.setState({ searchQuery: event.target.value });
+    }
+
+    private searchCurrentRecipes(event: any) {
+        this.setState({ currentSearchQuery: event.target.value });
     }
 
     public render() {
@@ -203,6 +210,16 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                         <Col sm={6}>
                             <Panel>
                                 <Panel.Heading>
+                                    <Button style={{ marginTop: '3px' }}
+                                        bsSize='small'
+                                        onClick={() => {
+                                            this.currentSearchInput.focus();
+                                        }}
+                                        className={"pull-right btn-circle classy-btn search-btn" + ((this.state.currentSearchQuery.length > 0) ? " search-btn-open" : "")}>
+
+                                        <input placeholder="search" ref={(input) => { this.currentSearchInput = input }} onChange={this.searchCurrentRecipes} />
+                                        <FaSearch size={15} className="pull-right" style={{ marginRight: '7px' }} />
+                                    </Button>
                                     <h4>Current Possibilities</h4>
                                 </Panel.Heading>
                                 <Panel.Body>
