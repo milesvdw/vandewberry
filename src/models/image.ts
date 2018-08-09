@@ -5,6 +5,7 @@ export class Image {
     public url: string = "";
     public description: string = "";
     public title: string = "";
+    public rotation: string = "none";
 
     public constructor(init?: Partial<Image>) {
         Object.assign(this, init);
