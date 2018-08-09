@@ -61,6 +61,7 @@ export class PhotoEditView extends React.Component<{ photo: Image, repo: IPhotoR
                         <img
                             key={this.state.photo._id}
                             src={this.state.photo.url}
+                            style={{maxWidth: '50vw', maxHeight: '40vh'}}
                             alt={this.state.photo.title} 
                             className={previewRotationClass}/>
                     </Col>
