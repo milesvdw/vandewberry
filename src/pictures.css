@@ -90,6 +90,7 @@ div .prev:focus,
   display: block;
   padding: 5px;
   border: none;
+  z-index: 1;
 }
 
 /* On hover, add a black background color with a little bit see-through */
