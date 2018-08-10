@@ -126,6 +126,9 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                                                     />
                                             </button>
                                         </li>
+                                        <li className="list-group-item" style={{textAlign: 'center'}}>
+                                            Calories: {recipe.calories}
+                                        </li>
                                         <li className="list-group-item list-group-item-info">
                                             {recipe.description}
                                         </li>

@@ -7,6 +7,7 @@ export class Recipe {
     public materials: Material[] = [new Material()]; // each top-level item represents a list of ingredients which may replace/substitute each other
     public description: string = "";
     public name: string = "";
+    public calories: number = 0;
 
     public constructor(init?: Partial<Recipe>) {
         Object.assign(this, init);

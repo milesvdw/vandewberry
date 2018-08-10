@@ -60,7 +60,7 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
             <Row key={index}>
                 <Col sm={1}>
                     {/* NOTE: the below code uses the 'pretty-checkbox' npm package to deliver something good looking */}
-                    <div className='pretty p-rotate p-default' style={ {marginTop: '10px', marginLeft: '4px'}}>
+                    <div className='pretty p-rotate p-default' style={{ marginTop: '10px', marginLeft: '4px' }}>
                         <input type='checkbox' defaultChecked={material.required} name='required' onClick={this.toggleMaterialRequired(index)} />
                         <div className='state p-danger' >
                             <label />
@@ -87,12 +87,20 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
         return (
             <div>
                 <Row>
-                    <Col sm={12}>
+                    <Col sm={6}>
                         <FormGroup>
                             <label htmlFor="name">
                                 Recipe Name
-                        </label>
+                            </label>
                             <input type='text' name='name' className='form-control' value={this.state.recipe.name} onChange={this.updateFields} />
+                        </FormGroup>
+                    </Col>
+                    <Col sm={6}>
+                        <FormGroup>
+                            <label htmlFor="calories">
+                                Calories
+                            </label>
+                            <input type='text' name='calories' className='form-control' value={this.state.recipe.calories} onChange={this.updateFields} />
                         </FormGroup>
                     </Col>
                 </Row>
