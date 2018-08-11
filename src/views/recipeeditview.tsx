@@ -44,7 +44,7 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
     private toggleMaterialRequired(index: number) {
         return (event: any) => {
             const recipe = this.state.recipe;
-            recipe.materials[0].required = !recipe.materials[index].required
+            recipe.materials[index].required = !recipe.materials[index].required
             return this.setState({ recipe })
         }
     }
