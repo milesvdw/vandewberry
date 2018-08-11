@@ -57,6 +57,24 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
             });
     }
 
+    public getInventory() {
+        return this.state.ingredients.filter((ingredient: Ingredient) => {
+            return ingredient.status === 'inventory';
+        })
+    }
+
+    public getArchive() {
+        return this.state.ingredients.filter((ingredient: Ingredient) => {
+            return ingredient.status === 'archived';
+        })
+    }
+
+    public getShoppingList() {
+        return this.state.ingredients.filter((ingredient: Ingredient) => {
+            return ingredient.status === 'shopping';
+        })
+    }
+
     public async deleteIngredient(ingredient: Ingredient) {
         ingredient.Delete();
         let ingredients = this.state.ingredients;

@@ -148,10 +148,13 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
 
                 let missingMaterials = recipe.materials
                     .filter((material: Material) => {
-                        return material.required && !material.isAvailable(this.props.repo.state.ingredients);
+                        let available = material.isAvailable(this.props.repo.state.ingredients.filter((ingredient: Ingredient) => {
+                            return ingredient.status === 'inventory';
+                        }));
+                        return material.required && !available;
                     });
 
-                return !(missingMaterials.length > 0);
+                return missingMaterials.length === 0;
             });
 
         return this.mapRecipesToRows(this.getAllSearchedRecipes(this.state.currentSearchQuery, availableRecipes));

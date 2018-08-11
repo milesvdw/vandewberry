@@ -261,8 +261,3 @@ div.clearfix li:active{
 .groupBox {
   border: 5px;
 }
-
-.extra-margin {
-  margin: auto;
-  margin-bottom: 10vh;
-}

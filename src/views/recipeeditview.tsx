@@ -3,7 +3,7 @@ import { Row, Col, FormGroup, Button } from "react-bootstrap";
 import { Recipe } from "../models/recipe";
 import { IRecipeRepo } from "../FoodApp";
 import { Material } from "../models/material";
-import { FaMinusCircle } from "react-icons/lib/fa"
+import { FaMinusCircle, FaPlus } from "react-icons/lib/fa"
 import { Ingredient } from "../models/ingredient";
 
 export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRecipeRepo, onSave: () => void }, { recipe: Recipe }> {
@@ -135,6 +135,24 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
                     </Col>
                 </Row>
                 {materials}
+                <Row>
+                    <Col>
+                        <Button style={{ marginTop: '3px', marginRight: '17px' }}
+                            bsSize='xsmall'
+                            onClick={() => {
+                                let recipe = this.state.recipe;
+                                recipe.materials.push(new Material());
+                                this.setState({recipe})
+                                return;
+                            }}
+                            className="pull-right btn-circle classy-btn">
+                            <FaPlus size={15} />
+                        </Button>
+                    </Col>
+                </Row>
+                <Row>
+                    <br />
+                </Row>
                 <Row>
                     <Col sm={12}>
                         <Button bsSize='large' bsStyle='info' className='pull-right'

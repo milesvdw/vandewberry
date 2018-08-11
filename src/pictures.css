@@ -149,3 +149,8 @@ div .prev:focus,
   transform: rotate(270deg);
   margin-bottom: 10vh;
 }
+
+.extra-margin {
+  margin: auto;
+  margin-bottom: 10vh;
+}
