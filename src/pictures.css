@@ -147,4 +147,5 @@ div .prev:focus,
   -o-transform: rotate(270deg);
   -ms-transform: rotate(270deg);
   transform: rotate(270deg);
+  margin-bottom: 10vh;
 }

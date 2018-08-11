@@ -36,9 +36,11 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
 
         let selectedImageRotationClass;
         if (this.state.selectedImage && this.state.selectedImage.rotation === Rotation.LEFT) {
-            selectedImageRotationClass = "rotate270";
+            // MILES HACK: extra-margin adds margin to the bottom on the bad assumption that any rotated image is 
+            // taller post rotation than it was pre-rotation (i.e. was sideways landscape)
+            selectedImageRotationClass = "rotate270 extra-margin";
         } else if (this.state.selectedImage && this.state.selectedImage.rotation === Rotation.RIGHT) {
-            selectedImageRotationClass = "rotate90";
+            selectedImageRotationClass = "rotate90 extra-margin";
         } else if (this.state.selectedImage && this.state.selectedImage.rotation === Rotation.FLIP) {
             selectedImageRotationClass = "rotate180";
         }
@@ -107,7 +109,7 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
                                     </Button>
 
                                     <img
-                                        style={{ maxWidth: '50vw', maxHeight: '50vh', margin: 'auto', display: 'block', }}
+                                        style={{ maxWidth: '50vw', maxHeight: '50vh', display: 'block', }}
                                         src={this.state.selectedImage ? this.state.selectedImage.url : ""} 
                                         className={selectedImageRotationClass}/>
                                 </div>
