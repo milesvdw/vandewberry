@@ -25,11 +25,11 @@ export class PhotoEditView extends React.Component<{ photo: Image, repo: IPhotoR
 
     public render() {
         let previewRotationClass;
-        if(this.state.photo.rotation === Rotation.LEFT) {
-            previewRotationClass = "rotate270";
-        } else if(this.state.photo.rotation === Rotation.RIGHT) {
-            previewRotationClass = "rotate90";
-        } else if(this.state.photo.rotation === Rotation.FLIP) {
+        if (this.state.photo.rotation === Rotation.LEFT) {
+            previewRotationClass = "rotate270 extra-margin";
+        } else if (this.state.photo.rotation === Rotation.RIGHT) {
+            previewRotationClass = "rotate90 extra-margin";
+        } else if (this.state.photo.rotation === Rotation.FLIP) {
             previewRotationClass = "rotate180";
         }
 
@@ -49,6 +49,16 @@ export class PhotoEditView extends React.Component<{ photo: Image, repo: IPhotoR
                 <Row>
                     <Col sm={12}>
                         <FormGroup>
+                            <label htmlFor="title">
+                                Date Taken (ddmmyyyy)
+                            </label>
+                            <input type='text' name='date_taken' className='form-control' value={this.state.photo.date_taken} onChange={this.updateFields} />
+                        </FormGroup>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col sm={12}>
+                        <FormGroup>
                             <label htmlFor="url">
                                 Url
                             </label>
@@ -61,9 +71,9 @@ export class PhotoEditView extends React.Component<{ photo: Image, repo: IPhotoR
                         <img
                             key={this.state.photo._id}
                             src={this.state.photo.url}
-                            style={{maxWidth: '50vw', maxHeight: '40vh'}}
-                            alt={this.state.photo.title} 
-                            className={previewRotationClass}/>
+                            style={{ maxWidth: '50vw', maxHeight: '40vh' }}
+                            alt={this.state.photo.title}
+                            className={previewRotationClass} />
                     </Col>
                 </Row>
                 <Row>
@@ -74,15 +84,6 @@ export class PhotoEditView extends React.Component<{ photo: Image, repo: IPhotoR
                             </label>
                             <textarea name='description' className='form-control' value={this.state.photo.description} onChange={this.updateFields} />
                         </FormGroup>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col sm={12}>
-                        <Button bsSize='large' bsStyle='info' className='pull-right'
-                            onClick={() => {
-                                this.props.repo.saveImage(this.state.photo);
-                                this.props.onSave();
-                            }}>Save</Button>
                     </Col>
                 </Row>
                 <Row>
@@ -117,7 +118,25 @@ export class PhotoEditView extends React.Component<{ photo: Image, repo: IPhotoR
                             </div>
                         </div>
                     </Col>
-
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                </Row>
+                <Row>
+                    <Col sm={12}>
+                        <Button bsSize='large' bsStyle='danger' className='pull-left'
+                            onClick={() => {
+                                this.props.repo.deleteImage(this.state.photo);
+                                this.props.onSave();
+                            }}>Delete</Button>
+                        <Button bsSize='large' bsStyle='info' className='pull-right'
+                            onClick={() => {
+                                this.props.repo.saveImage(this.state.photo);
+                                this.props.onSave();
+                            }}>Save</Button>
+                    </Col>
                 </Row>
             </div>
 

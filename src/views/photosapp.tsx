@@ -9,6 +9,7 @@ import { Database } from "../database";
 export interface IPhotoRepo {
     state: { photos: Image[] };
     saveImage: (image: Image) => void;
+    deleteImage: (image: Image) => void;
 }
 
 export class PhotosApp extends React.Component<{}, { photos: Image[] }> implements IPhotoRepo {
@@ -52,6 +53,19 @@ export class PhotosApp extends React.Component<{}, { photos: Image[] }> implemen
 
         this.setState({ photos });
         return;
+    }
+
+    public async deleteImage(photo: Image) {
+        photo.Delete();
+        let photos = this.state.photos;
+
+        let existingIngredientIndex: number = photos.findIndex((searchIngredient: Image) => {
+            return searchIngredient._id === photo._id;
+        })
+        if (existingIngredientIndex >= 0) {
+            photos.splice(existingIngredientIndex, 1);
+            this.setState({ photos });
+        }
     }
 
     public render() {

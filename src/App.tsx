@@ -57,7 +57,7 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
         <FoodApp ref={thing => { this.foodApp = thing }} />
         <Route path="/photos"
           component={() =>
-            <PhotosApp ref={thing => {this.photoApp = thing }} />
+            <PhotosApp ref={thing => { this.photoApp = thing }} />
           }
         />
         <Route path="/home"
@@ -75,12 +75,7 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
           <Switch>
             <div>
               {this.state.authenticated && showIfLoggedIn}
-              <Route path="/login"
-                component={() =>
-                  <Login authenticate={this.authenticate} />
-
-                }
-              />
+              {!this.state.authenticated && <Login authenticate={this.authenticate} />}
             </div>
           </Switch>
         </HashRouter>
