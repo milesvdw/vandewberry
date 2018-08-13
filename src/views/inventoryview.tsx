@@ -174,7 +174,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                     <Col sm={12}>
                         <ul className="list-group well">
                             <li className="list-group-item list-group-item-info" style={{ textAlign: 'center' }}>
-                                {g === "" ? "uncategorized" : g}
+                                {g === "" ? "Uncategorized" : g.charAt(0).toUpperCase() + g.substr(1).toLowerCase()}
                             </li>
                             {groupRows}
                         </ul>
