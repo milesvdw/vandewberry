@@ -31,8 +31,18 @@ declare global {
     interface Array<T> {
         unique(): T[];
     }
+    // tslint:disable-next-line:interface-name
+    interface String {
+        capitalize(): string;
+    }
 }
 
 Array.prototype.unique = function<T>(): T[] {
     return this.filter((value: any, index: number) => this.indexOf(value) === index);
+}
+
+
+
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.substr(1).toLowerCase();
 }
