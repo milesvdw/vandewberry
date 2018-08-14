@@ -21,17 +21,29 @@ export class Recipe {
         }
     }
 
+    public toLowerCase(): Recipe{
+        let recipe = this;
+        recipe.name = this.name.toLowerCase();
+        recipe.materials.forEach(material => {
+            material.ingredients.forEach(ingredient => {
+                ingredient = ingredient.toLowerCase();
+            });
+        });
+        return recipe;
+    }
+
     public Save(): Promise<Recipe> {
+        let recipe = this.toLowerCase();
         return Database.ApiCall('/api/recipes', {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(this),
+            body: JSON.stringify(recipe),
             method: 'post',
         }).then(async (id: string) => {
-            this._id = id;
-            return this;
+            recipe._id = id;
+            return recipe;
         });
     }
 

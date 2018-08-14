@@ -14,17 +14,26 @@ export class Ingredient {
     }
 
     public Save(): Promise<Ingredient> {
+        let ingredient = this.toLowerCase();
         return Database.ApiCall('/api/inventory', {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(this),
+            body: JSON.stringify(ingredient),
             method: 'post',
         }).then(async (id: string) => {
-            this._id = id;
-            return this;
+            ingredient._id = id;
+            return ingredient;
         });
+    }
+
+    public toLowerCase(): Ingredient {
+        let ingredient = this;
+        ingredient.name = this.name.toLowerCase();
+        ingredient.category = this.category.toLowerCase();
+        ingredient.status = this.status.toLowerCase();
+        return ingredient;
     }
 
     public Delete(): Promise<boolean> {
