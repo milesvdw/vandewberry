@@ -56,8 +56,8 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
     private addIngredientsToCart(materials: Material[]) {
         // 1. Filter list of materials to those which are made exclusively of ingredients not in the inventory
         // 2. Add the first ingredient of each of those to the shopping list
-            // Moving an existing ingredient if possible
-            // Creating an ingredient if not possible
+        // Moving an existing ingredient if possible
+        // Creating an ingredient if not possible
 
         // For each material:
         //   find the subset of the material's ingredients have an existing archived match in the database
@@ -74,7 +74,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
             // it wasn't in inventory or shopping
             let firstExistingMatch = archivedIngredients.find((ai: Ingredient) => m.ingredients.some((i: Ingredient) => compareIngredients(i, ai)));
 
-            if(firstExistingMatch) {
+            if (firstExistingMatch) {
                 firstExistingMatch.status = 'shopping';
                 this.props.repo.saveIngredient(firstExistingMatch);
             } else {
@@ -101,7 +101,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                             <Panel.Toggle componentClass="a" className="no-border btn btn-block btn-secondary">
                                 {recipe.name}
                             </Panel.Toggle>
-                            <Panel.Collapse>  
+                            <Panel.Collapse>
                                 <div id={'possible_recipe_details_' + recipe._id}>
                                     <ul className="list-group well">
                                         <li className="button-container">
@@ -109,25 +109,33 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                                                 onClick={(e: any) => {
                                                     e.stopPropagation();
                                                     this.setState({ editRecipe: recipe, editing: true })
-                                            }}>
-                                                <FaPencil/>
+                                                }}>
+                                                <FaPencil />
                                             </button>
                                             <button className='btn-row'
-                                                onClick={() => {this.addIngredientsToCart(recipe.materials)}}
+                                                onClick={() => { this.addIngredientsToCart(recipe.materials) }}
                                             >
-                                                <FaShoppingCart/>
+                                                <FaShoppingCart />
                                             </button>
                                             <button className='btn-row'
                                                 onClick={() => {
-                                                    if(confirm('Delete this recipe?'))
-                                                    {this.props.repo.deleteRecipe(recipe)}
-                                            }}>
-                                                <FaTimesCircle 
-                                                    />
+                                                    if (confirm('Delete this recipe?')) { this.props.repo.deleteRecipe(recipe) }
+                                                }}>
+                                                <FaTimesCircle
+                                                />
                                             </button>
                                         </li>
-                                        <li className="list-group-item" style={{textAlign: 'center'}}>
+                                        <li className="list-group-item" style={{ textAlign: 'center' }}>
                                             Calories: {recipe.calories}
+                                        </li>
+                                        <li className="list-group-item" style={{ textAlign: 'center' }}>
+                                            <button
+                                                onClick={() => {
+                                                    recipe.lastEaten = new Date(Date.now());
+                                                    this.props.repo.saveRecipe(recipe);
+                                                }}>
+                                                Last Eaten: {recipe.lastEatenString()}
+                                            </button>
                                         </li>
                                         <li className="list-group-item list-group-item-info">
                                             {recipe.description}

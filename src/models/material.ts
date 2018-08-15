@@ -9,6 +9,11 @@ export class Material {
     public constructor(init?: Partial<Material>) {
         Object.assign(this, init);
         this.required = this.required === true || this.required as any === 'true';
+        if (init && this.ingredients.length > 0 && !(this.ingredients[0] instanceof Ingredient)) {
+            this.ingredients = this.ingredients.map((i) => {
+                return new Ingredient(i)
+            });
+        }
     }
 
     public isAvailable(ingredients: Ingredient[]): boolean {

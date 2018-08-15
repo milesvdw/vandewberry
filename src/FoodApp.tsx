@@ -122,7 +122,7 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
     }
 
     public async saveIngredient(ingredient: Ingredient) {
-        ingredient = ingredient.toLowerCase();
+        ingredient = ingredient.toLowerCaseIngredient();
         let savedRecipe: Ingredient = await ingredient.Save();
         let ingredients = this.state.ingredients;
 

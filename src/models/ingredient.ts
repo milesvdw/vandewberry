@@ -14,7 +14,7 @@ export class Ingredient {
     }
 
     public Save(): Promise<Ingredient> {
-        let ingredient = this.toLowerCase();
+        let ingredient = this.toLowerCaseIngredient();
         return Database.ApiCall('/api/inventory', {
             headers: {
                 'Accept': 'application/json',
@@ -28,7 +28,7 @@ export class Ingredient {
         });
     }
 
-    public toLowerCase(): Ingredient {
+    public toLowerCaseIngredient(): Ingredient {
         let ingredient = this;
         ingredient.name = this.name.toLowerCase();
         ingredient.category = this.category.toLowerCase();
