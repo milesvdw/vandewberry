@@ -15,8 +15,6 @@ export class PhotoEditView extends React.Component<{ photo: Image, repo: IPhotoR
     }
 
     private updateFields(event: any) {
-        console.log("Field: " + event.target.name);
-        console.log("Value: " + event.target.value);
         const field = event.target.name;
         const photo = this.state.photo;
         photo[field] = event.target.value;

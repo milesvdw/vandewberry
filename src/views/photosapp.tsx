@@ -33,7 +33,6 @@ export class PhotosApp extends React.Component<{}, { photos: Image[] }> implemen
                 this.setState({
                     photos: data.map((item: any) => new Image(item))
                 });
-                console.log(data.map((item: any) => new Image(item)))
             });
     }
 

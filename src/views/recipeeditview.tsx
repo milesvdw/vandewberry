@@ -29,7 +29,6 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
     private updateMaterialFields(index: number) {
         return (event: any) => {
             const field = event.target.name;
-            console.log(field);
             const recipe = this.state.recipe;
             let val = event.target.value;
             if (field === 'ingredients') { // hack to deal with zipped/unzipped material lists

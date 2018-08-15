@@ -20,7 +20,6 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
 
     fetch('/api/checkSession', { credentials: 'include' })
       .then((data: any) => {
-        console.log(data);
         return data.json();
       })
       .then((response: IApiResponse) => {
