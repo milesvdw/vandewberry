@@ -4,7 +4,7 @@ import { Route, Switch } from "react-router-dom";
 import { PhotoViewer } from "./photoviewer";
 import { PhotoManager } from "./photomanager";
 import { Image } from "../models/image";
-import { Database } from "../database";
+import { Database } from "../Database";
 
 export interface IPhotoRepo {
     state: { photos: Image[] };

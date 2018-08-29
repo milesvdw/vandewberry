@@ -1,6 +1,6 @@
 import { Material } from "./material";
 import { Ingredient } from "./ingredient";
-import { Database } from "../database";
+import { Database } from "../Database";
 
 export class Recipe {
     public _id?: string;

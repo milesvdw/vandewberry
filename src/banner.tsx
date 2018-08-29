@@ -7,18 +7,18 @@ export class Banner extends React.Component<{ authenticated: boolean, logout: (e
     }
 
     public render() {
+        let navItems = [] as JSX.Element[];
+        if (this.props.authenticated) {
+            navItems.push(<NavItem eventKey={1} href="#logout" onClick={this.props.logout}>Logout</NavItem>);
+        } else {
+            navItems.push(<NavItem eventKey={1} href="#login">Login</NavItem>);
+            navItems.push(<NavItem eventKey={1} href="#createAccount">Create Account</NavItem>);
+        }
 
         return (
             <Navbar>
                 <Nav>
-                    {this.props.authenticated ?
-                        <NavItem eventKey={1} href="#logout" onClick={this.props.logout}>
-                            Logout
-                        </NavItem> :
-                        <NavItem eventKey={1} href="#login">
-                            Login
-                        </NavItem>
-                    }
+                    {navItems}
 
 
                     <NavItem eventKey={1} href="#home">

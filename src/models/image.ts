@@ -1,4 +1,4 @@
-import { Database } from "../database";
+import { Database } from "../Database";
 
 export class Image {
     public _id?: string;

@@ -142,7 +142,7 @@ MongoClient.connect(uri, (err, client) => {
     db.collection('inventory').remove({ "_id": ObjectId(req.body._id) });
     res.json(ApiResponse(true, null));
   });
-  
+
   app.delete('/api/photos', passport.authenticationMiddleware(), (req, res) => {
     db.collection('photos').remove({ "_id": ObjectId(req.body._id) });
     res.json(ApiResponse(true, null));
@@ -182,6 +182,17 @@ MongoClient.connect(uri, (err, client) => {
     passport.authenticate('local'),
     (req, res) => {
       res.send(ApiResponse(true, null))
+    }
+  );
+
+  app.post('/api/createAccount',
+    (req, res) => {
+      const salt = bcrypt.genSaltSync(10);
+      const hash = bcrypt.hashSync(req.body.password, salt)
+
+
+      db.collection('users').save({ user: req.body.username, passwordHash: hash, household: req.body.household });
+      res.send(ApiResponse(false, null));
     }
   );
 

@@ -2,7 +2,7 @@ import { Route } from "react-router";
 import { Ingredient } from "./models/ingredient";
 import { Recipe } from "./models/recipe";
 import * as React from "react";
-import { Database } from "./database";
+import { Database } from "./Database";
 import { RecipesView } from "./views/recipesview";
 import { InventoryView } from "./views/inventoryview";
 

@@ -50,7 +50,7 @@ export class Database {
             });
     }
 
-    public static Login(user: string, password: string): Promise<boolean> {
+    public static Login(username: string, password: string): Promise<boolean> {
         let url: string = "/api/login";
         return fetch(url, {
             headers: {
@@ -58,7 +58,7 @@ export class Database {
                 'Content-Type': 'application/json'
             },
             credentials: 'include',
-            body: JSON.stringify({ username: user, password }),
+            body: JSON.stringify({ username, password }),
             method: 'post',
         })
             .then((data: any) => {
@@ -72,6 +72,30 @@ export class Database {
                 }
             }, () => {
                 window.location.hash = '/login'
+                return false;
+            })
+    }
+
+    public static CreateAccount(username: string, password: string, household: string): Promise<boolean> {
+        let url: string = "/api/createAccount";
+        return fetch(url, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ username, password, household }),
+            method: 'post',
+        })
+            .then((data: any) => {
+                return data.json();
+            }).then((response: IApiResponse) => {
+                if (response.authenticated) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }, () => {
                 return false;
             })
     }

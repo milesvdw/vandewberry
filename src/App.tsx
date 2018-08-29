@@ -2,13 +2,14 @@
 import * as React from 'react';
 import './App.css';
 import './pictures.css';
-import { Banner } from './banner';
+import { Banner } from './Banner';
 import { HashRouter, Route, Switch } from "react-router-dom"
 import { HomeView } from './views/homeview';
 import { FoodApp } from './FoodApp';
 import { Login } from './Login';
-import { IApiResponse } from './database';
+import { IApiResponse } from './Database';
 import { PhotosApp } from './views/photosapp';
+import { CreateAccount } from './CreateAccount';
 
 class App extends React.Component<{}, { error: boolean, authenticated: boolean, user: string }> {
   constructor(props: {}) {
@@ -74,7 +75,20 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
           <Switch>
             <div>
               {this.state.authenticated && showIfLoggedIn}
-              {!this.state.authenticated && <Login authenticate={this.authenticate} />}
+              {!this.state.authenticated &&
+                <Switch>
+                  <Route path="/createAccount"
+                    component={() =>
+                      <CreateAccount authenticate={this.authenticate} />
+                    }
+                  />
+                  <Route path="/"
+                    component={() =>
+                      <Login authenticate={this.authenticate} />
+                    }
+                  />
+                </Switch>
+              }
             </div>
           </Switch>
         </HashRouter>

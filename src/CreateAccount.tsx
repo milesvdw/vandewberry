@@ -2,13 +2,13 @@ import * as React from "react";
 import { Database } from "./Database";
 import { Redirect } from "react-router-dom";
 
-export class Login extends React.Component<{ authenticate: (user: string) => void }, { error: boolean, username: string, password: string, authenticated: boolean }> {
+export class CreateAccount extends React.Component<{ authenticate: (user: string) => void }, { error: boolean, username: string, password: string, household: string, authenticated: boolean }> {
     constructor(props: { authenticate: () => void }) {
         super(props);
-        this.state = { error: false, username: "", password: "", authenticated: false }
+        this.state = { error: false, username: "", password: "", authenticated: false, household: "" }
 
         this.updateFields = this.updateFields.bind(this);
-        this.attemptLogin = this.attemptLogin.bind(this);
+        this.createAccount = this.createAccount.bind(this);
     }
 
     private updateFields(event: any) {
@@ -18,16 +18,14 @@ export class Login extends React.Component<{ authenticate: (user: string) => voi
         return this.setState(state);
     }
 
-    private attemptLogin(event: any) {
+    private createAccount(event: any) {
         event.preventDefault()
 
-        Database.Login(this.state.username, this.state.password).then((authenticated: boolean) => {
+        Database.CreateAccount(this.state.username, this.state.password, this.state.household).then((authenticated: boolean) => {
             if (!authenticated) {
                 return this.setState({ error: true })
             } else {
-                this.setState({ authenticated: true })
-                this.props.authenticate(this.state.username)
-                window.location.hash = "/home";
+                window.location.hash = "/login";
             }
         });
     }
@@ -36,7 +34,7 @@ export class Login extends React.Component<{ authenticate: (user: string) => voi
         return (
             <div>
                 {this.state.authenticated && <Redirect to={'/home'} />}
-                <form className='form-group' style={{padding: '10px'}} onSubmit={this.attemptLogin}>
+                <form className='form-group' style={{padding: '10px'}} onSubmit={this.createAccount}>
                     <label htmlFor="username">
                         Username
                             </label>
@@ -45,14 +43,18 @@ export class Login extends React.Component<{ authenticate: (user: string) => voi
                         Password
                             </label>
                     <input type='text' name='password' className='form-control' value={this.state.password} onChange={this.updateFields} />
-                    <button type="submit" style={{margin: '5px'}} >login</button>
+                    <label htmlFor="household">
+                        Household Name
+                            </label>
+                    <input type='text' name='household' className='form-control' value={this.state.household} onChange={this.updateFields} />
+                    <button type="submit" style={{margin: '5px'}} >Create Account</button>
                 </form>
 
 
                 
 
                 {this.state.error && (
-                    <p>Bad login information</p>
+                    <p>Bad account information</p>
                 )}
             </div>
         )
