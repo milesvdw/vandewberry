@@ -192,7 +192,7 @@ MongoClient.connect(uri, (err, client) => {
 
 
       db.collection('users').save({ user: req.body.username, passwordHash: hash, household: req.body.household });
-      res.send(ApiResponse(false, null));
+      res.send(ApiResponse(false, true));
     }
   );
 

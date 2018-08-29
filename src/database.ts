@@ -90,7 +90,7 @@ export class Database {
             .then((data: any) => {
                 return data.json();
             }).then((response: IApiResponse) => {
-                if (response.authenticated) {
+                if (response.payload) {
                     return true;
                 } else {
                     return false;
