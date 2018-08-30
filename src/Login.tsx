@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Database } from "./Database";
 import { Redirect } from "react-router-dom";
+import { Panel } from "react-bootstrap";
+
 
 export class Login extends React.Component<{ authenticate: (user: string) => void }, { error: boolean, username: string, password: string, authenticated: boolean }> {
     constructor(props: { authenticate: () => void }) {
@@ -36,20 +38,31 @@ export class Login extends React.Component<{ authenticate: (user: string) => voi
         return (
             <div>
                 {this.state.authenticated && <Redirect to={'/home'} />}
-                <form className='form-group' style={{padding: '10px'}} onSubmit={this.attemptLogin}>
-                    <label htmlFor="username">
-                        Username
-                            </label>
-                    <input type='text' name='username' className='form-control' value={this.state.username} onChange={this.updateFields} />
-                    <label htmlFor="password">
-                        Password
-                            </label>
-                    <input type='text' name='password' className='form-control' value={this.state.password} onChange={this.updateFields} />
-                    <button type="submit" style={{margin: '5px'}} >login</button>
-                </form>
+                <Panel style={{ margin: '20px' }}>
+                    <Panel.Heading>
+                        Login
+                    </Panel.Heading>
+                    <Panel.Body>
+                        <form className='form-group' style={{ padding: '10px' }} onSubmit={this.attemptLogin}>
+                            <label htmlFor="username">
+                                Username
+                                    </label>
+                            <input type='text' name='username' className='form-control' value={this.state.username} onChange={this.updateFields} />
+                            <label htmlFor="password">
+                                Password
+                                    </label>
+                            <input type='text' name='password' className='form-control' value={this.state.password} onChange={this.updateFields} />
+                            <button type="submit"
+                                className='classy-btn no-outline btn-round btn-press btn-default'
+                                style={{ marginLeft: '0', marginTop: '15px', float: 'right', fontSize: '14px', textShadow: 'none' }}
+                            >
+                                Login
+                            </button>
+                        </form>
+                    </Panel.Body>
+                </Panel>
 
 
-                
 
                 {this.state.error && (
                     <p>Bad login information</p>

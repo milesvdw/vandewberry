@@ -13,7 +13,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
 
     constructor(props: { repo: IIngredientRepo & IRecipeRepo }) {
         super(props);
-        this.state = { editIngredient: new Ingredient(), mode: "", groupByCategory: true, searchQuery: ''};
+        this.state = { editIngredient: new Ingredient(), mode: "", groupByCategory: true, searchQuery: '' };
 
         this.renderShoppingRow = this.renderShoppingRow.bind(this);
         this.showTransferButtons = this.showTransferButtons.bind(this);
@@ -186,10 +186,10 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
     }
 
     private getAllSearchedIngredients(input: string, ingredients: Ingredient[]) {
-        if(input.length >0) {
+        if (input.length > 0) {
             return ingredients
                 .filter((ingredient: Ingredient) => {
-                    return ingredient.name.toLowerCase().indexOf(input.toLowerCase()) >=0;
+                    return ingredient.name.toLowerCase().indexOf(input.toLowerCase()) >= 0;
                 });
         } else {
             return ingredients;
@@ -227,7 +227,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
         return (
             <Container id='ingredient_container'>
                 <Grid>
-                    <Row style={{margin: '10px'}}>
+                    <Row style={{ margin: '10px' }}>
                         <Button style={{ marginTop: '3px' }}
                             bsSize='small'
                             onClick={() => {
@@ -258,8 +258,6 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                         <Col sm={4}>
                             <Panel>
                                 <Panel.Heading>
-                                    
-
                                     <OverlayTrigger rootClose={true} trigger="click" placement="right" overlay={this.contextMenu}>
                                         <Button style={{ marginTop: '3px', marginLeft: '0px', marginRight: '15px' }}
                                             bsSize='small'

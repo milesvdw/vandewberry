@@ -130,6 +130,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                                         </li>
                                         <li className="list-group-item" style={{ textAlign: 'center' }}>
                                             <button
+                                                className="classy-btn no-outline btn-round btn-press btn-default"
                                                 onClick={() => {
                                                     recipe.lastEaten = new Date(Date.now());
                                                     this.props.repo.saveRecipe(recipe);

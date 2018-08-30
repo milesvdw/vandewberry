@@ -115,6 +115,18 @@ checkbox {
   transition: all 0.3s ease;
 }
 
+.no-outline, .no-outline:focus, .no-outline:active {
+  outline: none!important;
+}
+
+.common-gradient{
+  background-image: linear-gradient(to bottom,#fff 0,#f8f8f8 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 1px 5px rgba(0,0,0,.075);
+  background-color: #f8f8f8;
+  border-color: #e7e7e7;
+  color: #333;
+}
+
 .no-border {
   border: transparent;
   box-shadow: none;
@@ -132,6 +144,14 @@ checkbox {
   border-radius: 35px;
   font-size: 24px;
   line-height: 1.33;
+}
+
+.btn-round {
+  border-radius: 4px;
+}
+
+.btn-press {
+  box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
 }
 
 .btn-circle {
