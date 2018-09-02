@@ -2,8 +2,15 @@
 import * as React from "react";
 import { Container } from "react-bootstrap/lib/Tab";
 import { Grid, Row, Col, Panel, Modal, Button, Popover, OverlayTrigger, MenuItem, Clearfix } from "react-bootstrap";
-import { FaPlus, FaTrash, FaEllipsisV, FaShoppingCart, FaFolder, FaPencil, FaSearch } from "react-icons/lib/fa"
-// FaTrash, FaPencil,
+
+import FaPlus from "react-icons/lib/fa/plus";
+import FaTrash from "react-icons/lib/fa/trash";
+import FaEllipsisV from "react-icons/lib/fa/ellipsis-v";
+import FaShoppingCart from "react-icons/lib/fa/shopping-cart";
+import FaFolder from "react-icons/lib/fa/folder";
+import FaPencil from "react-icons/lib/fa/pencil";
+import FaSearch from "react-icons/lib/fa/search";
+
 import { IIngredientRepo, IRecipeRepo } from "../FoodApp";
 import { Ingredient } from "../models/ingredient";
 import { IngredientEditView } from "./ingredienteditview";

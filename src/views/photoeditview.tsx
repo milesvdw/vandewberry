@@ -3,7 +3,11 @@ import { Row, Col, FormGroup, Button } from "react-bootstrap";
 import { Image } from "../models/image";
 import { Rotation } from "../models/rotation";
 import { IPhotoRepo } from "./photosapp";
-import { FaRotateLeft, FaRepeat, FaClose, FaArrowsH } from "react-icons/lib/fa";
+
+import FaRotateLeft from "react-icons/lib/fa/rotate-left";
+import FaRepeat from "react-icons/lib/fa/repeat";
+import FaClose from "react-icons/lib/fa/close";
+import FaArrowsH from "react-icons/lib/fa/arrows-h";
 
 export class PhotoEditView extends React.Component<{ photo: Image, repo: IPhotoRepo, onSave: () => void }, { photo: Image }> {
     constructor(props: { photo: Image, repo: IPhotoRepo, onSave: () => void }) {
