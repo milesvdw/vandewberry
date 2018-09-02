@@ -44,15 +44,15 @@ export class CreateAccount extends React.Component<{ authenticate: (user: string
                         <form className='form-group' style={{ padding: '10px' }} onSubmit={this.createAccount}>
                             <label htmlFor="username">
                                 Username
-                                    </label>
+                            </label>
                             <input type='text' name='username' className='form-control' value={this.state.username} onChange={this.updateFields} />
                             <label htmlFor="password">
                                 Password
-                                    </label>
-                            <input type='text' name='password' className='form-control' value={this.state.password} onChange={this.updateFields} />
+                            </label>
+                            <input type='password' name='password' className='form-control' value={this.state.password} onChange={this.updateFields} />
                             <label htmlFor="household">
                                 Household Name
-                                    </label>
+                            </label>
                             <input type='text' name='household' className='form-control' value={this.state.household} onChange={this.updateFields} />
                             <Button type="submit"
                                 className='classy-btn no-outline btn-round btn-press btn-default'
