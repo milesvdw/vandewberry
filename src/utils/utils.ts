@@ -44,5 +44,9 @@ Array.prototype.unique = function<T>(): T[] {
 
 
 String.prototype.capitalize = function() {
-    return this.charAt(0).toUpperCase() + this.substr(1).toLowerCase();
+    let finalString = "";
+    this.split(" ").map(x =>
+        finalString = finalString + x.charAt(0).toUpperCase() + x.substr(1).toLowerCase() + " "
+    );
+    return finalString.substring(0, finalString.length - 1);
 }
