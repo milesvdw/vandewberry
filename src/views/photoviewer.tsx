@@ -1,9 +1,19 @@
 import * as React from "react";
 import { Image } from "../models/image";
-import { Modal, Row, Col, Button } from "react-bootstrap";
+
+import Modal from "react-bootstrap/lib/Modal";
+import Row from "react-bootstrap/lib/Row";
+import Col from "react-bootstrap/lib/Col";
+import Button from "react-bootstrap/lib/Button";
+
 import { PhotoEditView } from "./photoeditview";
 import { IPhotoRepo } from "./photosapp";
-import { FaPlus, FaCaretLeft, FaCaretRight, FaPaintBrush } from "react-icons/lib/fa";
+
+import FaPlus from "react-icons/lib/fa/plus";
+import FaCaretLeft from "react-icons/lib/fa/caret-left";
+import FaCaretRight from "react-icons/lib/fa/caret-right";
+import FaPaintBrush from "react-icons/lib/fa/paint-brush";
+
 import { Rotation } from "../models/rotation";
 
 export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selectedImage: Image | null, mode: string, editImage: Image }> {

@@ -1,5 +1,8 @@
 import * as React from "react";
-import { Navbar, Nav, NavItem } from "react-bootstrap";
+
+import Navbar from "react-bootstrap/lib/Navbar";
+import Nav from "react-bootstrap/lib/Nav";
+import NavItem from "react-bootstrap/lib/NavItem";
 
 export class Banner extends React.Component<{ user: string, authenticated: boolean, logout: (event: any) => void }> {
     constructor(props: { user: string, authenticated: boolean, logout: (event: any) => void }) {

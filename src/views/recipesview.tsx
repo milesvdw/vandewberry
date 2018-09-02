@@ -1,11 +1,24 @@
 // tslint:disable:no-console
 import * as React from "react";
 import { Container } from "react-bootstrap/lib/Tab";
-import { Grid, Row, Col, Panel, Modal, Button } from "react-bootstrap";
+
+import Grid from "react-bootstrap/lib/Grid";
+import Row from "react-bootstrap/lib/Row";
+import Col from "react-bootstrap/lib/Col";
+import Panel from "react-bootstrap/lib/Panel";
+import Modal from "react-bootstrap/lib/Modal";
+import Button from "react-bootstrap/lib/Button";
+
 import { Recipe } from "../models/recipe";
 import { Material } from "../models/material";
 import { RecipeEditView } from "./recipeeditview";
-import { FaTimesCircle, FaPencil, FaPlus, FaSearch, FaShoppingCart } from "react-icons/lib/fa"
+
+import FaTimesCircle from "react-icons/lib/fa/times-circle";
+import FaPencil from "react-icons/lib/fa/pencil";
+import FaPlus from "react-icons/lib/fa/plus";
+import FaSearch from "react-icons/lib/fa/search";
+import FaShoppingCart from "react-icons/lib/fa/shopping-cart";
+
 import { IRecipeRepo, IIngredientRepo } from "../FoodApp";
 import { Ingredient } from "../models/ingredient";
 import { compareIngredients } from "../utils/utils";

@@ -1,9 +1,17 @@
 import * as React from "react";
-import { Row, Col, FormGroup, Button } from "react-bootstrap";
+
+import Row from "react-bootstrap/lib/Row";
+import Col from "react-bootstrap/lib/Col";
+import FormGroup from "react-bootstrap/lib/FormGroup";
+import Button from "react-bootstrap/lib/Button";
+
 import { Recipe } from "../models/recipe";
 import { IRecipeRepo } from "../FoodApp";
 import { Material } from "../models/material";
-import { FaMinusCircle, FaPlus } from "react-icons/lib/fa"
+
+import FaMinusCircle from "react-icons/lib/fa/minus-circle";
+import FaPlus from "react-icons/lib/fa/plus";
+
 import { Ingredient } from "../models/ingredient";
 
 export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRecipeRepo, onSave: () => void }, { recipe: Recipe }> {

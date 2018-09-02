@@ -1,8 +1,9 @@
 import * as React from "react";
 import { Database } from "./Database";
 import { Redirect } from "react-router-dom";
-import { Panel, Button } from "react-bootstrap";
 
+import Panel from "react-bootstrap/lib/Panel";
+import Button from "react-bootstrap/lib/Button";
 
 export class Login extends React.Component<{ authenticate: (user: string) => void }, { error: boolean, username: string, password: string, authenticated: boolean }> {
     constructor(props: { authenticate: () => void }) {
