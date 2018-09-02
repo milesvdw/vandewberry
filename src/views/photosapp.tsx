@@ -1,5 +1,9 @@
 import * as React from "react";
-import { Navbar, NavItem, Nav } from "react-bootstrap";
+
+import Navbar from "react-bootstrap/lib/Navbar";
+import NavItem from "react-bootstrap/lib/NavItem";
+import Nav from "react-bootstrap/lib/Nav";
+
 import { Route, Switch } from "react-router-dom";
 import { PhotoViewer } from "./photoviewer";
 import { PhotoManager } from "./photomanager";

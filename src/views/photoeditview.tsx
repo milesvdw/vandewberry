@@ -1,5 +1,10 @@
 import * as React from "react";
-import { Row, Col, FormGroup, Button } from "react-bootstrap";
+
+import Row from "react-bootstrap/lib/Row";
+import Col from "react-bootstrap/lib/Col";
+import FormGroup from "react-bootstrap/lib/FormGroup";
+import Button from "react-bootstrap/lib/Button";
+
 import { Image } from "../models/image";
 import { Rotation } from "../models/rotation";
 import { IPhotoRepo } from "./photosapp";
