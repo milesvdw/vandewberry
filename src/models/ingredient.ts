@@ -8,6 +8,7 @@ export class Ingredient {
     public expires: boolean;
     public shelf_life: number;
     public status: string = "archived";
+    public household: string = "";
 
     public constructor(init?: Partial<Ingredient>) {
         Object.assign(this, init);

@@ -100,20 +100,9 @@ MongoClient.connect(uri, (err, client) => {
 
   passport.authenticationMiddleware = authenticationMiddleware
 
-  app.get('/api/photos', passport.authenticationMiddleware(), (req, res) => {
-    db.collection('photos').find().toArray((geterr, items) => {
-      res.send(ApiResponse(true, items));
-    });
-  });
-
-  app.get('/api/inventory', passport.authenticationMiddleware(), (req, res) => {
-    db.collection('inventory').find().toArray((geterr, items) => {
-      res.send(ApiResponse(true, items));
-    });
-  });
-
   app.post('/api/inventory', passport.authenticationMiddleware(), (req, res) => {
     req.body._id = ObjectId(req.body._id);
+    req.body.household = req.user.household;
     db.collection('inventory').save(req.body, (getErr, result) => {
       if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
         res.json(ApiResponse(true, result.ops[0]._id));
@@ -127,6 +116,7 @@ MongoClient.connect(uri, (err, client) => {
 
   app.post('/api/photos', passport.authenticationMiddleware(), (req, res) => {
     req.body._id = ObjectId(req.body._id);
+    req.body.household = req.user.household;
     db.collection('photos').save(req.body, (getErr, result) => {
       if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
         res.json(ApiResponse(true, result.ops[0]._id));
@@ -155,6 +145,7 @@ MongoClient.connect(uri, (err, client) => {
 
   app.post('/api/recipes', passport.authenticationMiddleware(), (req, res) => {
     req.body._id = ObjectId(req.body._id);
+    req.body.household = req.user.household;
     db.collection('recipes').save(req.body, (getErr, result) => {
       if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
         res.json(ApiResponse(true, result.ops[0]._id));
@@ -167,13 +158,19 @@ MongoClient.connect(uri, (err, client) => {
   });
 
   app.get('/api/photos', passport.authenticationMiddleware(), (req, res) => {
-    db.collection('photos').find().toArray((geterr, items) => {
+    db.collection('photos').find({ household: req.user.household }).toArray((geterr, items) => {
+      res.send(ApiResponse(true, items));
+    });
+  });
+
+  app.get('/api/inventory', passport.authenticationMiddleware(), (req, res) => {
+    db.collection('inventory').find({ household: req.user.household }).toArray((geterr, items) => {
       res.send(ApiResponse(true, items));
     });
   });
 
   app.get('/api/recipes', passport.authenticationMiddleware(), (req, res) => {
-    db.collection('recipes').find().toArray((geterr, items) => {
+    db.collection('recipes').find({ household: req.user.household }).toArray((geterr, items) => {
       res.send(ApiResponse(true, items));
     });
   });

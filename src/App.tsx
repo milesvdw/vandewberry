@@ -70,7 +70,7 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
 
     return (
       <div>
-        <Banner authenticated={this.state.authenticated} logout={this.logout} />
+        <Banner user={this.state.user} authenticated={this.state.authenticated} logout={this.logout} />
         <HashRouter>
           <Switch>
             <div>

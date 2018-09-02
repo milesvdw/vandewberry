@@ -9,7 +9,8 @@ export class Recipe {
     public name: string = "";
     public calories: number = 0;
     public lastEaten: Date  = new Date(3000,0);
-
+    public household: string = "";
+    
     public constructor(init?: Partial<Recipe>) {
         Object.assign(this, init);
 

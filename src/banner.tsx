@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Navbar, Nav, NavItem } from "react-bootstrap";
 
-export class Banner extends React.Component<{ authenticated: boolean, logout: (event: any) => void }> {
-    constructor(props: { authenticated: boolean, logout: (event: any) => void }) {
+export class Banner extends React.Component<{ user: string, authenticated: boolean, logout: (event: any) => void }> {
+    constructor(props: { user: string, authenticated: boolean, logout: (event: any) => void }) {
         super(props);
     }
 
@@ -17,6 +17,9 @@ export class Banner extends React.Component<{ authenticated: boolean, logout: (e
 
         return (
             <Navbar>
+                {/* <div className="pull-left">
+                    Welcome {this.props.user}
+                </div> */}
                 <Nav>
                     {navItems}
 

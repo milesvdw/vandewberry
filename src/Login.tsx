@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Database } from "./Database";
 import { Redirect } from "react-router-dom";
-import { Panel } from "react-bootstrap";
+import { Panel, Button } from "react-bootstrap";
 
 
 export class Login extends React.Component<{ authenticate: (user: string) => void }, { error: boolean, username: string, password: string, authenticated: boolean }> {
@@ -52,12 +52,12 @@ export class Login extends React.Component<{ authenticate: (user: string) => voi
                                 Password
                                     </label>
                             <input type='text' name='password' className='form-control' value={this.state.password} onChange={this.updateFields} />
-                            <button type="submit"
+                            <Button type="submit"
                                 className='classy-btn no-outline btn-round btn-press btn-default'
                                 style={{ marginLeft: '0', marginTop: '15px', float: 'right', fontSize: '14px', textShadow: 'none' }}
                             >
                                 Login
-                            </button>
+                            </Button>
                         </form>
                     </Panel.Body>
                 </Panel>
