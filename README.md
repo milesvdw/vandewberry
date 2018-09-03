@@ -1,7 +1,24 @@
 ## Table of Contents
 
+
+- [Development](#development-best-practices)
 - [Deploying to Production](#deploying-to-production)
 - [Running Locally](#running-locally)
+
+
+## Development Best Practices
+This is something of a passion project
+of mine, but now folks are maybe taking
+an interest, and we've got a few 
+collaborators. So, with that in mind,
+feel free to push minor modifications 
+directly to master for now, using
+your best judgement as to risk.
+For larger changes or feature additions,
+I request that you simply put up a PR
+for a few days just so that folks
+can see what's going in and 
+get a handle on things.
 
 ## Deploying To Production
 
