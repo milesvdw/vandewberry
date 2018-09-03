@@ -9,6 +9,7 @@ import { InventoryView } from "./views/inventoryview";
 export interface IRecipeRepo {
     state: { recipes: Recipe[] };
     deleteRecipe(recipe: Recipe): void;
+    shareRecipe(recipe: Recipe, household: string): void;
     saveRecipe(recipe: Recipe): void;
     refresh(): void;
 }
@@ -99,6 +100,10 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
             recipes.splice(existingRecipeIndex, 1);
             this.setState({ recipes });
         }
+    }
+
+    public shareRecipe(recipe: Recipe, household: string) {
+        recipe.Share(household);
     }
 
     public async saveRecipe(recipe: Recipe) {

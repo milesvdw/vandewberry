@@ -13,90 +13,42 @@ import { Recipe } from "../models/recipe";
 import { Material } from "../models/material";
 import { RecipeEditView } from "./recipeeditview";
 
-import FaTimesCircle from "react-icons/lib/fa/times-circle";
-import FaPencil from "react-icons/lib/fa/pencil";
 import FaPlus from "react-icons/lib/fa/plus";
 import FaSearch from "react-icons/lib/fa/search";
-import FaShoppingCart from "react-icons/lib/fa/shopping-cart";
-
 import { IRecipeRepo, IIngredientRepo } from "../FoodApp";
 import { Ingredient } from "../models/ingredient";
-import { compareIngredients } from "../utils/utils";
+import { RecipeDetailView } from "./RecipeDetailView";
 
-export class RecipesView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { editing: boolean, editRecipe: Recipe, searchQuery: string, currentSearchQuery: string }> {
+export class RecipesView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { sharing: boolean, editing: boolean, editRecipe: Recipe, shareHousehold: string, searchQuery: string, currentSearchQuery: string }> {
 
     constructor(props: { repo: IIngredientRepo & IRecipeRepo }) {
         super(props);
-        this.state = { editing: false, editRecipe: new Recipe(), searchQuery: "", currentSearchQuery: "" };
-
-        this.displayMaterials = this.displayMaterials.bind(this);
+        this.state = { sharing: false, editing: false, shareHousehold: "", editRecipe: new Recipe(), searchQuery: "", currentSearchQuery: "" };
         this.getAllRecipes = this.getAllRecipes.bind(this);
         this.getAvailableRecipes = this.getAvailableRecipes.bind(this);
         this.mapRecipesToRows = this.mapRecipesToRows.bind(this);
         this.getAllSearchedRecipes = this.getAllSearchedRecipes.bind(this);
         this.searchRecipes = this.searchRecipes.bind(this);
         this.searchCurrentRecipes = this.searchCurrentRecipes.bind(this);
-        this.addIngredientsToCart = this.addIngredientsToCart.bind(this);
+        this.shareRecipe = this.shareRecipe.bind(this);
+        this.editRecipe = this.editRecipe.bind(this);
+        this.updateShareHousehold = this.updateShareHousehold.bind(this);
     }
 
     private currentSearchInput: any;
 
     private searchInput: any;
 
-    private displayMaterials(materials: Material[]) {
-        let inventory = this.props.repo.state.ingredients.filter((i: Ingredient) => i.status === 'inventory');
-        return materials
-            .map((material: Material, index: number) => {
-
-                let materialIsMissingMarker = "";
-                let available = material.isAvailable(inventory);
-                if (material.required && !available) {
-                    materialIsMissingMarker = "list-group-item-danger"
-                } else if (!material.required && !available) {
-                    materialIsMissingMarker = "list-group-item-warning"
-                }
-
-                return (
-                    <li className={"list-group-item " + materialIsMissingMarker} key={index} >
-                        <span>
-                            {material.print()}
-                        </span>
-                    </li>
-                );
-            });
+    private editRecipe(recipe: Recipe) {
+        this.setState({ editRecipe: recipe, editing: true })
+    }
+    private shareRecipe(recipe: Recipe) {
+        this.setState({ editRecipe: recipe, sharing: true })
     }
 
-    private addIngredientsToCart(materials: Material[]) {
-        // 1. Filter list of materials to those which are made exclusively of ingredients not in the inventory
-        // 2. Add the first ingredient of each of those to the shopping list
-        // Moving an existing ingredient if possible
-        // Creating an ingredient if not possible
-
-        // For each material:
-        //   find the subset of the material's ingredients have an existing archived match in the database
-        //   grab the first of these, 
-
-        let inventoryOrShopping = this.props.repo.state.ingredients.filter((i: Ingredient) => i.status !== 'archived');
-        let archivedIngredients = this.props.repo.state.ingredients.filter((i: Ingredient) => i.status === 'archived');
-
-        let neededMaterials = materials.filter((m: Material) => !m.isAvailable(inventoryOrShopping));
-
-        neededMaterials.forEach((m: Material) => {
-            // if the material can be fullfilled by an existing ingredient, we'll use that.
-            // oh btw we know that we only have to look in the archive to find those, because
-            // it wasn't in inventory or shopping
-            let firstExistingMatch = archivedIngredients.find((ai: Ingredient) => m.ingredients.some((i: Ingredient) => compareIngredients(i, ai)));
-
-            if (firstExistingMatch) {
-                firstExistingMatch.status = 'shopping';
-                this.props.repo.saveIngredient(firstExistingMatch);
-            } else {
-                let ingredient = new Ingredient(m.ingredients[0]);
-                ingredient._id = undefined;
-                ingredient.status = 'shopping';
-                this.props.repo.saveIngredient(ingredient);
-            }
-        });
+    private updateShareHousehold(event: any) {
+        let shareHousehold: string = event.target.value as string;
+        return this.setState({ shareHousehold });
     }
 
     private mapRecipesToRows(recipes: Recipe[]) {
@@ -105,62 +57,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                 return recipe1.name.localeCompare(recipe2.name);
             })
             .map((recipe: Recipe) => {
-
-                let materials = this.displayMaterials(recipe.materials);
-
-                return (
-                    <Row className="recipe-row" key={recipe._id}>
-                        <Panel defaultExpanded={false} className='no-border'>
-                            <Panel.Toggle componentClass="a" className="no-border btn btn-block btn-secondary">
-                                {recipe.name}
-                            </Panel.Toggle>
-                            <Panel.Collapse>
-                                <div id={'possible_recipe_details_' + recipe._id}>
-                                    <ul className="list-group well">
-                                        <li className="button-container">
-                                            <button className='btn-row'
-                                                onClick={(e: any) => {
-                                                    e.stopPropagation();
-                                                    this.setState({ editRecipe: recipe, editing: true })
-                                                }}>
-                                                <FaPencil />
-                                            </button>
-                                            <button className='btn-row'
-                                                onClick={() => { this.addIngredientsToCart(recipe.materials) }}
-                                            >
-                                                <FaShoppingCart />
-                                            </button>
-                                            <button className='btn-row'
-                                                onClick={() => {
-                                                    if (confirm('Delete this recipe?')) { this.props.repo.deleteRecipe(recipe) }
-                                                }}>
-                                                <FaTimesCircle
-                                                />
-                                            </button>
-                                        </li>
-                                        <li className="list-group-item" style={{ textAlign: 'center' }}>
-                                            Calories: {recipe.calories}
-                                        </li>
-                                        <li className="list-group-item" style={{ textAlign: 'center' }}>
-                                            <button
-                                                className="classy-btn no-outline btn-round btn-press btn-default"
-                                                onClick={() => {
-                                                    recipe.lastEaten = new Date(Date.now());
-                                                    this.props.repo.saveRecipe(recipe);
-                                                }}>
-                                                Last Eaten: {recipe.lastEatenString()}
-                                            </button>
-                                        </li>
-                                        <li className="list-group-item list-group-item-info">
-                                            {recipe.description}
-                                        </li>
-                                        {materials}
-                                    </ul>
-                                </div>
-                            </Panel.Collapse>
-                        </Panel>
-                    </Row>
-                );
+                return <RecipeDetailView key={recipe._id} repo={this.props.repo} recipe={recipe} shareRecipe={this.shareRecipe} editRecipe={this.editRecipe} />
             });
     }
 
@@ -230,6 +127,26 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                                         onSave={() => {
                                             this.setState({ editing: false })
                                         }} />
+                                </Col>
+                            </Row>
+                        </Modal.Body>
+                    </Modal>
+                    <Modal show={this.state.sharing} onHide={() => this.setState({ sharing: false })}>
+                        <Modal.Header>
+                            <Modal.Title className="text-center">Share Recipe</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Row>
+                                <Col sm={6} id='new_recipe'>
+                                    <input type='text' name='shareHousehold' className='form-control' value={this.state.shareHousehold} onChange={this.updateShareHousehold} />
+
+                                </Col>
+                                <Col sm={6}>
+                                    <Button bsSize='large' bsStyle='info' className='pull-right'
+                                        onClick={() => {
+                                            this.props.repo.shareRecipe(this.state.editRecipe, this.state.shareHousehold);
+                                            this.setState({ sharing: false })
+                                        }}> Save</Button>
                                 </Col>
                             </Row>
                         </Modal.Body>

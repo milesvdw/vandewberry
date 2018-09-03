@@ -55,6 +55,23 @@ export class Recipe {
         });
     }
 
+    public Share(household: string): Promise<Recipe> {
+        let recipe = this.toLowerCaseRecipe();
+        recipe.household = household;
+        return Database.ApiCall('/api/recipes/share', {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(recipe),
+            method: 'post',
+        }).then(async (id: string) => {
+            recipe._id = id;
+            return recipe;
+        });
+    }
+
+
     public Delete(): Promise<boolean> {
         return Database.ApiCall('/api/recipes', {
             headers: {
