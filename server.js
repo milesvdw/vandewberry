@@ -44,6 +44,7 @@ let authenticationMiddleware = () => {
 
 if (process.env.NODE_ENV === 'production' || testProd) {
   app.use(express.static('build'));
+  app.use(express.static('public'));
   port = process.env.PORT || 5000;
 }
 
