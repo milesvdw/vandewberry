@@ -4,7 +4,7 @@ import './App.css';
 import './pictures.css';
 import { Banner } from './Banner';
 import { HashRouter, Route, Switch } from "react-router-dom"
-import { HomeView } from './views/homeview';
+import { HomeApp } from './HomeApp';
 import { FoodApp } from './FoodApp';
 import { Login } from './Login';
 import { IApiResponse } from './Database';
@@ -43,27 +43,29 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
     this.setState({ authenticated: true, user });
     this.foodApp && this.foodApp.refresh();
     this.photoApp && this.photoApp.refresh();
+    this.homeApp && this.homeApp.refresh();
   }
 
   private foodApp: FoodApp | null;
   private photoApp: PhotosApp | null;
+  private homeApp: HomeApp | null;
+
 
 
 
 
   public render() {
+
     let showIfLoggedIn = (
-        [<FoodApp key="foodApp" ref={thing => { this.foodApp = thing }} />,
-        <Route key="photosRoute" path="/photos"
+      <div>
+        <FoodApp ref={fa => { this.foodApp = fa }} />
+        <HomeApp ref={ha => { this.homeApp = ha }} />
+        <Route path="/photos"
           component={() =>
             <PhotosApp ref={thing => { this.photoApp = thing }} />
           }
-        />,
-        <Route key="homeRoute" path="/home"
-          component={() =>
-            <HomeView />
-          }
-        />]
+        />
+      </div>
     )
 
     return (
@@ -71,19 +73,20 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
         <Banner user={this.state.user} authenticated={this.state.authenticated} logout={this.logout} />
         <HashRouter>
           <Switch>
-              {this.state.authenticated && showIfLoggedIn}
-              {!this.state.authenticated &&
-                [<Route key="createAccountroute" path="/createAccount"
-                  component={() =>
-                    <CreateAccount authenticate={this.authenticate} />
-                  }
-                />,
-                <Route key="loginRoute" path="/"
-                  component={() =>
-                    <Login authenticate={this.authenticate} />
-                  }
-                />]
-              }
+            {this.state.authenticated && showIfLoggedIn}
+
+            {!this.state.authenticated &&
+              [<Route key="createAccountroute" path="/createAccount"
+                component={() =>
+                  <CreateAccount authenticate={this.authenticate} />
+                }
+              />,
+              <Route key="loginRoute" path="/"
+                component={() =>
+                  <Login authenticate={this.authenticate} />
+                }
+              />]
+            }
           </Switch>
         </HashRouter>
       </div>

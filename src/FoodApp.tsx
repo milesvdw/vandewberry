@@ -27,6 +27,7 @@ export interface IIngredientRepo {
 export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredients: Ingredient[] }> implements IRecipeRepo, IIngredientRepo {
     constructor(props: {}) {
         super(props);
+        
         this.state = { recipes: [], ingredients: [] };
 
         this.deleteRecipe = this.deleteRecipe.bind(this);
@@ -39,6 +40,7 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
     public componentDidMount() {
         this.refresh();
     }
+
     // TODO: Consider splitting this refresh between recipes and ingredients
     public refresh() {
         Database.GetRecipes()

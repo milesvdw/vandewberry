@@ -189,6 +189,13 @@ MongoClient.connect(uri, (err, client) => {
     });
   });
 
+  app.get('/api/householdMembers', passport.authenticationMiddleware(), (req, res) => {
+    db.collection('users').find({ household: req.user.household }).toArray((geterr, items) => {
+      console.log(items.map((user) => { return user.user }));
+      res.send(ApiResponse(true, items.map((user) => { return user.user })));
+    });
+  });
+
   app.post('/api/login',
     passport.authenticate('local'),
     (req, res) => {

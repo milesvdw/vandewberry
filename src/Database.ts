@@ -21,6 +21,11 @@ export class Database {
             .then((json: any) => json.map((item: any) => new Image(item)))
     }
 
+    public static GetHouseholdMembers(): Promise<string[]> {
+        let url: string = "/api/householdMembers";
+        return this.ApiCall(url);
+    }
+
     public static GetRecipes(): Promise<Recipe[]> {
         let url: string = "/api/recipes";
         return this.ApiCall(url)
