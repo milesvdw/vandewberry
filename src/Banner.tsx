@@ -20,10 +20,7 @@ export class Banner extends React.Component<{ user: string, authenticated: boole
 
         return (
             <Navbar>
-                <p className="navbar-text" style={{marginRight: "10px"}} >Welcome {this.props.user}!</p> 
-                {/* <div className="pull-left">
-                    Welcome {this.props.user}
-                </div> */}
+                { this.props.authenticated && <p className="navbar-text" style={{marginRight: "10px"}} >Welcome {this.props.user}!</p> }
                 <Nav>
                     {navItems}
 
