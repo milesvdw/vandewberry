@@ -222,7 +222,7 @@ MongoClient.connect(uri, (err, client) => {
   );
 
   app.get('/api/checkSession', authenticationMiddleware(), (req, res, next) => {
-    res.json(ApiResponse(true, req.user.name));
+    res.json(ApiResponse(true, req.user.user));
   })
 
   app.listen(port, () => console.log(`Listening on port ${port}`));

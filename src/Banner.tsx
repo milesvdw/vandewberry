@@ -12,14 +12,15 @@ export class Banner extends React.Component<{ user: string, authenticated: boole
     public render() {
         let navItems = [] as JSX.Element[];
         if (this.props.authenticated) {
-            navItems.push(<NavItem eventKey={1} href="#logout" onClick={this.props.logout}>Logout</NavItem>);
+            navItems.push(<NavItem key="logout" eventKey={1} href="#logout" onClick={this.props.logout}>Logout</NavItem>);
         } else {
-            navItems.push(<NavItem eventKey={1} href="#login">Login</NavItem>);
-            navItems.push(<NavItem eventKey={1} href="#createAccount">Create Account</NavItem>);
+            navItems.push(<NavItem key="login" eventKey={1} href="#login">Login</NavItem>);
+            navItems.push(<NavItem key="createAccount" eventKey={1} href="#createAccount">Create Account</NavItem>);
         }
 
         return (
             <Navbar>
+                <p className="navbar-text" style={{marginRight: "10px"}} >Welcome {this.props.user}!</p> 
                 {/* <div className="pull-left">
                     Welcome {this.props.user}
                 </div> */}

@@ -53,19 +53,17 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
 
   public render() {
     let showIfLoggedIn = (
-      <div id='protected'>
-        <FoodApp ref={thing => { this.foodApp = thing }} />
-        <Route path="/photos"
+        [<FoodApp key="foodApp" ref={thing => { this.foodApp = thing }} />,
+        <Route key="photosRoute" path="/photos"
           component={() =>
             <PhotosApp ref={thing => { this.photoApp = thing }} />
           }
-        />
-        <Route path="/home"
+        />,
+        <Route key="homeRoute" path="/home"
           component={() =>
             <HomeView />
           }
-        />
-      </div>
+        />]
     )
 
     return (
@@ -73,23 +71,19 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
         <Banner user={this.state.user} authenticated={this.state.authenticated} logout={this.logout} />
         <HashRouter>
           <Switch>
-            <div>
               {this.state.authenticated && showIfLoggedIn}
               {!this.state.authenticated &&
-                <Switch>
-                  <Route path="/createAccount"
-                    component={() =>
-                      <CreateAccount authenticate={this.authenticate} />
-                    }
-                  />
-                  <Route path="/"
-                    component={() =>
-                      <Login authenticate={this.authenticate} />
-                    }
-                  />
-                </Switch>
+                [<Route key="createAccountroute" path="/createAccount"
+                  component={() =>
+                    <CreateAccount authenticate={this.authenticate} />
+                  }
+                />,
+                <Route key="loginRoute" path="/"
+                  component={() =>
+                    <Login authenticate={this.authenticate} />
+                  }
+                />]
               }
-            </div>
           </Switch>
         </HashRouter>
       </div>
