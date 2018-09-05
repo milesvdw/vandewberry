@@ -123,7 +123,7 @@ export class RecipeDetailView extends React.Component<{ repo: IIngredientRepo & 
             <Row className="recipe-row" key={this.props.recipe._id}>
                 <Panel defaultExpanded={false} className='no-border'>
                     <Panel.Toggle componentClass="a" className="no-border btn btn-block btn-secondary">
-                        {this.props.recipe.name}
+                        {this.props.recipe.name.capitalize()}
                     </Panel.Toggle>
                     <Panel.Collapse>
                         <div id={'possible_recipe_details_' + this.props.recipe._id}>

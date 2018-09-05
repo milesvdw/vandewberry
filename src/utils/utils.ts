@@ -28,16 +28,14 @@ declare global {
     }
 }
 
-Array.prototype.unique = function<T>(): T[] {
+Array.prototype.unique = function <T>(): T[] {
     return this.filter((value: any, index: number) => this.indexOf(value) === index);
 }
 
 
 
-String.prototype.capitalize = function() {
-    let finalString = "";
-    this.split(" ").map(x =>
-        finalString = finalString + x.charAt(0).toUpperCase() + x.substr(1).toLowerCase() + " "
-    );
-    return finalString.substring(0, finalString.length - 1);
+String.prototype.capitalize = function () {
+    return this.replace(/(\b)+\w/g,
+        (txt) =>  { 
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
