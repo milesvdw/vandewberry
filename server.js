@@ -208,9 +208,15 @@ MongoClient.connect(uri, (err, client) => {
       const salt = bcrypt.genSaltSync(10);
       const hash = bcrypt.hashSync(req.body.password, salt)
 
+      db.collection('users').find({ user: req.body.username }).toArray((geterr, items) => {
+        if (items.length > 0) {
+          res.send(ApiResponse(false, false));
+          return;
+        }
+        db.collection('users').save({ user: req.body.username, passwordHash: hash, household: req.body.household });
+        res.send(ApiResponse(false, true));
+      });
 
-      db.collection('users').save({ user: req.body.username, passwordHash: hash, household: req.body.household });
-      res.send(ApiResponse(false, true));
     }
   );
 
