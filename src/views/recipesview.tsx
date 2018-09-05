@@ -19,11 +19,11 @@ import { IRecipeRepo, IIngredientRepo } from "../FoodApp";
 import { Ingredient } from "../models/ingredient";
 import { RecipeDetailView } from "./RecipeDetailView";
 
-export class RecipesView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { sharing: boolean, editing: boolean, editRecipe: Recipe, shareHousehold: string, searchQuery: string, currentSearchQuery: string }> {
+export class RecipesView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { suggesting: boolean, sharing: boolean, editing: boolean, editRecipe: Recipe, shareHousehold: string, searchQuery: string, currentSearchQuery: string }> {
 
     constructor(props: { repo: IIngredientRepo & IRecipeRepo }) {
         super(props);
-        this.state = { sharing: false, editing: false, shareHousehold: "", editRecipe: new Recipe(), searchQuery: "", currentSearchQuery: "" };
+        this.state = { sharing: false, suggesting: false, editing: false, shareHousehold: "", editRecipe: new Recipe(), searchQuery: "", currentSearchQuery: "" };
         this.getAllRecipes = this.getAllRecipes.bind(this);
         this.getAvailableRecipes = this.getAvailableRecipes.bind(this);
         this.mapRecipesToRows = this.mapRecipesToRows.bind(this);
@@ -151,6 +151,18 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                             </Row>
                         </Modal.Body>
                     </Modal>
+                    <Modal show={this.state.suggesting} onHide={() => this.setState({ suggesting: false })}>
+                        <Modal.Header>
+                            <Modal.Title className="text-center">Suggestions</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Row>
+                                <Col sm={6} id='new_recipe'>
+                                    Coming Soon
+                                </Col>
+                            </Row>
+                        </Modal.Body>
+                    </Modal>
                     <Row>
                         <Col sm={6}>
                             <Panel>
@@ -168,6 +180,18 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                                     <h4>Current Possibilities</h4>
                                 </Panel.Heading>
                                 <Panel.Body>
+                                    <Row className="recipe-row">
+                                        <Col className="text-center">
+                                            <Button
+                                                className='classy-btn no-outline btn-round btn-press btn-default'
+                                                style={{ textShadow: 'none' }}
+                                                onClick={() => {
+                                                    this.setState({ suggesting: true });
+                                                }} >
+                                                Need Suggestions?
+                                            </Button>
+                                        </Col>
+                                    </Row>
                                     {availableRecipes}
                                 </Panel.Body>
                             </Panel>
