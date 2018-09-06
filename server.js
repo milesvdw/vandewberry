@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoClient = require('mongodb').MongoClient;
 const MongoStore = require('connect-mongo')(session)
+const https = require('https');
 // parse application/json
 
 // TODO: Salting technique
@@ -231,6 +232,43 @@ MongoClient.connect(uri, (err, client) => {
         }
 
       });
+    }
+  );
+
+  app.post('/api/newIssue',
+    (req, res) => {
+      if (!req.body.title || !req.body.body){
+        res.json(ApiResponse(true, 'Missing Field'))
+      }
+      else{
+        var token = process.env.BUG_TRACKER_TOKEN
+        var options = {
+          host: "api.github.com",
+          path: "/repos/milesvdw/vandewberry/issues",
+          method: "POST",
+          headers: {
+            'Accept': 'application/vnd.github.v3+json',
+            'Authorization': 'token ' + token,
+            'User-Agent': 'vandewberryBugReporter',
+          }
+        }
+        var request = https.request(options, function(res2) {
+          var responseString = "";
+          res2.on("data", function (data) {
+            responseString += data;
+          })
+          res2.on("end", function() {
+            // console.log(responseString);
+          })
+        })
+        var payload = {
+          title: req.body.title, 
+          body: req.body.body, 
+        };
+        request.write(JSON.stringify(payload));
+        request.end();
+        res.json(ApiResponse(true, 'Bug Submitted Successfully'));
+      }
     }
   );
 

@@ -31,5 +31,8 @@
       "config/**/*.js",
       "node_modules/**/*.ts"
     ]
+  },
+  "jsRules": {
+    "object-literal-sort-keys": false //Disable for javascript
   }
 }

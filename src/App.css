@@ -132,6 +132,11 @@ checkbox {
   box-shadow: none;
 }
 
+.bug-report-field {
+  display: inline-block;
+  margin: 10px;
+}
+
 .button-container{
   display: flex;
   margin-bottom: 10px;

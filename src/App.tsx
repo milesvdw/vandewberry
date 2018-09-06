@@ -10,6 +10,7 @@ import { Login } from './Login';
 import { IApiResponse } from './Database';
 import { PhotosApp } from './views/photosapp';
 import { CreateAccount } from './CreateAccount';
+import { Footer } from './Footer';
 
 class App extends React.Component<{}, { error: boolean, authenticated: boolean, user: string }> {
   constructor(props: {}) {
@@ -89,6 +90,7 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
             }
           </Switch>
         </HashRouter>
+        <Footer/>
       </div>
     );
   }
