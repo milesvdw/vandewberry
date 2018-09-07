@@ -14,6 +14,8 @@ const PhotosApi = require('./photosApi');
 const UsersApi = require('./usersApi');
 const ApiResponse = require('./apiResponse').ApiResponse
 const https = require('https');
+var mysql = require('mysql');
+var util = require('util')
 // parse application/json
 
 // TODO: Salting technique
@@ -46,12 +48,43 @@ if (process.env.NODE_ENV === 'production' || testProd) {
   port = process.env.PORT || 5000;
 }
 
+var connectionConfig = {
+  connectionLimit: 9,
+  host: process.env.DATABASE_URL,
+  user: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  database: "heroku_bbb26e4d4bb66eb",
+  port: '3306'
+}
+
+const pool = mysql.createPool(connectionConfig)
+pool.getConnection((err, connection) => {
+  if (err) {
+    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+      console.error('Database connection was closed.')
+    }
+    if (err.code === 'ER_CON_COUNT_ERROR') {
+      console.error('Database has too many connections.')
+    }
+    if (err.code === 'ECONNREFUSED') {
+      console.error('Database connection was refused.')
+    }
+  }
+  if (connection) connection.release()
+  return
+})
+pool.query = util.promisify(pool.query) // dark magic
+
 MongoClient.connect(uri, (err, client) => {
   if (err) {
     throw err;
   }
 
   let db = client.db('heroku_6ftkk7t9');
+
+
+
+
 
   app.use(session({
     secret: process.env.SECRET,
@@ -64,36 +97,41 @@ MongoClient.connect(uri, (err, client) => {
   app.use(passport.initialize())
   app.use(passport.session())
 
-
-
   passport.use(new LocalStrategy(
     async (username, password, done) => {
-      users = await db.collection('users').find({ user: username }).toArray()
 
-      if (users.length === 1) {
-        // Always use hashed passwords and fixed time comparison
-        bcrypt.compare(password, users[0].passwordHash, (cryptErr, isValid) => {
-          if (cryptErr) {
-            return done(cryptErr)
-          }
-          if (!isValid) {
-            return done(null, false)
-          }
-          return done(null, users[0])
-        })
-      } else {
+      try {
+        var users = await pool.query("SELECT * from users WHERE username = \'" + username + "'");
+        console.log(users);
+        if (users.length === 1) {
+          // Always use hashed passwords and fixed time comparison
+          bcrypt.compare(password, users[0].password, (cryptErr, isValid) => {
+            if (cryptErr) {
+              return done(cryptErr)
+            }
+            if (!isValid) {
+              return done(null, false)
+            }
+            return done(null, users[0])
+          })
+        } else {
 
-        return done(null, false)
+          return done(null, false)
 
+        }
+      } catch (err) {
+        throw new Error(err)
       }
+
+      connection.end();
     }))
 
   passport.serializeUser((user, done) => {
-    done(null, user._id);
+    done(null, user.id);
   });
 
   passport.deserializeUser(async (id, done) => {
-    users = await db.collection('users').find({ _id: ObjectId(id) }).toArray()
+    var users = await pool.query("SELECT * from users WHERE id = \'" + id + "'");
     done(err, users[0]);
   });
 
@@ -115,16 +153,18 @@ MongoClient.connect(uri, (err, client) => {
   app.get('/api/inventory', passport.authenticationMiddleware(), InventoryApi.get(db));
   app.post('/api/inventory', passport.authenticationMiddleware(), InventoryApi.post(db));
   app.delete('/api/inventory', passport.authenticationMiddleware(), InventoryApi.delete(db));
-
-  app.get('/api/householdMembers', passport.authenticationMiddleware(), (req, res) => {
-    db.collection('users').find({ household: req.user.household }).toArray((geterr, items) => {
-      console.log(items.map((user) => { return user.user }));
-      res.send(ApiResponse(true, items.map((user) => { return user.user })));
-    });
+ 
+  app.get('/api/householdMembers', passport.authenticationMiddleware(), async (req, res) => {
+    try {
+      var users = await pool.query("SELECT * from users WHERE householdId = \'" + req.user.householdId + "'");
+      res.send(ApiResponse(true, users.map((user) => { return user.username })));
+    } catch (err) {
+      throw new Error(err)
+    }
   });
 
   // USERS
-  app.post('/api/login', passport.authenticate('local'), UsersApi.login(db));
+  app.post('/api/login', passport.authenticate('local'), UsersApi.login(connectionConfig));
   app.post('/api/createAccount', UsersApi.createAccount(db));
   app.get('/api/logout', UsersApi.logout(db));
 

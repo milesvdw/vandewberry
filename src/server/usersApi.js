@@ -6,7 +6,7 @@ var login = (db) => (req, res) => {
     res.send(ApiResponse(true, null))
 }
 
-var createAccount = (db) => (req, res) => {
+var createAccount = (connectionConfig) => (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(req.body.password, salt)
 
