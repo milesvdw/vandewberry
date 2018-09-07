@@ -3,6 +3,9 @@
   "name": "vandewberry",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "8.9.4"
+  },
   "dependencies": {
     "bcrypt": "^3.0.0",
     "body-parser": "^1.18.3",
