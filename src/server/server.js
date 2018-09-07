@@ -8,9 +8,11 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoClient = require('mongodb').MongoClient;
 const MongoStore = require('connect-mongo')(session)
-const RecipeApi = require('recipeApi');
-const InventoryApi = require('inventoryApi');
-const InventoryApi = require('photosApi');
+const RecipeApi = require('./recipesApi');
+const InventoryApi = require('./inventoryApi');
+const PhotosApi = require('./photosApi');
+const UsersApi = require('./usersApi');
+const ApiResponse = require('./apiResponse').ApiResponse
 const https = require('https');
 // parse application/json
 
@@ -21,14 +23,6 @@ const https = require('https');
 // const passwordHash = bcrypt.hashSync(myPlaintextPassword, salt)
 
 const app = express();
-
-
-
-
-let ApiResponse = (authenticated, payload) => {
-  return { authenticated, payload };
-}
-
 
 let port = 5001; // process.env.PORT || 
 
@@ -107,20 +101,20 @@ MongoClient.connect(uri, (err, client) => {
 
 
   // RECIPES
-  app.get('/api/recipes', passport.authenticationMiddleware(), RecipeApi.get);
-  app.delete('/api/recipes', passport.authenticationMiddleware(), RecipeApi.delete);
-  app.post('/api/recipes', passport.authenticationMiddleware(), RecipeApi.post);
-  app.post('/api/recipes/share', passport.authenticationMiddleware(), RecipeApi.share);
+  app.get('/api/recipes', passport.authenticationMiddleware(), RecipeApi.get(db));
+  app.delete('/api/recipes', passport.authenticationMiddleware(), RecipeApi.delete(db));
+  app.post('/api/recipes', passport.authenticationMiddleware(), RecipeApi.post(db));
+  app.post('/api/recipes/share', passport.authenticationMiddleware(), RecipeApi.share(db));
 
   // PHOTOS
-  app.get('/api/photos', passport.authenticationMiddleware(), PhotosApi.get);
-  app.post('/api/photos', passport.authenticationMiddleware(), PhotosApi.post);
-  app.delete('/api/photos', passport.authenticationMiddleware(), PhotosApi.delete);
+  app.get('/api/photos', passport.authenticationMiddleware(), PhotosApi.get(db));
+  app.post('/api/photos', passport.authenticationMiddleware(), PhotosApi.post(db));
+  app.delete('/api/photos', passport.authenticationMiddleware(), PhotosApi.delete(db));
 
   // INVENTORY
-  app.get('/api/inventory', passport.authenticationMiddleware(), InventoryApi.get);
-  app.post('/api/inventory', passport.authenticationMiddleware(), InventoryApi.post);
-  app.delete('/api/inventory', passport.authenticationMiddleware(), InventoryApi.delete);
+  app.get('/api/inventory', passport.authenticationMiddleware(), InventoryApi.get(db));
+  app.post('/api/inventory', passport.authenticationMiddleware(), InventoryApi.post(db));
+  app.delete('/api/inventory', passport.authenticationMiddleware(), InventoryApi.delete(db));
 
   app.get('/api/householdMembers', passport.authenticationMiddleware(), (req, res) => {
     db.collection('users').find({ household: req.user.household }).toArray((geterr, items) => {
@@ -130,9 +124,9 @@ MongoClient.connect(uri, (err, client) => {
   });
 
   // USERS
-  app.post('/api/login', passport.authenticate('local'), UsersApi.login);
-  app.post('/api/createAccount', UsersApi.createAccount);
-  app.get('/api/logout', UsersApi.logout);
+  app.post('/api/login', passport.authenticate('local'), UsersApi.login(db));
+  app.post('/api/createAccount', UsersApi.createAccount(db));
+  app.get('/api/logout', UsersApi.logout(db));
 
   app.post('/api/newIssue',
     (req, res) => {
@@ -177,17 +171,4 @@ MongoClient.connect(uri, (err, client) => {
 
   app.listen(port, () => console.log(`Listening on port ${port}`));
 
-});
-
-var mysql = require('mysql');
-
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "yourusername",
-  password: "yourpassword"
-});
-
-con.connect(function (err) {
-  if (err) throw err;
-  console.log("Connected!");
 });

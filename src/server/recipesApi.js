@@ -1,9 +1,11 @@
-var deleteRecipe = (req, res) => {
+const ApiResponse = require('./apiResponse').ApiResponse
+
+var deleteRecipe = (db) => (req, res) => {
     db.collection('recipes').remove({ "_id": ObjectId(req.body._id) });
     res.json(ApiResponse(true, null));
 }
 
-var post = (req, res) => {
+var post = (db) => (req, res) => {
     req.body._id = ObjectId(req.body._id);
     req.body.household = req.user.household;
     db.collection('recipes').save(req.body, (getErr, result) => {
@@ -17,7 +19,7 @@ var post = (req, res) => {
     });
 }
 
-var share = (req, res) => {
+var share = (db) => (req, res) => {
     req.body._id = ObjectId(req.body._id);
     db.collection('recipes').save(req.body, (getErr, result) => {
         if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
@@ -30,7 +32,7 @@ var share = (req, res) => {
     });
 }
 
-var get = (req, res) => {
+var get = (db) => (req, res) => {
     db.collection('recipes').find({ household: req.user.household }).toArray((geterr, items) => {
         res.send(ApiResponse(true, items));
     });

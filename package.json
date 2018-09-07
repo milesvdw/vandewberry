@@ -27,7 +27,7 @@
   },
   "scripts": {
     "local-start": "react-scripts-ts start",
-    "start": "node server.js",
+    "start": "node src/server/server.js",
     "prepare": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"

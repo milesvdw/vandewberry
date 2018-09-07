@@ -1,9 +1,12 @@
-var deleteItem = (req, res) => {
+
+const ApiResponse = require('./apiResponse').ApiResponse
+
+var deleteItem = (db) => (req, res) => {
     db.collection('inventory').remove({ "_id": ObjectId(req.body._id) });
     res.json(ApiResponse(true, null));
 }
 
-var post = (req, res) => (req, res) => {
+var post = (db) => (req, res) => {
     req.body._id = ObjectId(req.body._id);
     req.body.household = req.user.household;
     db.collection('inventory').save(req.body, (getErr, result) => {
@@ -17,13 +20,12 @@ var post = (req, res) => (req, res) => {
     });
 }
 
-var get = (req, res) => {
+var get = (db) => (req, res) => {
     db.collection('inventory').find({ household: req.user.household }).toArray((geterr, items) => {
         res.send(ApiResponse(true, items));
     });
 }
 
-module.exports.share = share;
 module.exports.delete = deleteItem;
 module.exports.post = post;
 module.exports.get = get;
