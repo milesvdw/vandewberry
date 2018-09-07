@@ -129,8 +129,6 @@ MongoClient.connect(uri, (err, client) => {
       } catch (err) {
         throw new Error(err)
       }
-
-      connection.end();
     }))
 
   passport.serializeUser((user, done) => {
@@ -158,7 +156,7 @@ MongoClient.connect(uri, (err, client) => {
 
   // INVENTORY
   app.get('/api/inventory', passport.authenticationMiddleware(), InventoryApi.get(pool));
-  app.post('/api/inventory', passport.authenticationMiddleware(), InventoryApi.post(db));
+  app.post('/api/inventory', passport.authenticationMiddleware(), InventoryApi.post(pool));
   app.delete('/api/inventory', passport.authenticationMiddleware(), InventoryApi.delete(db));
 
   app.get('/api/householdMembers', passport.authenticationMiddleware(), async (req, res) => {

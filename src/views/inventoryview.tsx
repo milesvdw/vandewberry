@@ -22,7 +22,7 @@ import FaPencil from "react-icons/lib/fa/pencil";
 import FaSearch from "react-icons/lib/fa/search";
 
 import { IIngredientRepo, IRecipeRepo } from "../FoodApp";
-import { Ingredient } from "../models/ingredient";
+import { Ingredient, STATUS } from "../models/ingredient";
 import { IngredientEditView } from "./ingredienteditview";
 
 // NOTE: mode should be 'editing' 'deleting' or 'choosingEdit'
@@ -53,7 +53,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
     }
 
     private renderShoppingRow(ingredient: Ingredient) {
-        return (<Row key={ingredient._id}>
+        return (<Row key={ingredient.id}>
             <span className="btn btn-block btn-secondary">
                 {this.showTransferButtons() && <Button style={{ marginTop: '0px', marginLeft: '2px' }}
                     bsSize='xsmall'
@@ -81,7 +81,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
     }
 
     private renderArchiveRow(ingredient: Ingredient) {
-        return (<Row key={ingredient._id}>
+        return (<Row key={ingredient.id}>
             <span className="btn btn-block btn-secondary">
 
                 {this.showTransferButtons() && <Button style={{ marginTop: '0px', marginLeft: '2px' }}
@@ -127,7 +127,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
     }
 
     private renderInventoryRow(ingredient: Ingredient) {
-        return (<Row key={ingredient._id}>
+        return (<Row key={ingredient.id}>
             <span className="btn btn-block btn-secondary">
 
                 {ingredient.name}
@@ -151,7 +151,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                 <ul style={{ padding: 0 }}>
                     <MenuItem eventKey="1" onClick={() => {
                         let ingredient = new Ingredient();
-                        ingredient.status = 'inventory';
+                        ingredient.statusID = STATUS.INVENTORY;;
                         this.setState({ editIngredient: ingredient, mode: "editing" });
                         document.body.click(); // HACK ALERT! This manually closes the popover after the user has selected an option
                     }}>Add</MenuItem>
@@ -221,23 +221,23 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
     public render() {
 
         let archivedRows = this.getAllSearchedIngredients(this.state.searchQuery, this.props.repo.state.ingredients)
-            .filter((ingredient: Ingredient) => ingredient.status === 'archived')
+            .filter((ingredient: Ingredient) => ingredient.statusID === STATUS.ARCHIVED)
             .map((ingredient) => this.renderArchiveRow(ingredient));
 
         let shoppingRows;
         if (this.state.groupByCategory) {
 
             shoppingRows = this.renderGroups(this.getAllSearchedIngredients(this.state.searchQuery, this.props.repo.state.ingredients)
-                .filter((ingredient: Ingredient) => ingredient.status === 'shopping'));
+                .filter((ingredient: Ingredient) => ingredient.statusID === STATUS.SHOPPING));
         } else {
             shoppingRows = this.getAllSearchedIngredients(this.state.searchQuery, this.props.repo.state.ingredients)
-                .filter((ingredient: Ingredient) => ingredient.status === 'shopping')
+                .filter((ingredient: Ingredient) => ingredient.statusID === STATUS.SHOPPING)
                 .map((ingredient) => this.renderShoppingRow(ingredient));
         }
 
 
         let inventoryRows = this.getAllSearchedIngredients(this.state.searchQuery, this.props.repo.state.ingredients)
-            .filter((ingredient: Ingredient) => ingredient.status === 'inventory')
+            .filter((ingredient: Ingredient) => ingredient.statusID === STATUS.INVENTORY)
             .map((ingredient) => this.renderInventoryRow(ingredient));
 
 
@@ -296,7 +296,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                                         bsSize='small'
                                         onClick={() => {
                                             let ingredient = new Ingredient();
-                                            ingredient.status = 'shopping';
+                                            ingredient.statusID = STATUS.SHOPPING;;
                                             this.setState({ editIngredient: ingredient, mode: "editing" })
                                         }}
                                         className="pull-right btn-circle classy-btn">
@@ -317,7 +317,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                                         bsSize='small'
                                         onClick={() => {
                                             let ingredient = new Ingredient();
-                                            ingredient.status = 'archived';
+                                            ingredient.statusID = STATUS.ARCHIVED;;
                                             this.setState({ editIngredient: ingredient, mode: "editing" })
                                         }}
                                         className="pull-right btn-circle classy-btn">

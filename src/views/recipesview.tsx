@@ -16,7 +16,7 @@ import { RecipeEditView } from "./recipeeditview";
 import FaPlus from "react-icons/lib/fa/plus";
 import FaSearch from "react-icons/lib/fa/search";
 import { IRecipeRepo, IIngredientRepo } from "../FoodApp";
-import { Ingredient } from "../models/ingredient";
+import { Ingredient, STATUS } from "../models/ingredient";
 import { RecipeDetailView } from "./RecipeDetailView";
 
 export class RecipesView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { sharing: boolean, editing: boolean, editRecipe: Recipe, shareHousehold: string, searchQuery: string, currentSearchQuery: string }> {
@@ -68,7 +68,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                 let missingMaterials = recipe.materials
                     .filter((material: Material) => {
                         let available = material.isAvailable(this.props.repo.state.ingredients.filter((ingredient: Ingredient) => {
-                            return ingredient.status === 'inventory';
+                            return ingredient.statusID === STATUS.INVENTORY;
                         }));
                         return material.required && !available;
                     });

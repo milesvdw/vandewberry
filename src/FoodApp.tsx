@@ -1,5 +1,5 @@
 import { Route } from "react-router";
-import { Ingredient } from "./models/ingredient";
+import { Ingredient, STATUS } from "./models/ingredient";
 import { Recipe } from "./models/recipe";
 import * as React from "react";
 import { Database } from "./Database";
@@ -62,19 +62,19 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
 
     public getInventory() {
         return this.state.ingredients.filter((ingredient: Ingredient) => {
-            return ingredient.status === 'inventory';
+            return ingredient.statusID = STATUS.INVENTORY;
         })
     }
 
     public getArchive() {
         return this.state.ingredients.filter((ingredient: Ingredient) => {
-            return ingredient.status === 'archived';
+            return ingredient.statusID = STATUS.ARCHIVED;
         })
     }
 
     public getShoppingList() {
         return this.state.ingredients.filter((ingredient: Ingredient) => {
-            return ingredient.status === 'shopping';
+            return ingredient.statusID = STATUS.SHOPPING;
         })
     }
 
@@ -83,7 +83,7 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
         let ingredients = this.state.ingredients;
 
         let existingIngredientIndex: number = ingredients.findIndex((searchIngredient: Ingredient) => {
-            return searchIngredient._id === ingredient._id;
+            return searchIngredient.id === ingredient.id;
         })
         if (existingIngredientIndex >= 0) {
             ingredients.splice(existingIngredientIndex, 1);
@@ -134,7 +134,7 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
         let ingredients = this.state.ingredients;
 
         let existingIngredientIndex: number | undefined = ingredients.findIndex((searchIngredient: Ingredient) => {
-            return searchIngredient._id === savedRecipe._id;
+            return searchIngredient.id === savedRecipe.id;
         })
 
         if (existingIngredientIndex >= 0) {
@@ -151,17 +151,17 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
     }
 
     public async purchaseIngredient(ingredient: Ingredient) {
-        ingredient.status = 'inventory';
+        ingredient.statusID = STATUS.INVENTORY;
         this.saveIngredient(ingredient);
     }
 
     public async useUpIngredient(ingredient: Ingredient) {
-        ingredient.status = 'shopping';
+        ingredient.statusID = STATUS.SHOPPING;
         this.saveIngredient(ingredient);
     }
 
     public async archiveIngredient(ingredient: Ingredient) {
-        ingredient.status = 'archived';
+        ingredient.statusID = STATUS.ARCHIVED;
         this.saveIngredient(ingredient);
     }
 

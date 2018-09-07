@@ -6,26 +6,54 @@ var deleteItem = (db) => (req, res) => {
     res.json(ApiResponse(true, null));
 }
 
-var post = (db) => (req, res) => {
-    req.body._id = ObjectId(req.body._id);
-    req.body.household = req.user.household;
-    db.collection('inventory').save(req.body, (getErr, result) => {
-        if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
-            res.json(ApiResponse(true, result.ops[0]._id));
-        } else if (result.result.upserted) {
-            res.json(ApiResponse(true, result.result.upserted[0]._id));
-        } else {
-            res.json(ApiResponse(true, req.body._id));
+var post = (pool) => async (req, res) => {
+    var connection;
+    if (req.body.id > 0) {
+        try {
+            connection = pool.getConnection((err2, con) => {
+                con.query(
+                    "UPDATE ingredients SET `name` = '" + req.body.name + "', " +
+                    "category = '" + req.body.category + "', " +
+                    "statusID = " + req.body.statusID + ", " +
+                    "expires = '" + req.body.expires + "', " +
+                    "shelf_life = '" + req.body.shelf_life + "', " +
+                    "householdId = " + req.user.householdId + " WHERE id = " + req.body.id, (err3, ingredient) => {
+                        console.log(err3);
+                        res.json(ApiResponse(true, req.body.id));
+                    });
+            });
         }
-    });
+        catch (err) {
+            res.send(ApiResponse(true, []));
+        }
+    } else {
+        try {
+            connection = pool.getConnection((err2, con) => {
+                con.query(
+                    "INSERT INTO ingredients (`name`, category, statusID, expires, shelf_life, householdId) VALUES ( '" +
+                    req.body.name + "', '" +
+                    req.body.category + "', " +
+                    req.body.statusID + ", '" +
+                    req.body.expires + "', '" +
+                    req.body.shelf_life + "', " +
+                    req.user.householdId + ")", (err3, ingredient) => {
+                        con.query("SELECT LAST_INSERT_ID()", (err4, insertResults) => {
+                            res.json(ApiResponse(true, insertResults[0]['LAST_INSERT_ID()']));
+                        });
+                    });
+            });
+        }
+        catch (err) {
+            res.send(ApiResponse(true, []));
+        }
+    }
 }
 
 var get = (pool) => async (req, res) => {
     try {
-        var ingredients = await pool.query("SELECT * from ingredients WHERE householdId = " + req.user.householdId);
-        console.log(req.user.householdId);
+        var ingredients = await pool.query("SELECT ingredients.id as id, name, category, statusID, expires, shelf_life from ingredients WHERE householdId = " + req.user.householdId);
         res.send(ApiResponse(true, ingredients));
-    } 
+    }
     catch (err) {
         res.send(ApiResponse(true, []));
     }

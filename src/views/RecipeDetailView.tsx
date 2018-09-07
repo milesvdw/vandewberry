@@ -13,7 +13,7 @@ import FaShoppingCart from "react-icons/lib/fa/shopping-cart";
 import FaShareAlt from "react-icons/lib/fa/share-alt";
 
 import { IRecipeRepo, IIngredientRepo } from "../FoodApp";
-import { Ingredient } from "../models/ingredient";
+import { Ingredient, STATUS } from "../models/ingredient";
 import { compareIngredients } from "../utils/utils";
 
 export class RecipeDetailView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo, editRecipe: (recipe: Recipe) => void, shareRecipe: (recipe: Recipe) => void, recipe: Recipe }> {
@@ -27,7 +27,7 @@ export class RecipeDetailView extends React.Component<{ repo: IIngredientRepo & 
     }
 
     private displayMaterials(materials: Material[]) {
-        let inventory = this.props.repo.state.ingredients.filter((i: Ingredient) => i.status === 'inventory');
+        let inventory = this.props.repo.state.ingredients.filter((i: Ingredient) => i.statusID === STATUS.INVENTORY);
         return materials
             .map((material: Material, index: number) => {
 
@@ -59,8 +59,8 @@ export class RecipeDetailView extends React.Component<{ repo: IIngredientRepo & 
         //   find the subset of the material's ingredients have an existing archived match in the database
         //   grab the first of these, 
 
-        let inventoryOrShopping = this.props.repo.state.ingredients.filter((i: Ingredient) => i.status !== 'archived');
-        let archivedIngredients = this.props.repo.state.ingredients.filter((i: Ingredient) => i.status === 'archived');
+        let inventoryOrShopping = this.props.repo.state.ingredients.filter((i: Ingredient) => i.statusID !== STATUS.ARCHIVED);
+        let archivedIngredients = this.props.repo.state.ingredients.filter((i: Ingredient) => i.statusID === STATUS.ARCHIVED);
 
         let neededMaterials = materials.filter((m: Material) => !m.isAvailable(inventoryOrShopping));
 
@@ -71,12 +71,12 @@ export class RecipeDetailView extends React.Component<{ repo: IIngredientRepo & 
             let firstExistingMatch = archivedIngredients.find((ai: Ingredient) => m.ingredients.some((i: Ingredient) => compareIngredients(i, ai)));
 
             if (firstExistingMatch) {
-                firstExistingMatch.status = 'shopping';
+                firstExistingMatch.statusID = STATUS.SHOPPING;
                 this.props.repo.saveIngredient(firstExistingMatch);
             } else {
                 let ingredient = new Ingredient(m.ingredients[0]);
-                ingredient._id = undefined;
-                ingredient.status = 'shopping';
+                ingredient.id = undefined;
+                ingredient.statusID = STATUS.SHOPPING;
                 this.props.repo.saveIngredient(ingredient);
             }
         });

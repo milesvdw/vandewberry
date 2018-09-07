@@ -1,13 +1,19 @@
+// tslint:disable:max-classes-per-file
 import { Database } from "../Database";
 
+export class STATUS {
+    public static ARCHIVED = 11;
+    public static SHOPPING = 1;
+    public static INVENTORY = 31;
+}
 export class Ingredient {
-    public _id?: string;
+    public id?: string;
     public name: string = "";
     public category: string = "";
     public last_purchased: any; // TODO: figure out what this should be
     public expires: boolean;
     public shelf_life: number;
-    public status: string = "archived";
+    public statusID: number = STATUS.ARCHIVED;
     public household: string = "";
 
     public constructor(init?: Partial<Ingredient>) {
@@ -24,7 +30,7 @@ export class Ingredient {
             body: JSON.stringify(ingredient),
             method: 'post',
         }).then(async (id: string) => {
-            ingredient._id = id;
+            ingredient.id = id;
             return ingredient;
         });
     }
@@ -33,7 +39,6 @@ export class Ingredient {
         let ingredient = this;
         ingredient.name = this.name.toLowerCase();
         ingredient.category = this.category.toLowerCase();
-        ingredient.status = this.status.toLowerCase();
         return ingredient;
     }
 
