@@ -54,13 +54,13 @@ export class Footer extends React.Component<{}, { title: string, body: string }>
                                     <input type="text" className="form-control" name="title" aria-describedby="titleHelp" placeholder="Title" value={this.state.title} onChange={this.updateFields}/>
                                     <small id="titleHelp" className="form-text text-muted">A simple, descriptive title for the issue.</small>
                                 </FormGroup>
-                                <FormGroup className='bug-report-field' style={{maxWidth: '75%'}}>
+                                <FormGroup {...{tooltip: 'A detailed description of the bug and how it was discovered'}} className='bug-report-field' style={{maxWidth: '75%'}}>
                                     <label htmlFor="body">Information</label>
                                     <input type="text" className="form-control" name="body" aria-describedby="bodyHelp" placeholder="Steps to reproduce:..." value={this.state.body} onChange={this.updateFields} />
                                     <small id="bodyHelp" className="form-text text-muted">Any information you can provide about the issue.</small>
                                 </FormGroup>
-                                <Button type="submit"
-                                    className='classy-btn no-outline btn-round btn-press btn-default'
+                                <Button {...{tooltip: 'Submit Bug for review on Github'}} type="submit"
+                                     className='classy-btn no-outline btn-round btn-press btn-default' 
                                     style={{ position: 'absolute', right: '40px', fontSize: '14px', textShadow: 'none', bottom: '40px'}}>
                                     Submit Bug
                                 </Button>
