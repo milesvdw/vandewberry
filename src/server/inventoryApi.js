@@ -20,10 +20,15 @@ var post = (db) => (req, res) => {
     });
 }
 
-var get = (db) => (req, res) => {
-    db.collection('inventory').find({ household: req.user.household }).toArray((geterr, items) => {
-        res.send(ApiResponse(true, items));
-    });
+var get = (pool) => async (req, res) => {
+    try {
+        var ingredients = await pool.query("SELECT * from ingredients WHERE householdId = " + req.user.householdId);
+        console.log(req.user.householdId);
+        res.send(ApiResponse(true, ingredients));
+    } 
+    catch (err) {
+        res.send(ApiResponse(true, []));
+    }
 }
 
 module.exports.delete = deleteItem;

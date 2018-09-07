@@ -70,7 +70,9 @@ pool.getConnection((err, connection) => {
       console.error('Database connection was refused.')
     }
   }
-  if (connection) connection.release()
+  if (connection) {
+    connection.release()
+  }
   return
 })
 pool.query = util.promisify(pool.query) // dark magic
@@ -82,7 +84,13 @@ MongoClient.connect(uri, (err, client) => {
 
   let db = client.db('heroku_6ftkk7t9');
 
-
+  // db.collection('inventory').find().toArray((geterr, items) => {
+  //   items.forEach(async (item) => {
+  //     var results = await pool.query("SELECT * FROM households WHERE name = '" + item.household + "'")
+  //     statusId = item.status === "shopping" ? 1 : item.status === "archived" ? 11 : 31;
+  //     await pool.query("INSERT INTO ingredients (`name`, `category`, statusID, expires, shelf_life, householdId ) VALUES ('" + item.name + "', " + "'" + item.category + "', " + "" + statusId + ", " + "'" + item.expires + "', " + "'" + item.shelf_life + "', " + results[0].id + ")")
+  //   });
+  // });
 
 
 
@@ -102,7 +110,6 @@ MongoClient.connect(uri, (err, client) => {
 
       try {
         var users = await pool.query("SELECT * from users WHERE username = \'" + username + "'");
-        console.log(users);
         if (users.length === 1) {
           // Always use hashed passwords and fixed time comparison
           bcrypt.compare(password, users[0].password, (cryptErr, isValid) => {
@@ -150,10 +157,10 @@ MongoClient.connect(uri, (err, client) => {
   app.delete('/api/photos', passport.authenticationMiddleware(), PhotosApi.delete(db));
 
   // INVENTORY
-  app.get('/api/inventory', passport.authenticationMiddleware(), InventoryApi.get(db));
+  app.get('/api/inventory', passport.authenticationMiddleware(), InventoryApi.get(pool));
   app.post('/api/inventory', passport.authenticationMiddleware(), InventoryApi.post(db));
   app.delete('/api/inventory', passport.authenticationMiddleware(), InventoryApi.delete(db));
- 
+
   app.get('/api/householdMembers', passport.authenticationMiddleware(), async (req, res) => {
     try {
       var users = await pool.query("SELECT * from users WHERE householdId = \'" + req.user.householdId + "'");
