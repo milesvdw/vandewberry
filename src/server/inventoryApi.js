@@ -18,7 +18,6 @@ var post = (pool) => async (req, res) => {
                     "expires = '" + req.body.expires + "', " +
                     "shelf_life = '" + req.body.shelf_life + "', " +
                     "householdId = " + req.user.householdId + " WHERE id = " + req.body.id, (err3, ingredient) => {
-                        console.log(err3);
                         res.json(ApiResponse(true, req.body.id));
                     });
             });
