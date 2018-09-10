@@ -1,14 +1,15 @@
+// tslint:disable:no-console
 const ApiResponse = require('./apiResponse').ApiResponse
 // const utils = require('../utils/utils')
 
-var deleteRecipe = (db) => (req, res) => {
+var deleteRecipe = (pool) => async (req, res) => {
     var existingData = await pool.query("SELECT * FROM recipes LEFT JOIN materials ON materials.recipeId = recipes.id \
     WHERE recipes.id = ?", [req.body.id]);
 
-    if (existingData.length == 0) {
+    if (existingData.length === 0) {
         console.log("ERROR: attempted to delete a recipe that doesn't exist");
         res.json(ApiResponse(true, false));
-    } else if (existingData[0]['recipes.householdId'] != req.user.householdId) {
+    } else if (existingData[0]['recipes.householdId'] !== req.user.householdId) {
         console.log("ERROR: attempted to delete a recipe that the user doesn't own");
         res.json(ApiResponse(true, false));
     } else {
@@ -21,7 +22,7 @@ var deleteRecipe = (db) => (req, res) => {
     res.json(ApiResponse(true, false)); // TODO: this line maybe shouldn't exist at all. How would you get here?
 }
 
-function createRecipe(req, pool, con, res) {
+async function createRecipe(req, pool, con, res) {
     con.query("INSERT INTO recipes (`name`, `description`, `calories`, `lastEasten`, `householdId`) \
     VALUES (?, ?, ?, ?, ?)",
         [req.body.name, req.body.description, req.body.calories, req.body.lastEaten, req.user.householdId],
@@ -32,7 +33,7 @@ function createRecipe(req, pool, con, res) {
                 con.release();
                 return;
             }
-            con.query("SELECT LAST_INSERT_ID()", (err3, insertedIdRaw) => {
+            con.query("SELECT LAST_INSERT_ID()", async (err3, insertedIdRaw) => {
                 if (err3) {
                     console.log("ERROR while selecting id of just inserted recipe");
                     console.log(err3);
@@ -54,10 +55,10 @@ function createRecipe(req, pool, con, res) {
         });
 };
 
-function updateRecipe(req, pool, con, res) {
+async function updateRecipe(req, pool, con, res) {
     var existingRecipe = await pool.query("SELECT * FROM recipes WHERE id = ?", [req.body.id]);
     if (existingRecipe.length > 0) {
-        if (existingRecipe[0].householdId != req.user.householdId) {
+        if (existingRecipe[0].householdId !== req.user.householdId) {
             console.log("ERROR user attempted to update a recipe that their household doesn't own");
             con.release();
             return;
@@ -82,14 +83,14 @@ function updateRecipe(req, pool, con, res) {
         })
 }
 
-function insert_update_ingredientGroups(pool, material, index, cb, groupIds = []) {
-    if (index == material.ingredientgroups.length) {
+async function insert_update_ingredientGroups(pool, material, index, cb, groupIds = []) {
+    if (index === material.ingredientgroups.length) {
         cb(groupIds); // no ingredientgroups left to add
         return;
     }
 
     var ingredientGroup = material.ingredientgroups[index];
-    if (ingredientGroup.name != "") {
+    if (ingredientGroup.name !== "") {
         let existingGroups = await pool.query("SELECT * FROM ingredientgroups WHERE `name` = ?", [ingredientGroup.name]);
         if (existingGroups.length > 0) {
             // hook the material up to the existing ingredientgroup
@@ -97,7 +98,7 @@ function insert_update_ingredientGroups(pool, material, index, cb, groupIds = []
             return insert_update_ingredientGroups(pool, material, index + 1, cb, groupIds);
         } else {
             await pool.query("INSERT INTO ingredientgroups (`name`) VALUES (?)", [ingredientGroup.name]);
-            let existingGroups = await pool.query("SELECT * FROM ingredientgroups WHERE `name` = ?", [ingredientGroup.name]);
+            existingGroups = await pool.query("SELECT * FROM ingredientgroups WHERE `name` = ?", [ingredientGroup.name]);
             groupIds.push(existingGroups[0].id);
             return insert_update_ingredientGroups(pool, material, index + 1, cb, groupIds);
         }
@@ -106,7 +107,7 @@ function insert_update_ingredientGroups(pool, material, index, cb, groupIds = []
     insert_update_ingredientGroups(pool, material, index + 1, cb, groupIds);
 }
 
-function link_material_ingredientGroups(groupIds, materialId, con) {
+async function link_material_ingredientGroups(groupIds, materialId, con) {
     if (groupIds.length > 0) {
         let groupId = groupIds.pop();
         con.query("INSERT INTO materials_ingredientgroups (`materialId`, `ingredientGroupId`) VALUES (?, ?)", [materialId, groupId], (err, ignore) => {
@@ -125,7 +126,7 @@ function link_material_ingredientGroups(groupIds, materialId, con) {
     }
 }
 
-function insert_update_materials(pool, req, recipeId, index, cb) {
+async function insert_update_materials(pool, req, recipeId, index, cb) {
     if (index === req.body.materials.length) {
         cb();
         return;
@@ -139,19 +140,26 @@ function insert_update_materials(pool, req, recipeId, index, cb) {
         await pool.query("DELETE FROM materials_ingredientgroups WHERE materialId = ?", [material.id]);
     }
     insert_update_ingredientGroups(pool, material, 0, (groupIds) => {
-        if (groupIds.length == 0) return; // no ingredients to link this material to...
+        if (groupIds.length === 0) {
+            return; // no ingredients to link this material to...
+        }
         pool.getConnection((err, con) => {
-            con.query("INSERT INTO materials (`recipeId`, `quantity`, `required`) VALUES (?, ?, ?)", [recipeId, req.body.quantity, req.body.required ? 1 : 0], (err, ignore) => {
-                if (err) {
+            if(err) {
+                console.log("ERROR: getting connection to insert materials");
+                console.log(err);
+                return;
+            }
+            con.query("INSERT INTO materials (`recipeId`, `quantity`, `required`) VALUES (?, ?, ?)", [recipeId, req.body.quantity, req.body.required ? 1 : 0], (err2, ignore) => {
+                if (err2) {
                     console.log("ERROR while inserting new material");
-                    console.log(err);
+                    console.log(err2);
                     con.release();
                     return;
                 }
-                con.query("SELECT LAST_INSERT_ID()", (err2, insertedIdRaw) => {
-                    if (err2) {
+                con.query("SELECT LAST_INSERT_ID()", (err3, insertedIdRaw) => {
+                    if (err3) {
                         console.log("ERROR at selecting last insert id after inserting new material");
-                        console.log(err2);
+                        console.log(err3);
                         con.release();
                         return;
                     }
@@ -189,11 +197,11 @@ var post = (pool) => async (req, res) => {
     // });
 }
 
-var share = (pool) => (req, res) => {
+var share = (pool) => async (req, res) => {
     // TODO: update the post to this endpoint to only send a household and a recipeId, all else is wasted bandwidth
     var results = await pool.query("SELECT * FROM households WHERE name = ?", [req.body.household])
 
-    if (results.length == 0) {
+    if (results.length === 0) {
         console.log("user tried to share recipe with non-existent household");
         res.json(ApiResponse(true, false));
     }

@@ -2,7 +2,7 @@
 
 const ApiResponse = require('./apiResponse').ApiResponse
 
-var login = (db) => (req, res) => {
+var login = (pool) => (req, res) => {
     res.send(ApiResponse(true, null))
 }
 
@@ -17,7 +17,7 @@ var createAccount = (pool) => async (req, res) => {
             res.send(ApiResponse(false, false));
             return;
         }
-        var households = await pool.query("SELECT * FROM households WHERE `name` = ?" + req.body.household);
+        var households = await pool.query("SELECT * FROM households WHERE `name` = ?", [req.body.household]);
 
         await pool.query("INSERT INTO users (`username`, `password`, `householdId`) VALUES ( ?, ?, ?)", [req.body.username, hash, households[0].id]);
         // db.collection('users').save({ user: req.body.username, passwordHash: hash, household: req.body.household });
@@ -29,7 +29,7 @@ var createAccount = (pool) => async (req, res) => {
     }
 }
 
-var logout = (db) => (req, res, next) => {
+var logout = (pool) => (req, res, next) => {
     req.logout();
     req.session.destroy(function (logerr) {
         if (!logerr) {

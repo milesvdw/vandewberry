@@ -12,19 +12,15 @@
       true,
       "allow-fast-null-checks"
     ],
-    "no-console": [
-      "error",
-      {
-        "allow": "log"
-      }
-    ],
     "jsx-no-lambda": false,
+    "no-console": false,
     "no-debugger": false,
     "object-literal-sort-keys": false,
     "member-ordering": false,
     "ordered-imports": false,
     "variable-name": false,
-    "prefer-const": false
+    "prefer-const": false,
+    "curly": [true, "ignore-same-line"]
   },
   "linterOptions": {
     "exclude": [

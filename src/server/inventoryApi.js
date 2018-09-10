@@ -18,11 +18,11 @@ var post = (pool) => async (req, res) => {
             connection = pool.getConnection((err2, con) => {
                 con.query(
                     "UPDATE ingredients SET \
-                    `name` = '?', \
-                    category = '?', \
+                    `name` = ?, \
+                    category = ?, \
                     statusID = ?, \
-                    expires = '?', \
-                    shelf_life = '?', \
+                    expires = ?, \
+                    shelf_life = ?, \
                     householdId = ? \
                     WHERE id = ?",
                     [req.body.name, req.body.category, req.body.statusId, req.body.expires, req.body.shelf_life, req.body.householdId, req.body.id],
@@ -38,7 +38,7 @@ var post = (pool) => async (req, res) => {
         try {
             connection = pool.getConnection((err2, con) => {
                 con.query(
-                    "INSERT INTO ingredients (`name`, category, statusID, expires, shelf_life, householdId) VALUES ( '?', '?', ?, '?', '?', ?)",
+                    "INSERT INTO ingredients (`name`, category, statusID, expires, shelf_life, householdId) VALUES ( ?, ?, ?, ?, ?, ?)",
                     [req.body.name, req.body.category, req.body.statusId, req.body.expires, req.body.shelf_life, req.body.householdId, req.body.id],
                      (err3, ingredient) => {
                         con.query("SELECT LAST_INSERT_ID()", (err4, insertResults) => {
