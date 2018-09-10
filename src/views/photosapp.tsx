@@ -46,7 +46,7 @@ export class PhotosApp extends React.Component<{}, { photos: Image[] }> implemen
         let photos = this.state.photos;
 
         let existingPhotoIndex: number | undefined = photos.findIndex((searchPhoto: Image) => {
-            return searchPhoto._id === savedPhoto._id;
+            return searchPhoto.id === savedPhoto.id;
         })
         if (existingPhotoIndex >= 0) {
             photos.splice(existingPhotoIndex, 1);
@@ -63,7 +63,7 @@ export class PhotosApp extends React.Component<{}, { photos: Image[] }> implemen
         let photos = this.state.photos;
 
         let existingIngredientIndex: number = photos.findIndex((searchIngredient: Image) => {
-            return searchIngredient._id === photo._id;
+            return searchIngredient.id === photo.id;
         })
         if (existingIngredientIndex >= 0) {
             photos.splice(existingIngredientIndex, 1);

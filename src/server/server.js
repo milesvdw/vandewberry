@@ -143,9 +143,9 @@ MongoClient.connect(uri, (err, client) => {
   app.post('/api/recipes/share', passport.authenticationMiddleware(), RecipeApi.share(db));
 
   // PHOTOS
-  app.get('/api/photos', passport.authenticationMiddleware(), PhotosApi.get(db));
-  app.post('/api/photos', passport.authenticationMiddleware(), PhotosApi.post(db));
-  app.delete('/api/photos', passport.authenticationMiddleware(), PhotosApi.delete(db));
+  // app.get('/api/photos', passport.authenticationMiddleware(), PhotosApi.get(db));
+  // app.post('/api/photos', passport.authenticationMiddleware(), PhotosApi.post(db));
+  // app.delete('/api/photos', passport.authenticationMiddleware(), PhotosApi.delete(db));
 
   // INVENTORY
   app.get('/api/inventory', passport.authenticationMiddleware(), InventoryApi.get(pool));

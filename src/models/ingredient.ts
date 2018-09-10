@@ -14,7 +14,7 @@ export class Ingredient {
     public expires: boolean;
     public shelf_life: number;
     public statusID: number = STATUS.ARCHIVED;
-    public household: string = "";
+    public householdId: string = "";
 
     public constructor(init?: Partial<Ingredient>) {
         Object.assign(this, init);

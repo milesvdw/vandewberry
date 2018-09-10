@@ -28,9 +28,9 @@ export class Banner extends React.Component<{ user: string, authenticated: boole
                     <NavItem eventKey={1} href="#home">
                         Home
                     </NavItem>
-                    <NavItem eventKey={1} href="#photos/view">
+                    {/* <NavItem eventKey={1} href="#photos/view">
                         Photos
-                    </NavItem>
+                    </NavItem> */}
                     <NavItem eventKey={1} href="#recipes">
                         Recipes
                     </NavItem>

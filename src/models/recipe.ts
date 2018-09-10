@@ -9,7 +9,7 @@ export class Recipe {
     public name: string = "";
     public calories: number = 0;
     public lastEaten: Date  = new Date(3000,0);
-    public household: string = "";
+    public householdId: number;
     
     public constructor(init?: Partial<Recipe>) {
         Object.assign(this, init);
@@ -55,9 +55,9 @@ export class Recipe {
         });
     }
 
-    public Share(household: string): Promise<Recipe> {
+    public Share(householdId: number): Promise<Recipe> {
         let recipe = this.toLowerCaseRecipe();
-        recipe.household = household;
+        recipe.householdId = householdId;
         return Database.ApiCall('/api/recipes/share', {
             headers: {
                 'Accept': 'application/json',

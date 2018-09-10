@@ -96,7 +96,7 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
         let recipes = this.state.recipes;
 
         let existingRecipeIndex: number = recipes.findIndex((searchRecipe: Recipe) => {
-            return searchRecipe._id === recipe._id;
+            return searchRecipe.id === recipe.id;
         })
         if (existingRecipeIndex >= 0) {
             recipes.splice(existingRecipeIndex, 1);
@@ -113,7 +113,7 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
         let recipes = this.state.recipes;
 
         let existingRecipeIndex: number | undefined = recipes.findIndex((searchRecipe: Recipe) => {
-            return searchRecipe._id === savedRecipe._id;
+            return searchRecipe.id === savedRecipe.id;
         })
         if (existingRecipeIndex >= 0) {
             recipes.splice(existingRecipeIndex, 1);
