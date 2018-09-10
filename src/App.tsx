@@ -8,7 +8,7 @@ import { HomeApp } from './HomeApp';
 import { FoodApp } from './FoodApp';
 import { Login } from './Login';
 import { IApiResponse } from './Database';
-import { PhotosApp } from './views/photosapp';
+// import { PhotosApp } from './views/photosapp';
 import { CreateAccount } from './CreateAccount';
 import { Footer } from './Footer';
 
@@ -43,12 +43,12 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
   private authenticate(user: string) {
     this.setState({ authenticated: true, user });
     this.foodApp && this.foodApp.refresh();
-    this.photoApp && this.photoApp.refresh();
+    // this.photoApp && this.photoApp.refresh();
     this.homeApp && this.homeApp.refresh();
   }
 
   private foodApp: FoodApp | null;
-  private photoApp: PhotosApp | null;
+  // private photoApp: PhotosApp | null;
   private homeApp: HomeApp | null;
 
 

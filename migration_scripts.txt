@@ -1,0 +1,33 @@
+  db.collection('inventory').find().toArray((geterr, items) => {
+    items.forEach(async (item) => {
+      if(item.name == null) {
+        console.log("BAD ITEM!");
+        console.log(item);
+        return;
+      }
+      var results = await pool.query("SELECT * FROM households WHERE name = ?", [item.household] )
+      statusId = item.status === "shopping" ? 1 : item.status === "archived" ? 11 : 31;
+      await pool.query("INSERT INTO ingredients (`name`, `category`, statusID, expires, shelf_life, householdId ) VALUES (?, ?, ?, ?, ?, ?)", [item.name, item.category, statusId, item.expires ? 1: 0, item.shelf_life, results[0].id])
+      let insertedIngredientId = (await pool.query("SELECT * FROM ingredients WHERE householdId=? AND `name` = ?", [results[0].id, item.name]))[0].id
+      let existingIngredientGroups = await pool.query("SELECT * FROM ingredientgroups WHERE `name` = ? ", [item.name]);
+      if (existingIngredientGroups.length > 0) {
+        await pool.query("UPDATE ingredients SET ingredientGroupId = ? WHERE id = ?", [existingIngredientGroups[0].id, insertedIngredientId])
+      } else {
+        pool.getConnection((err, con) => {
+          con.query("INSERT INTO ingredientgroups (`name`) VALUES (?)", [item.name], (err, results) => {
+            con.query("SELECT LAST_INSERT_ID()", (err, lastInsertedRaw) => {
+              if(err) {
+                console.log("WEIRD!");
+                console.log(err);
+                con.release();
+                return;
+              }
+              con.query("UPDATE ingredients SET ingredientGroupId = ? WHERE id = ?", [lastInsertedRaw[0]['LAST_INSERT_ID()'], insertedIngredientId], (err, ignore) => {
+                con.release();
+              })
+            });
+          });
+        })
+      }
+    });
+  });

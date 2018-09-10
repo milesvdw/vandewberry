@@ -32,11 +32,6 @@ export class Recipe {
     public toLowerCaseRecipe(): Recipe{
         let recipe = this;
         recipe.name = this.name.toLowerCase();
-        recipe.materials.forEach(material => {
-            material.ingredients.forEach(ingredient => {
-                ingredient = ingredient.toLowerCaseIngredient();
-            });
-        });
         return recipe;
     }
 
@@ -55,9 +50,9 @@ export class Recipe {
         });
     }
 
-    public Share(householdId: number): Promise<Recipe> {
+    public Share(household: string): Promise<Recipe> {
         let recipe = this.toLowerCaseRecipe();
-        recipe.householdId = householdId;
+        (recipe as any).household = household; // hack to add on something to the request that maybe shouldn't be there
         return Database.ApiCall('/api/recipes/share', {
             headers: {
                 'Accept': 'application/json',
@@ -86,17 +81,17 @@ export class Recipe {
     }
 
     public ParseIngredients(): Recipe {
-        let parsedMaterials: Material[] = this.materials.map((ingredientRow) => { // TODO: I think there ought to be a better way to map the selector to the list than this...
-            let quantity: string = ingredientRow.quantity;
-            let ingredients: Ingredient[] = ingredientRow.ingredients[0].name.split(',').map((i) => {
+        let parsedMaterials: Material[] = this.materials.map((material) => { // TODO: I think there ought to be a better way to map the selector to the list than this...
+            let quantity: string = material.quantity;
+            let ingredientgroups: Ingredient[] = material.ingredientgroups[0].name.split(',').map((i) => {
                 return new Ingredient({
-                    name: i.trim()
+                    name: i.trim() // TODO: this may be a problem now that we have ids and a relational database!
                 });
             });
-            let required: boolean = ingredientRow.required;
+            let required: boolean = material.required;
 
             return new Material({
-                ingredients,
+                ingredientgroups,
                 quantity,
                 required
             });
@@ -107,10 +102,10 @@ export class Recipe {
 
     public UnparseIngredients(): Recipe {
         this.materials = this.materials.map((material: Material) => {
-            let combinedIngredient: Ingredient = material.ingredients[0];
-            combinedIngredient.name = material.ingredients.map((ingredient) => ingredient.name).join(', ');
+            let combinedIngredient: Ingredient = material.ingredientgroups[0];
+            combinedIngredient.name = material.ingredientgroups.map((ingredientgroup) => ingredientgroup.name).join(', ');
             return new Material({
-                ingredients: [combinedIngredient],
+                ingredientgroups: [combinedIngredient],
                 quantity: material.quantity,
                 required: material.required
             });

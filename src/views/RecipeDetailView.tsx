@@ -68,13 +68,13 @@ export class RecipeDetailView extends React.Component<{ repo: IIngredientRepo & 
             // if the material can be fullfilled by an existing ingredient, we'll use that.
             // oh btw we know that we only have to look in the archive to find those, because
             // it wasn't in inventory or shopping
-            let firstExistingMatch = archivedIngredients.find((ai: Ingredient) => m.ingredients.some((i: Ingredient) => compareIngredients(i, ai)));
+            let firstExistingMatch = archivedIngredients.find((ai: Ingredient) => m.ingredientgroups.some((i: Ingredient) => compareIngredients(i, ai)));
 
             if (firstExistingMatch) {
                 firstExistingMatch.statusID = STATUS.SHOPPING;
                 this.props.repo.saveIngredient(firstExistingMatch);
             } else {
-                let ingredient = new Ingredient(m.ingredients[0]);
+                let ingredient = new Ingredient(m.ingredientgroups[0]); // TODO we need to separate the Ingredients from IngredientGroups in a meaningful way
                 ingredient.id = undefined;
                 ingredient.statusID = STATUS.SHOPPING;
                 this.props.repo.saveIngredient(ingredient);

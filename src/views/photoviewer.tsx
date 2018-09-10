@@ -36,7 +36,7 @@ export class PhotoViewer extends React.Component<{ repo: IPhotoRepo }, { selecte
             }
             return (
                 <img
-                    key={image._id}
+                    key={image.id}
                     src={image.url}
                     alt={image.title}
                     onClick={() => { this.setState({ selectedImage: image }) }}

@@ -78,7 +78,7 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
                     <input type='text' className='form-control' name='quantity' value={material.quantity} onChange={this.updateMaterialFields(index)} />
                 </Col>
                 <Col sm={8}>
-                    <input type='text' className='form-control' name='ingredients' value={material.ingredients.map((ingredient: Ingredient) => ingredient.name).join(', ')} onChange={this.updateMaterialFields(index)} />
+                    <input type='text' className='form-control' name='ingredients' value={material.ingredientgroups.map((ingredientgroup: Ingredient) => ingredientgroup.name).join(', ')} onChange={this.updateMaterialFields(index)} />
                 </Col>
                 <Col sm={1}>
                     <FaMinusCircle onClick={() => { this.removeMaterial(index); }} />

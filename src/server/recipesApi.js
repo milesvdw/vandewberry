@@ -1,5 +1,5 @@
 const ApiResponse = require('./apiResponse').ApiResponse
-const utils = require('../utils/utils')
+// const utils = require('../utils/utils')
 
 var deleteRecipe = (db) => (req, res) => {
     db.collection('recipes').remove({ "_id": ObjectId(req.body._id) });
@@ -20,10 +20,10 @@ function createRecipe(req, pool, con, res) {
 }
 
 function createRecipeMaterials(req, pool, recipeId, res) {
-    
+
 }
 
-var post = (pool) => (req, res) => {
+var post = (pool) => async (req, res) => {
     if (req.body.id > 0) {
         // do an update
         await pool.query("SELECT * FROM recipes");
@@ -47,7 +47,8 @@ var post = (pool) => (req, res) => {
 }
 
 var share = (pool) => (req, res) => {
-    req.body._id = ObjectId(req.body._id);
+    // TODO: req now has a 'household' which is different from a 'householdId' which will be used for sharing
+    
     db.collection('recipes').save(req.body, (getErr, result) => {
         if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
             res.json(ApiResponse(true, result.ops[0]._id));
@@ -95,7 +96,7 @@ function constructRecipeFromRows(rows) {
 
 
 
-var get = (pool) => (req, res) => {
+var get = (pool) => async (req, res) => {
     try {
         var sqlRecipes = await pool.query("SELECT * FROM recipes \
         LEFT JOIN materials ON materials.recipeId = recipes.id \
