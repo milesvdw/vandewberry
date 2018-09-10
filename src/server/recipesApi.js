@@ -11,95 +11,125 @@ function createRecipe(req, pool, con, res) {
     VALUES (?, ?, ?, ?, ?)",
         [req.body.name, req.body.description, req.body.calories, req.body.lastEaten, req.user.householdId],
         (err2, ignore) => {
+            if (err2) {
+                console.log("ERROR while inserting recipe");
+                console.log(err2);
+                con.release();
+                return;
+            }
             con.query("SELECT LAST_INSERT_ID()", (err3, insertedIdRaw) => {
                 var recipeId = insertedIdRaw[0]['LAST_INSERT_ID()'];
                 con.release();
-                createRecipeMaterials(req, pool, recipeId, () => {
+
+                insert_update_materials(pool, req, recipeId, 0, () => {
                     res.json(ApiResponse(true, recipeId))
                 })
             });
         });
 };
 
-function createRecipeMaterials(req, pool, recipeId, cb) {
-    var link_material_ingredientGroups = (groupIds, materialId, con) => {
-        if (groupIds.length > 0) {
-            let groupId = groupIds.pop();
-            con.query("INSERT INTO materials_ingredientgroups (`materialId`, `ingredientGroupId`) VALUES (?, ?)", [materialId, groupId], (err, ignore) => {
+function updateRecipe(req, pool, con, cb) {
+    con.query("UPDATE recipes SET `name` = ?, `description` = ?, `calories` = ?, `lastEaten` = ? `WHERE `id` = ?",
+        [req.body.name, req.body.description, req.body.calories, req.body.lastEaten, req.body.id],
+        (err, results) => {
+            if (err) {
+                console.log("ERROR while updating existing recipe");
+                console.log(err);
+                con.release();
+            }
+            insert_update_materials(pool, req, req.body.id, 0, () => {
+                res.json(ApiResponse(true, recipeId))
+            })
+
+        })
+}
+
+function insert_update_ingredientGroups(pool, material, index, cb, groupIds = []) {
+    if (index == material.ingredientgroups.length) {
+        cb(groupIds); // no ingredientgroups left to add
+        return;
+    }
+
+    var ingredientGroup = material.ingredientgroups[index];
+    if (ingredientGroup.name != "") {
+        let existingGroups = await pool.query("SELECT * FROM ingredientgroups WHERE `name` = ?", [ingredientGroup.name]);
+        if (existingGroups.length > 0) {
+            // hook the material up to the existing ingredientgroup
+            groupIds.push(existingGroups[0].id);
+            return insert_update_ingredientGroups(pool, material, index + 1, cb, groupIds);
+        } else {
+            await pool.query("INSERT INTO ingredientgroups (`name`) VALUES (?)", [ingredientGroup.name]);
+            let existingGroups = await pool.query("SELECT * FROM ingredientgroups WHERE `name` = ?", [ingredientGroup.name]);
+            groupIds.push(existingGroups[0].id);
+            return insert_update_ingredientGroups(pool, material, index + 1, cb, groupIds);
+        }
+
+    }
+    insert_update_ingredientGroups(pool, material, index + 1, cb, groupIds);
+}
+
+function link_material_ingredientGroups(groupIds, materialId, con) {
+    if (groupIds.length > 0) {
+        let groupId = groupIds.pop();
+        con.query("INSERT INTO materials_ingredientgroups (`materialId`, `ingredientGroupId`) VALUES (?, ?)", [materialId, groupId], (err, ignore) => {
+            if (err) {
+                console.log("ERROR while linking new material to ingredientgroup");
+                console.log(err);
+                con.release();
+                return;
+            } else {
+                link_material_ingredientGroups(groupIds, materialId, con);
+            }
+        })
+    } else {
+        con.release();
+        return;
+    }
+}
+
+function insert_update_materials(pool, req, recipeId, index, cb) {
+    if (index === req.body.materials.length) {
+        cb();
+        return;
+    }
+    var material = req.body.materials[index];
+    // first insert the ingredient groups
+    if (material.id > 0) {
+        // drop existing material_ingredientgroup connections
+        await pool.query("DELETE FROM materials_ingredientgroups WHERE materialId = ?", [material.id]);
+    }
+    insert_update_ingredientGroups(pool, material, 0, (groupIds) => {
+        if (groupIds.length == 0) return; // no ingredients to link this material to...
+        pool.getConnection((err, con) => {
+            con.query("INSERT INTO materials (`recipeId`, `quantity`, `required`) VALUES (?, ?, ?)", [recipeId, req.body.quantity, req.body.required ? 1 : 0], (err, ignore) => {
                 if (err) {
-                    console.log("ERROR while linking new material to ingredientgroup");
+                    console.log("ERROR while inserting new material");
                     console.log(err);
                     con.release();
                     return;
-                } else {
-                    link_material_ingredientGroups(groupIds, materialId, con);
                 }
-            })
-        } else {
-            con.release();
-            return;
-        }
-    }
-    var insert_ingredientGroups = (material, index, cb, groupIds = []) => {
-        if (index == material.ingredientgroups.length) {
-            cb(groupIds); // no ingredientgroups left to add
-            return;
-        }
-
-        var ingredientGroup = material.ingredientgroups[index];
-        if (ingredientGroup.name != "") {
-            let existingGroups = await pool.query("SELECT * FROM ingredientgroups WHERE `name` = ?", [ingredientGroup.name]);
-            if (existingGroups.length > 0) {
-                groupIds.push(existingGroups[0].id);
-                return insert_ingredientGroups(material, index + 1, cb, groupIds);
-            } else {
-                await pool.query("INSERT INTO ingredientgroups (`name`) VALUES (?)", [ingredientGroup.name]);
-                let existingGroups = await pool.query("SELECT * FROM ingredientgroups WHERE `name` = ?", [ingredientGroup.name]);
-                groupIds.push(existingGroups[0].id);
-                return insert_ingredientGroups(material, index + 1, cb, groupIds);
-            }
-
-        }
-        insert_ingredientGroups(material, index + 1, cb, groupIds);
-    }
-    var insert_materials = (index) => {
-        if (index === req.body.materials.length) {
-            cb();
-            return;
-        }
-        var material = req.body.materials[index];
-        // first insert the ingredient groups
-        insert_ingredientGroups(material, 0, (groupIds) => {
-            if (groupIds.length == 0) return; // no ingredients to link this material to...
-            pool.getConnection((err, con) => {
-                con.query("INSERT INTO materials (`recipeId`, `quantity`, `required`) VALUES (?, ?, ?)", [recipeId, req.body.quantity, req.body.required ? 1 : 0], (err, ignore) => {
-                    if (err) {
-                        console.log("ERROR while inserting new material");
-                        console.log(err);
+                con.query("SELECT LAST_INSERT_ID()", (err2, insertedIdRaw) => {
+                    if (err2) {
+                        console.log("ERROR at selecting last insert id after inserting new material");
+                        console.log(err2);
                         con.release();
                         return;
                     }
-                    con.query("SELECT LAST_INSERT_ID()", (err2, insertedIdRaw) => {
-                        if (err2) {
-                            console.log("ERROR at selecting last insert id after inserting new material");
-                            console.log(err2);
-                            con.release();
-                            return;
-                        }
-                        link_material_ingredientGroups(groupIds, insertedIdRaw[0]['LAST_INSERT_ID()'], con)
-                    })
+                    link_material_ingredientGroups(groupIds, insertedIdRaw[0]['LAST_INSERT_ID()'], con)
                 })
-            });
+            })
         });
-        insert_materials(index + 1);
-    };
-    insert_materials(0);
-}
+    });
+    insert_update_materials(pool, req, recipeId, index + 1, cb);
+};
+
 
 var post = (pool) => async (req, res) => {
     if (req.body.id > 0) {
         // do an update
-        await pool.query("SELECT * FROM recipes");
+        pool.getConnection((err, con) => {
+            updateRecipe(req, pool, con, res);
+        });
     }
     else {
         // do an insert
