@@ -1,9 +1,14 @@
 
 const ApiResponse = require('./apiResponse').ApiResponse
 
-var deleteItem = (db) => (req, res) => {
-    db.collection('inventory').remove({ "_id": ObjectId(req.body._id) });
-    res.json(ApiResponse(true, null));
+var deleteItem = (pool) => (req, res) => {
+    try {
+        var ingredients = await pool.query("DELETE FROM ingredients WHERE id = ?", [req.body.id]);
+        res.send(ApiResponse(true, null));
+    }
+    catch (err) {
+        res.send(ApiResponse(true, null));
+    }
 }
 
 var post = (pool) => async (req, res) => {

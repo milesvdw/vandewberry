@@ -3,7 +3,7 @@ import { Ingredient } from "./ingredient";
 import { Database } from "../Database";
 
 export class Recipe {
-    public _id?: string;
+    public id?: number;
     public materials: Material[] = [new Material()]; // each top-level item represents a list of ingredients which may replace/substitute each other
     public description: string = "";
     public name: string = "";
@@ -49,8 +49,8 @@ export class Recipe {
             },
             body: JSON.stringify(recipe),
             method: 'post',
-        }).then(async (id: string) => {
-            recipe._id = id;
+        }).then(async (id: number) => {
+            recipe.id = id;
             return recipe;
         });
     }
@@ -65,8 +65,8 @@ export class Recipe {
             },
             body: JSON.stringify(recipe),
             method: 'post',
-        }).then(async (id: string) => {
-            recipe._id = id;
+        }).then(async (id: number) => {
+            recipe.id = id;
             return recipe;
         });
     }

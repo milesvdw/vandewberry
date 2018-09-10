@@ -1,7 +1,7 @@
 import { Database } from "../Database";
 
 export class Image {
-    public _id?: string;
+    public id?: number;
     public url: string = "";
     public description: string = "";
     public title: string = "";
@@ -20,8 +20,8 @@ export class Image {
             },
             body: JSON.stringify(this),
             method: 'post',
-        }).then(async (id: string) => {
-            this._id = id;
+        }).then(async (id: number) => {
+            this.id = id;
             return this;
         });
     }

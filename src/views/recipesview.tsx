@@ -57,7 +57,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                 return recipe1.name.localeCompare(recipe2.name);
             })
             .map((recipe: Recipe) => {
-                return <RecipeDetailView key={recipe._id} repo={this.props.repo} recipe={recipe} shareRecipe={this.shareRecipe} editRecipe={this.editRecipe} />
+                return <RecipeDetailView key={recipe.id} repo={this.props.repo} recipe={recipe} shareRecipe={this.shareRecipe} editRecipe={this.editRecipe} />
             });
     }
 

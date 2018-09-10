@@ -2,6 +2,7 @@ import { Ingredient } from "./ingredient";
 import { isIngredientAvailable } from "../utils/recipes";
 
 export class Material {
+    public id?: number;
     public ingredients: Ingredient[] = [new Ingredient()];
     public quantity: string = "";
     public required: boolean = true;

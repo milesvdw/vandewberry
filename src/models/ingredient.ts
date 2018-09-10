@@ -7,7 +7,7 @@ export class STATUS {
     public static INVENTORY = 31;
 }
 export class Ingredient {
-    public id?: string;
+    public id?: number;
     public name: string = "";
     public category: string = "";
     public last_purchased: any; // TODO: figure out what this should be
@@ -29,7 +29,7 @@ export class Ingredient {
             },
             body: JSON.stringify(ingredient),
             method: 'post',
-        }).then(async (id: string) => {
+        }).then(async (id: number) => {
             ingredient.id = id;
             return ingredient;
         });

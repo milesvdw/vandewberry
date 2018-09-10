@@ -120,13 +120,13 @@ export class RecipeDetailView extends React.Component<{ repo: IIngredientRepo & 
         let materials = this.displayMaterials(this.props.recipe.materials);
         let recipeButtons = this.displayRecipeButtons(this.props.recipe);
         return (
-            <Row className="recipe-row" key={this.props.recipe._id}>
+            <Row className="recipe-row" key={this.props.recipe.id}>
                 <Panel defaultExpanded={false} className='no-border'>
                     <Panel.Toggle componentClass="a" className="no-border btn btn-block btn-secondary">
                         {this.props.recipe.name.capitalize()}
                     </Panel.Toggle>
                     <Panel.Collapse>
-                        <div id={'possible_recipe_details_' + this.props.recipe._id}>
+                        <div id={'possible_recipe_details_' + this.props.recipe.id}>
                             <ul className="list-group well">
 
                                 {recipeButtons}

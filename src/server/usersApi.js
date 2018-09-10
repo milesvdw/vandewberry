@@ -6,19 +6,25 @@ var login = (db) => (req, res) => {
     res.send(ApiResponse(true, null))
 }
 
-var createAccount = (connectionConfig) => (req, res) => {
+var createAccount = (pool) => (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(req.body.password, salt)
 
-    db.collection('users').find({ user: req.body.username }).toArray((geterr, items) => {
-        if (items.length > 0) {
+    try {
+        var users = await pool.query("SELECT FROM users WHERE user = ?", [req.body.username]);
+        // db.collection('users').find({ user: req.body.username }).toArray((geterr, items) => {
+        if (users.length > 0) {
             res.send(ApiResponse(false, false));
             return;
         }
-        db.collection('users').save({ user: req.body.username, passwordHash: hash, household: req.body.household });
+        await pool.query("INSERT INTO users ( ?, ?, ?)", [req.body.username, hash, req.body.household]);
+        // db.collection('users').save({ user: req.body.username, passwordHash: hash, household: req.body.household });
         res.send(ApiResponse(false, true));
-    });
-
+        // });
+    }
+    catch (err) {
+        res.send(ApiResponse(true, null));
+    }
 }
 
 var logout = (db) => (req, res, next) => {

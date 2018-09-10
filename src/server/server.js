@@ -16,6 +16,8 @@ const ApiResponse = require('./apiResponse').ApiResponse
 const https = require('https');
 var mysql = require('mysql');
 var util = require('util')
+const readline = require('readline');
+
 // parse application/json
 
 // TODO: Salting technique
@@ -56,18 +58,18 @@ var connectionConfig = {
   database: "heroku_bbb26e4d4bb66eb",
   port: '3306'
 }
-
 const pool = mysql.createPool(connectionConfig)
+
 pool.getConnection((err, connection) => {
   if (err) {
     if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-      console.error('Database connection was closed.')
+      console.log('Database connection was closed.')
     }
     if (err.code === 'ER_CON_COUNT_ERROR') {
-      console.error('Database has too many connections.')
+      console.log('Database has too many connections.')
     }
     if (err.code === 'ECONNREFUSED') {
-      console.error('Database connection was refused.')
+      console.log('Database connection was refused.')
     }
   }
   if (connection) {
@@ -75,24 +77,15 @@ pool.getConnection((err, connection) => {
   }
   return
 })
+
+console.log(connectionConfig);
+
 pool.query = util.promisify(pool.query) // dark magic
 
 MongoClient.connect(uri, (err, client) => {
   if (err) {
     throw err;
   }
-
-  let db = client.db('heroku_6ftkk7t9');
-
-  // db.collection('inventory').find().toArray((geterr, items) => {
-  //   items.forEach(async (item) => {
-  //     var results = await pool.query("SELECT * FROM households WHERE name = '" + item.household + "'")
-  //     statusId = item.status === "shopping" ? 1 : item.status === "archived" ? 11 : 31;
-  //     await pool.query("INSERT INTO ingredients (`name`, `category`, statusID, expires, shelf_life, householdId ) VALUES ('" + item.name + "', " + "'" + item.category + "', " + "" + statusId + ", " + "'" + item.expires + "', " + "'" + item.shelf_life + "', " + results[0].id + ")")
-  //   });
-  // });
-
-
 
   app.use(session({
     secret: process.env.SECRET,
@@ -109,7 +102,7 @@ MongoClient.connect(uri, (err, client) => {
     async (username, password, done) => {
 
       try {
-        var users = await pool.query("SELECT * from users WHERE username = \'" + username + "'");
+        var users = await pool.query("SELECT * from users WHERE username = '?'" + [username]);
         if (users.length === 1) {
           // Always use hashed passwords and fixed time comparison
           bcrypt.compare(password, users[0].password, (cryptErr, isValid) => {
@@ -136,7 +129,7 @@ MongoClient.connect(uri, (err, client) => {
   });
 
   passport.deserializeUser(async (id, done) => {
-    var users = await pool.query("SELECT * from users WHERE id = \'" + id + "'");
+    var users = await pool.query("SELECT * from users WHERE id = '?'" + [id]);
     done(err, users[0]);
   });
 
@@ -157,7 +150,7 @@ MongoClient.connect(uri, (err, client) => {
   // INVENTORY
   app.get('/api/inventory', passport.authenticationMiddleware(), InventoryApi.get(pool));
   app.post('/api/inventory', passport.authenticationMiddleware(), InventoryApi.post(pool));
-  app.delete('/api/inventory', passport.authenticationMiddleware(), InventoryApi.delete(db));
+  app.delete('/api/inventory', passport.authenticationMiddleware(), InventoryApi.delete(pool));
 
   app.get('/api/householdMembers', passport.authenticationMiddleware(), async (req, res) => {
     try {
