@@ -2,8 +2,23 @@ const ApiResponse = require('./apiResponse').ApiResponse
 // const utils = require('../utils/utils')
 
 var deleteRecipe = (db) => (req, res) => {
-    db.collection('recipes').remove({ "_id": ObjectId(req.body._id) });
-    res.json(ApiResponse(true, null));
+    var existingData = await pool.query("SELECT * FROM recipes LEFT JOIN materials ON materials.recipeId = recipes.id \
+    WHERE recipes.id = ?", [req.body.id]);
+
+    if (existingData.length == 0) {
+        console.log("ERROR: attempted to delete a recipe that doesn't exist");
+        res.json(ApiResponse(true, false));
+    } else if (existingData[0]['recipes.householdId'] != req.user.householdId) {
+        console.log("ERROR: attempted to delete a recipe that the user doesn't own");
+        res.json(ApiResponse(true, false));
+    } else {
+        var materialIds = existingData.map((row) => row['materials.id']).unique();
+        await pool.query("DELETE FROM materials_ingredientgroups WHERE materialId IN (?)", [materialIds]);
+        await pool.query("DELETE FROM materials WHERE `id` IN (?)", [materialIds]);
+        await pool.query("DELETE FROM recipes WHERE `id` = ?", [req.body.id])
+        res.json(ApiResponse(true, true))
+    }
+    res.json(ApiResponse(true, false)); // TODO: this line maybe shouldn't exist at all. How would you get here?
 }
 
 function createRecipe(req, pool, con, res) {
@@ -18,9 +33,20 @@ function createRecipe(req, pool, con, res) {
                 return;
             }
             con.query("SELECT LAST_INSERT_ID()", (err3, insertedIdRaw) => {
+                if (err3) {
+                    console.log("ERROR while selecting id of just inserted recipe");
+                    console.log(err3);
+                    con.release();
+                    return;
+                }
+
                 var recipeId = insertedIdRaw[0]['LAST_INSERT_ID()'];
                 con.release();
 
+                var preexistingMaterials = await pool.query("SELECT * FROM materials WHERE `recipeId` = ?", [recipeId]);
+                var preexistingMaterialIds = preexistingMaterials.map((row) => row.id);
+                await pool.query("DELETE FROM materials_ingredientgroups WHERE `materialId` IN (?)", [preexistingMaterialIds]); // delete old materials from this recipe so we can save fresh
+                await pool.query("DELETE FROM materials WHERE `materialId` IN (?)", [preexistingMaterialIds]);
                 insert_update_materials(pool, req, recipeId, 0, () => {
                     res.json(ApiResponse(true, recipeId))
                 })
@@ -28,7 +54,19 @@ function createRecipe(req, pool, con, res) {
         });
 };
 
-function updateRecipe(req, pool, con, cb) {
+function updateRecipe(req, pool, con, res) {
+    var existingRecipe = await pool.query("SELECT * FROM recipes WHERE id = ?", [req.body.id]);
+    if (existingRecipe.length > 0) {
+        if (existingRecipe[0].householdId != req.user.householdId) {
+            console.log("ERROR user attempted to update a recipe that their household doesn't own");
+            con.release();
+            return;
+        }
+    } else {
+        console.log("ERROR attempted to update a recipe that hasn't been created yet!");
+        con.release();
+        return;
+    }
     con.query("UPDATE recipes SET `name` = ?, `description` = ?, `calories` = ?, `lastEaten` = ? `WHERE `id` = ?",
         [req.body.name, req.body.description, req.body.calories, req.body.lastEaten, req.body.id],
         (err, results) => {
@@ -95,6 +133,8 @@ function insert_update_materials(pool, req, recipeId, index, cb) {
     var material = req.body.materials[index];
     // first insert the ingredient groups
     if (material.id > 0) {
+        // THIS SHOULD NEVER HAPPEN
+        console.log("ERROR! Expected material to be saved new, but this one already has an id!");
         // drop existing material_ingredientgroup connections
         await pool.query("DELETE FROM materials_ingredientgroups WHERE materialId = ?", [material.id]);
     }
@@ -150,17 +190,18 @@ var post = (pool) => async (req, res) => {
 }
 
 var share = (pool) => (req, res) => {
-    // TODO: req now has a 'household' which is different from a 'householdId' which will be used for sharing
+    // TODO: update the post to this endpoint to only send a household and a recipeId, all else is wasted bandwidth
+    var results = await pool.query("SELECT * FROM households WHERE name = ?", [req.body.household])
 
-    db.collection('recipes').save(req.body, (getErr, result) => {
-        if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
-            res.json(ApiResponse(true, result.ops[0]._id));
-        } else if (result.result.upserted) {
-            res.json(ApiResponse(true, result.result.upserted[0]._id));
-        } else {
-            res.json(ApiResponse(true, req.body._id));
-        }
-    });
+    if (results.length == 0) {
+        console.log("user tried to share recipe with non-existent household");
+        res.json(ApiResponse(true, false));
+    }
+
+    var householdId = results[0].id
+
+    await pool.query("INSERT INTO household_recipes (`householdId`, `recipeId`) VALUES (?, ?)", [householdId, req.body.id])
+    res.json(ApiResponse(true, req.body.id));
 }
 
 function constructMaterialFromRows(rows) {
@@ -169,14 +210,10 @@ function constructMaterialFromRows(rows) {
     material.quantity = rows[0]['materials.quantity']
     material.required = rows[0]['materials.required']
 
-    let ingredientgroupids = rows.map((r) => r['ingredientgroups.id']) // non-unique list of recipe ids
-    ingredientIds = ingredientIds.unique();
-
-    material.ingredients = []
-    ingredientIds.forEach((id) =>
-        recipe.materials.push(constructMaterialFromRows(rows.filter((row) =>
-            row['materials.id'] === id))))
-
+    material.ingredientgroups = rows.map((row) => {
+        return { id: row.ingredientgroups.id, name: row.ingredientgroups.name }
+    });
+    return material;
 }
 
 function constructRecipeFromRows(rows) {
@@ -195,6 +232,8 @@ function constructRecipeFromRows(rows) {
     materialIds.forEach((id) =>
         recipe.materials.push(constructMaterialFromRows(rows.filter((row) =>
             row['materials.id'] === id))))
+
+    return recipe;
 }
 
 
@@ -205,7 +244,6 @@ var get = (pool) => async (req, res) => {
         LEFT JOIN materials ON materials.recipeId = recipes.id \
         LEFT JOIN materials_ingredientgroups ON materials_ingredientgroups.materialId = materials.id \
         LEFT JOIN ingredientgroups ON materials_ingredientgroups.ingredientGroupId = ingredientgroups.id \
-        LEFT JOIN ingredients ON ingredients.ingredientGroupId = ingredientgroups.id \
         WHERE recipes.householdId = ? \
         AND \
         ingredients.householdId = ?", [req.user.householdId, req.user.householdId]);

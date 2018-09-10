@@ -1,6 +1,7 @@
 import { Material } from "./material";
 import { Ingredient } from "./ingredient";
 import { Database } from "../Database";
+import { IngredientGroup } from "./IngredientGroup";
 
 export class Recipe {
     public id?: number;
@@ -102,7 +103,7 @@ export class Recipe {
 
     public UnparseIngredients(): Recipe {
         this.materials = this.materials.map((material: Material) => {
-            let combinedIngredient: Ingredient = material.ingredientgroups[0];
+            let combinedIngredient: IngredientGroup = material.ingredientgroups[0];
             combinedIngredient.name = material.ingredientgroups.map((ingredientgroup) => ingredientgroup.name).join(', ');
             return new Material({
                 ingredientgroups: [combinedIngredient],
