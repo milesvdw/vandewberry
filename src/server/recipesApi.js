@@ -234,7 +234,6 @@ function constructRecipeFromRows(rows) {
 }
 
 function constructMaterialFromRows(rows) {
-    console.log(rows)
     material = {}
     material.id = rows[0].materialId
     material.quantity = rows[0].materialQuantity
