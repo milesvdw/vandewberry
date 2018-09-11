@@ -20,7 +20,6 @@ export class Ingredient {
         Object.assign(this, init);
 
         // deal with the fact that bits stored in mysql come back as string :(
-        console.log(this.expires);
         if (this.expires as any === "0") {
             this.expires = false;
         }

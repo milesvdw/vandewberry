@@ -18,8 +18,8 @@ export class Material {
         }
     }
 
-    public isAvailable(ingredientgroups: Ingredient[]): boolean {
-        return this.ingredientgroups.some((ingredient) => isIngredientAvailable(ingredient, ingredientgroups));
+    public isAvailable(ingredients: Ingredient[]): boolean {
+        return this.ingredientgroups.some((ingredientgroup) => isIngredientAvailable(ingredientgroup, ingredients));
     }
 
     public print() {

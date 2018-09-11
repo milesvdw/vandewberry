@@ -70,7 +70,7 @@ async function updateRecipe(req, pool, con, res) {
         con.release();
         return;
     }
-    con.query("UPDATE recipes SET `name` = ?, `description` = ?, `calories` = ?, `lastEaten` = ? `WHERE `id` = ?",
+    con.query("UPDATE recipes SET `name` = ?, `description` = ?, `calories` = ?, `lastEaten` = ? WHERE `id` = ?",
         [req.body.name, req.body.description, req.body.calories, req.body.lastEaten, req.body.id],
         (err, results) => {
             if (err) {
@@ -245,9 +245,9 @@ function constructMaterialFromRows(rows) {
     let ingredientgroupIds = rows.map((r) => r.ingredientGroupId) // non-unique list of recipe ids
     ingredientgroupIds = ingredientgroupIds.unique();
 
-    material.ingredientGroups = []
+    material.ingredientgroups = []
     ingredientgroupIds.forEach((id) =>
-        material.ingredientGroups.push(constructIngredientGroupFromRows(rows.filter((row) =>
+        material.ingredientgroups.push(constructIngredientGroupFromRows(rows.filter((row) =>
             row.ingredientGroupId === id))))
     return material;
 }
