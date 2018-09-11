@@ -5,21 +5,28 @@ const ApiResponse = require('./apiResponse').ApiResponse
 // const utils = require('../utils/utils')
 
 var deleteRecipe = (pool) => async (req, res) => {
-    var existingData = await pool.query("SELECT * FROM recipes LEFT JOIN materials ON materials.recipeId = recipes.id \
-    WHERE recipes.id = ?", [req.body.id]);
-
-    if (existingData.length === 0) {
-        console.log("ERROR: attempted to delete a recipe that doesn't exist");
+    var recipes = (await pool.query("SELECT * FROM recipes WHERE id = ?", [req.body.id]));
+    if(recipes.length === 0) {
+        console.log("ERROR: Can't delete a recipe that doesn't exist");
         res.json(ApiResponse(true, false));
-    } else if (existingData[0]['recipes.householdId'] !== req.user.householdId) {
+        return;
+    }
+    var recipe = recipes[0]
+    var materials = await pool.query("SELECT materials.* FROM recipes INNER JOIN materials ON materials.recipeId = recipes.id \
+    AND recipes.id = ?", [req.body.id]);
+
+    if (recipe.householdId !== req.user.householdId) {
         console.log("ERROR: attempted to delete a recipe that the user doesn't own");
         res.json(ApiResponse(true, false));
+        return;
     } else {
-        var materialIds = existingData.map((row) => row['materials.id']).unique();
+        var materialIds = materials.map((mat) => mat.id)
         await pool.query("DELETE FROM materials_ingredientgroups WHERE materialId IN (?)", [materialIds]);
         await pool.query("DELETE FROM materials WHERE `id` IN (?)", [materialIds]);
-        await pool.query("DELETE FROM recipes WHERE `id` = ?", [req.body.id])
+        await pool.query("DELETE FROM household_recipes WHERE recipeId = ?", [recipe.id]);
+        await pool.query("DELETE FROM recipes WHERE `id` = ?", [req.body.id]);
         res.json(ApiResponse(true, true))
+        return;
     }
     res.json(ApiResponse(true, false)); // TODO: this line maybe shouldn't exist at all. How would you get here?
 }
