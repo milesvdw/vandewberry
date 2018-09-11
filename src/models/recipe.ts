@@ -68,9 +68,6 @@ export class Recipe {
             },
             body: JSON.stringify(recipe),
             method: 'post',
-        }).then(async (id: number) => {
-            recipe.id = id;
-            return recipe;
         });
     }
 
