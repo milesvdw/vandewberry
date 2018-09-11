@@ -81,7 +81,7 @@ async function updateRecipe(req, pool, con, res) {
                 con.release();
             }
             insert_update_materials(pool, req, req.body.id, 0, () => {
-                res.json(ApiResponse(true, recipeId))
+                res.json(ApiResponse(true, req.body.id))
             })
 
         })

@@ -10,7 +10,7 @@ export class Material {
 
     public constructor(init?: Partial<Material>) {
         Object.assign(this, init);
-        this.required = this.required === true || this.required as any === 'true';
+        
         if (init && this.ingredientgroups.length > 0 && !(this.ingredientgroups[0] instanceof IngredientGroup)) {
             this.ingredientgroups = this.ingredientgroups.map((i) => {
                 return new IngredientGroup(i)
@@ -20,9 +20,11 @@ export class Material {
 
         // deal with the fact that bits stored in mysql come back as string :(
         if (this.required as any === "0") {
+            debugger;
             this.required = false;
         }
         else if (this.required as any === "1") {
+            debugger;
             this.required = true;
         }
     }
