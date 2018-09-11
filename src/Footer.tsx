@@ -1,13 +1,12 @@
 import * as React from "react";
 import { Database } from "./Database";
-import { FormGroup } from "react-bootstrap";
-import Panel from "react-bootstrap/lib/Panel";
+import { FormGroup, Modal } from "react-bootstrap";
 import Button from "react-bootstrap/lib/Button";
 
-export class Footer extends React.Component<{}, { title: string, body: string }> {
+export class Footer extends React.Component<{}, { title: string, body: string, bug: boolean }> {
     constructor(props: {}) {
         super(props);
-        this.state = { title: "", body: "" };
+        this.state = { title: "", body: "", bug: false };
         
         this.updateFields = this.updateFields.bind(this);
         this.submitBug = this.submitBug.bind(this);
@@ -42,31 +41,38 @@ export class Footer extends React.Component<{}, { title: string, body: string }>
     public render() {
         return (
             <div>
-                <div style={{width:'100vw', position: 'absolute', bottom: '0' }}>
-                    <Panel style={{ margin: '20px' }}>
-                        <Panel.Heading>
+                <div style={{width:'100vw', position: 'absolute', bottom: '10px', textAlign: 'center' }}>
+                    <Button {...{tooltip: 'Submit a bug for developer review'}}
+                        onClick={() => this.setState({bug: true})}
+                        className='classy-btn no-outline btn-round btn-press btn-default'>
+                        Bug Report
+                    </Button>
+                    <Modal show={this.state.bug} onHide={() => this.setState({ bug: false})}>
+                        <Modal.Header>
                             Bug Report
-                        </Panel.Heading>
-                        <Panel.Body>
-                            <form style={{ padding: '10px' }} onSubmit={this.submitBug}>
-                                <FormGroup className='bug-report-field' style={{width: '25%'}}>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <form onSubmit={this.submitBug}>
+                                <FormGroup {...{tooltip: 'A breif title of the bug'}}>
                                     <label htmlFor="title">Title</label>
                                     <input type="text" className="form-control" name="title" aria-describedby="titleHelp" placeholder="Title" value={this.state.title} onChange={this.updateFields}/>
                                     <small id="titleHelp" className="form-text text-muted">A simple, descriptive title for the issue.</small>
                                 </FormGroup>
-                                <FormGroup {...{tooltip: 'A detailed description of the bug and how it was discovered'}} className='bug-report-field' style={{maxWidth: '75%'}}>
+                                <FormGroup {...{tooltip: 'A detailed description of the bug and how it was discovered'}}>
                                     <label htmlFor="body">Information</label>
-                                    <input type="text" className="form-control" name="body" aria-describedby="bodyHelp" placeholder="Steps to reproduce:..." value={this.state.body} onChange={this.updateFields} />
+                                    <textarea rows={4} className="form-control" name="body" aria-describedby="bodyHelp" placeholder="Steps to reproduce:..." value={this.state.body} onChange={this.updateFields} />
                                     <small id="bodyHelp" className="form-text text-muted">Any information you can provide about the issue.</small>
                                 </FormGroup>
-                                <Button {...{tooltip: 'Submit Bug for review on Github'}} type="submit"
-                                     className='classy-btn no-outline btn-round btn-press btn-default' 
-                                    style={{ position: 'absolute', right: '40px', fontSize: '14px', textShadow: 'none', bottom: '40px'}}>
-                                    Submit Bug
-                                </Button>
+                                <FormGroup>
+                                    <Button {...{tooltip: 'Submit Bug for review on Github'}} type="submit"
+                                        className='classy-btn no-outline btn-round btn-press btn-default' 
+                                        /*style={{ position: 'absolute', right: '20px', fontSize: '14px', textShadow: 'none', bottom: '20px'}}*/>
+                                        Submit Bug
+                                    </Button>
+                                </FormGroup>
                             </form>
-                        </Panel.Body>
-                    </Panel>
+                        </Modal.Body>
+                    </Modal>
                 </div>
             </div>
         );
