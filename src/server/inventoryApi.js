@@ -90,9 +90,6 @@ var post = (pool) => async (req, res) => {
                 let insertedIngredientGroupId = (await pool.query("SELECT * from ingredientgroups WHERE `name` = ? LIMIT 1", [req.body.name.trim()]))[0].id;
                 // just update the ingredient's fields
                 pool.getConnection((err, con) => {
-                    console.log(mysql.format("INSERT INTO ingredients (`ingredientGroupId`, `category`, `statusID`, `expires`, `shelf_life`, `householdId`) \
-                    VALUES (?, ?, ?, ?, ?, ?) ",
-                        [insertedIngredientGroupId, req.body.category, req.body.statusID, req.body.expires ? 1 : 0, req.body.shelf_life, req.user.householdId]));
                     con.query("INSERT INTO ingredients (`ingredientGroupId`, `category`, `statusID`, `expires`, `shelf_life`, `householdId`) \
                     VALUES (?, ?, ?, ?, ?, ?) ",
                         [insertedIngredientGroupId, req.body.category, req.body.statusID, req.body.expires ? 1 : 0, req.body.shelf_life, req.user.householdId], (err2, ignore) => {
@@ -113,9 +110,6 @@ var post = (pool) => async (req, res) => {
                 await pool.query("INSERT INTO ingredientgroups (`name`) VALUES (?)", [req.body.name.trim()]);
                 let insertedIngredientGroupId = (await pool.query("SELECT * from ingredientgroups WHERE `name` = ? LIMIT 1", [req.body.name.trim()]))[0].id;
                 pool.getConnection((err, con) => {
-                    console.log(mysql.format("INSERT INTO ingredients (`ingredientGroupId`, `category`, `statusID`, `expires`, `shelf_life`, `householdId`) \
-                    VALUES (?, ?, ?, ?, ?, ?) ",
-                    [insertedIngredientGroupId, req.body.category, req.body.statusID, req.body.expires ? 1 : 0, req.body.shelf_life, req.user.householdId]))
                     con.query("INSERT INTO ingredients (`ingredientGroupId`, `category`, `statusID`, `expires`, `shelf_life`, `householdId`) \
                         VALUES (?, ?, ?, ?, ?, ?) ",
                         [insertedIngredientGroupId, req.body.category, req.body.statusID, req.body.expires ? 1 : 0, req.body.shelf_life, req.user.householdId], (err2, ignore) => {
@@ -144,7 +138,6 @@ var get = (pool) => async (req, res) => {
     try {
         var ingredients = await pool.query("SELECT ingredients.id as id, ingredientgroups.name as name, category, statusID, expires, shelf_life from ingredients \
         INNER JOIN ingredientgroups ON ingredients.ingredientGroupId = ingredientgroups.id AND householdId = ?", [req.user.householdId]);
-        console.log(ingredients[0]);
         res.send(ApiResponse(true, ingredients));
     }
     catch (err) {
