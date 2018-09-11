@@ -64,8 +64,6 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
         {/* <Route path="/photos"
           component={() =>
             <PhotosApp ref={thing => { this.photoApp = thing }} /> */}
-          }
-        />
       </div>
     )
 

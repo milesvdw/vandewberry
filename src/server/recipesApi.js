@@ -1,4 +1,5 @@
 // tslint:disable:no-console
+var mysql = require('mysql');
 const ApiResponse = require('./apiResponse').ApiResponse
 // const utils = require('../utils/utils')
 
@@ -260,6 +261,7 @@ Array.prototype.unique = function () {
 
 var get = (pool) => async (req, res) => {
     try {
+        console.log(mysql.format("SELECT recipes.id AS recipeId, recipes.description AS recipeDescription, recipes.name AS recipeName, recipes.calories AS recipeCalories, recipes.lastEaten AS recipeLastEaten, recipes.householdId AS householdId, materials.id AS materialId, materials.quantity AS materialQuantity, materials.required AS materialRequired, ingredientgroups.id AS ingredientGroupId, ingredientgroups.name AS ingredientGroupName FROM recipes LEFT JOIN materials ON materials.recipeId = recipes.id LEFT JOIN materials_ingredientgroups ON materials_ingredientgroups.materialId = materials.id LEFT JOIN ingredientgroups ON materials_ingredientgroups.ingredientGroupId = ingredientgroups.id WHERE recipes.householdId = ?", [req.user.householdId]));
         var sqlRecipes = await pool.query("SELECT recipes.id AS recipeId, \
         recipes.description AS recipeDescription, \
         recipes.name AS recipeName, \
@@ -276,16 +278,17 @@ var get = (pool) => async (req, res) => {
         LEFT JOIN materials_ingredientgroups ON materials_ingredientgroups.materialId = materials.id \
         LEFT JOIN ingredientgroups ON materials_ingredientgroups.ingredientGroupId = ingredientgroups.id \
         WHERE recipes.householdId = ?", [req.user.householdId]);
-        let recipeIds = sqlRecipes.map((r) => r['recipes.id']) // non-unique list of recipe ids
+        let recipeIds = sqlRecipes.map((r) => r['recipeId']) // non-unique list of recipe ids
         recipeIds = recipeIds.unique();
 
         let finalRecipes = [];
         recipeIds.forEach((rId) => {
-            finalRecipes.push(constructRecipeFromRows(sqlRecipes.filter((row) => row['recipes.id'] === rId))) // // TODO: this results in duplicate work as we filter this list several times, should be optimized 
+            finalRecipes.push(constructRecipeFromRows(sqlRecipes.filter((row) => row['recipeId'] === rId))) // // TODO: this results in duplicate work as we filter this list several times, should be optimized 
         })
         res.send(ApiResponse(true, finalRecipes));
     }
     catch (err) {
+        console.log(err);
         res.send(ApiResponse(true, []));
     }
 }
