@@ -16,6 +16,15 @@ export class Material {
                 return new IngredientGroup(i)
             });
         }
+
+
+        // deal with the fact that bits stored in mysql come back as string :(
+        if (this.required as any === "0") {
+            this.required = false;
+        }
+        else if (this.required as any === "1") {
+            this.required = true;
+        }
     }
 
     public isAvailable(ingredients: Ingredient[]): boolean {
