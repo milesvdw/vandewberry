@@ -42,8 +42,8 @@ export class Footer extends React.Component<{}, { title: string, body: string }>
     public render() {
         return (
             <div>
-                <div style={{width:'100vw', position: 'absolute', bottom: '0' }}>
-                    <Panel style={{ margin: '20px' }}>
+                <div style={{width:'100vw', position: 'fixed', bottom: '0' }}>
+                    <Panel>
                         <Panel.Heading>
                             Bug Report
                         </Panel.Heading>

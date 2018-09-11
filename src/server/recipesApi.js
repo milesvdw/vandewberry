@@ -215,7 +215,6 @@ var share = (pool) => async (req, res) => {
 }
 
 function constructRecipeFromRows(rows) {
-    console.log('rfr')
     //expects a list of rows, with each row having one unique recipe-material-ingredientgroup-ingredient combination
     recipe = {};
     recipe.id = rows[0].recipeId;
@@ -235,13 +234,11 @@ function constructRecipeFromRows(rows) {
 }
 
 function constructMaterialFromRows(rows) {
-    console.log('mfr')
     console.log(rows)
     material = {}
     material.id = rows[0].materialId
     material.quantity = rows[0].materialQuantity
     material.required = rows[0].materialRequired
-    console.log('mfr2')
     let ingredientgroupIds = rows.map((r) => r.ingredientGroupId) // non-unique list of recipe ids
     ingredientgroupIds = ingredientgroupIds.unique();
 
