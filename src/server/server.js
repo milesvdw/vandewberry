@@ -107,8 +107,6 @@ passport.use(new LocalStrategy(
           return done(null, users[0])
         })
       } else {
-        console.log('here4');
-
         return done(null, false)
 
       }

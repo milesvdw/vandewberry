@@ -45,7 +45,7 @@ async function createRecipe(req, pool, con, res) {
                 con.release();
 
                 var preexistingMaterials = await pool.query("SELECT * FROM materials WHERE `recipeId` = ?", [recipeId]);
-                if(preexistingMaterials.length > 0) {
+                if (preexistingMaterials.length > 0) {
                     var preexistingMaterialIds = preexistingMaterials.map((row) => row.id);
                     await pool.query("DELETE FROM materials_ingredientgroups WHERE `materialId` IN (?)", [preexistingMaterialIds]); // delete old materials from this recipe so we can save fresh
                     await pool.query("DELETE FROM materials WHERE `materialId` IN (?)", [preexistingMaterialIds]);
@@ -248,7 +248,6 @@ function constructMaterialFromRows(rows) {
 
 function constructIngredientGroupFromRows(rows) {
     ingredientGroup = {};
-    console.log(rows[0]);
     ingredientGroup.id = rows[0].ingredientGroupId;
     ingredientGroup.name = rows[0].ingredientGroupName;
 
