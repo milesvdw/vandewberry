@@ -13,6 +13,7 @@ import FaMinusCircle from "react-icons/lib/fa/minus-circle";
 import FaPlus from "react-icons/lib/fa/plus";
 
 import { Ingredient } from "../models/ingredient";
+import { IngredientGroup } from "../models/IngredientGroup";
 
 export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRecipeRepo, onSave: () => void }, { recipe: Recipe }> {
     constructor(props: { recipe: Recipe, repo: IRecipeRepo, onSave: () => void }) {
@@ -39,8 +40,8 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
             const field = event.target.name;
             const recipe = this.state.recipe;
             let val = event.target.value;
-            if (field === 'ingredients') { // hack to deal with zipped/unzipped material lists
-                val = val.split(', ').map((word: string) => new Ingredient({ name: word }))
+            if (field === 'ingredientgroups') { // hack to deal with zipped/unzipped material lists
+                val = val.split(', ').map((word: string) => new IngredientGroup({ name: word }))
             }
 
             recipe.materials[index][field] = val;
@@ -78,7 +79,7 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
                     <input type='text' className='form-control' name='quantity' value={material.quantity} onChange={this.updateMaterialFields(index)} />
                 </Col>
                 <Col sm={8}>
-                    <input type='text' className='form-control' name='ingredients' value={material.ingredientgroups.map((ingredientgroup: Ingredient) => ingredientgroup.name).join(', ')} onChange={this.updateMaterialFields(index)} />
+                    <input type='text' className='form-control' name='ingredientgroups' value={material.ingredientgroups.map((ingredientgroup: Ingredient) => ingredientgroup.name).join(', ')} onChange={this.updateMaterialFields(index)} />
                 </Col>
                 <Col sm={1}>
                     <FaMinusCircle onClick={() => { this.removeMaterial(index); }} />

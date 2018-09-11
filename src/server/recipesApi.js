@@ -23,7 +23,7 @@ var deleteRecipe = (pool) => async (req, res) => {
 }
 
 async function createRecipe(req, pool, con, res) {
-    con.query("INSERT INTO recipes (`name`, `description`, `calories`, `lastEasten`, `householdId`) \
+    con.query("INSERT INTO recipes (`name`, `description`, `calories`, `lastEaten`, `householdId`) \
     VALUES (?, ?, ?, ?, ?)",
         [req.body.name, req.body.description, req.body.calories, req.body.lastEaten, req.user.householdId],
         (err2, ignore) => {
@@ -45,9 +45,11 @@ async function createRecipe(req, pool, con, res) {
                 con.release();
 
                 var preexistingMaterials = await pool.query("SELECT * FROM materials WHERE `recipeId` = ?", [recipeId]);
-                var preexistingMaterialIds = preexistingMaterials.map((row) => row.id);
-                await pool.query("DELETE FROM materials_ingredientgroups WHERE `materialId` IN (?)", [preexistingMaterialIds]); // delete old materials from this recipe so we can save fresh
-                await pool.query("DELETE FROM materials WHERE `materialId` IN (?)", [preexistingMaterialIds]);
+                if(preexistingMaterials.length > 0) {
+                    var preexistingMaterialIds = preexistingMaterials.map((row) => row.id);
+                    await pool.query("DELETE FROM materials_ingredientgroups WHERE `materialId` IN (?)", [preexistingMaterialIds]); // delete old materials from this recipe so we can save fresh
+                    await pool.query("DELETE FROM materials WHERE `materialId` IN (?)", [preexistingMaterialIds]);
+                }
                 insert_update_materials(pool, req, recipeId, 0, () => {
                     res.json(ApiResponse(true, recipeId))
                 })
@@ -144,7 +146,7 @@ async function insert_update_materials(pool, req, recipeId, index, cb) {
             return; // no ingredients to link this material to...
         }
         pool.getConnection((err, con) => {
-            if(err) {
+            if (err) {
                 console.log("ERROR: getting connection to insert materials");
                 console.log(err);
                 return;
