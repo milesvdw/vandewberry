@@ -136,10 +136,9 @@ async function insert_update_materials(pool, req, recipeId, index, cb) {
     var material = req.body.materials[index];
     // first insert the ingredient groups
     if (material.id > 0) {
-        // THIS SHOULD NEVER HAPPEN
-        console.log("ERROR! Expected material to be saved new, but this one already has an id!");
         // drop existing material_ingredientgroup connections
         await pool.query("DELETE FROM materials_ingredientgroups WHERE materialId = ?", [material.id]);
+        await pool.query("DELETE FROM materials WHERE id = ?", [material.id]);
     }
     insert_update_ingredientGroups(pool, material, 0, (groupIds) => {
         if (groupIds.length === 0) {
@@ -225,7 +224,6 @@ function constructRecipeFromRows(rows) {
     recipe.householdId = rows[0].householdId
 
     let materialIds = rows.map((r) => r.materialId).unique(); // non-unique list of recipe ids
-    console.log(materialIds)
     recipe.materials = []
     materialIds.forEach((id) =>
         recipe.materials.push(constructMaterialFromRows(rows.filter((row) =>
@@ -250,6 +248,7 @@ function constructMaterialFromRows(rows) {
 
 function constructIngredientGroupFromRows(rows) {
     ingredientGroup = {};
+    console.log(rows[0]);
     ingredientGroup.id = rows[0].ingredientGroupId;
     ingredientGroup.name = rows[0].ingredientGroupName;
 
