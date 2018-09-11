@@ -151,7 +151,7 @@ async function insert_update_materials(pool, req, recipeId, index, cb) {
                 console.log(err);
                 return;
             }
-            con.query("INSERT INTO materials (`recipeId`, `quantity`, `required`) VALUES (?, ?, ?)", [recipeId, req.body.quantity, req.body.required ? 1 : 0], (err2, ignore) => {
+            con.query("INSERT INTO materials (`recipeId`, `quantity`, `required`) VALUES (?, ?, ?)", [recipeId, material.quantity, material.required ? 1 : 0], (err2, ignore) => {
                 if (err2) {
                     console.log("ERROR while inserting new material");
                     console.log(err2);
@@ -250,14 +250,22 @@ function constructRecipeFromRows(rows) {
 
 var get = (pool) => async (req, res) => {
     try {
-        var sqlRecipes = await pool.query("SELECT * FROM recipes \
+        var sqlRecipes = await pool.query("SELECT recipes.id as recipeId, \
+        recipes.description as recipeDescription, \
+        recipes.name as recipeName, \
+        recipe.calories as recipeCalories, \
+        recipe.householdId as householdId, \
+        material.id as materialId, \
+        material.quantity as materialQuantity \
+        material.required as materialRequired \
+        ingredientgroups.id as ingredientGroupId \
+        ingredientgroups.name as ingredientGroupName \
+        FROM recipes \
         LEFT JOIN materials ON materials.recipeId = recipes.id \
         LEFT JOIN materials_ingredientgroups ON materials_ingredientgroups.materialId = materials.id \
         LEFT JOIN ingredientgroups ON materials_ingredientgroups.ingredientGroupId = ingredientgroups.id \
-        WHERE recipes.householdId = ? \
-        AND \
-        ingredients.householdId = ?", [req.user.householdId, req.user.householdId]);
-
+        WHERE recipes.householdId = ?", [req.user.householdId]);
+        console.log(sqlRecipes);
         let recipeIds = sqlRecipes.map((r) => r['recipes.id']) // non-unique list of recipe ids
         recipeIds = recipeIds.unique();
 
