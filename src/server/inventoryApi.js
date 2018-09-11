@@ -13,25 +13,31 @@ var deleteItem = (pool) => async (req, res) => {
 }
 
 async function getExistingIngredientById(id) {
-    await pool.query("SELECT ingredients.*, ingredientgroups.name as name FROM ingredients \
+    return await pool.query("SELECT ingredients.*, ingredientgroups.name as name FROM ingredients \
             INNER JOIN ingredientgroups \
             ON ingredients.id = ? AND ingredients.ingredientGroupId = ingredientgroups.id", [id]);
 }
 
-async function updateIngredientValues(category, statusID, expires, shelf_life, id, ingredientGroupId) {
+async function updateIngredientValues(category, statusID, expires, shelfLife, id, ingredientGroupId) {
     if (ingredientGroupid) {
 
-        await pool.query("UPDATE ingredients SET \
+        return await pool.query("UPDATE ingredients SET \
                         ingredientGroupId = ?, \
                         category = ?, \
                         statusID = ?, \
                         expires = ?, \
                         shelf_life = ? \
                         WHERE id = ?",
-            [ingredientGroupId, category, statusID, expires, shelf_life, id]);
+            [ingredientGroupId, category, statusID, expires, shelfLife, id]);
     }
     else {
-
+        return await pool.query("UPDATE ingredients SET \
+            category = ?, \
+            statusID = ?, \
+            expires = ?, \
+            shelf_life = ? \
+            WHERE id = ?",
+            [category, statusID, expires, shelfLife, id]);
     }
 }
 
@@ -72,11 +78,11 @@ async function updateIngredient(user, ingredient) {
     res.json(ApiResponse(true, ingredient.id));
 }
 
-async function insertIngredientValues(ingredientGroupId, category, statusID, expires, shelf_life, householdId) {
+async function insertIngredientValues(ingredientGroupId, category, statusID, expires, shelfLife, householdId) {
     pool.getConnection((err, con) => {
         con.query("INSERT INTO ingredients (`ingredientGroupId`, `category`, `statusID`, `expires`, `shelf_life`, `householdId`) \
             VALUES (?, ?, ?, ?, ?, ?) ",
-            [ingredientGroupId, category, statusID, expires, shelf_life, householdId], (err2, ignore) => {
+            [ingredientGroupId, category, statusID, expires, shelfLife, householdId], (err2, ignore) => {
                 con.query("SELECT LAST_INSERT_ID()", (err3, insertedIdRaw) => {
                     if (err3) {
                         console.log("ERROR at selecting last insert id after inserting new ingredient");

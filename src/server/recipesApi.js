@@ -143,6 +143,13 @@ async function insert_update_materials(pool, req, recipeId, index, cb) {
         return;
     }
     var material = req.body.materials[index];
+
+    var hasIngredients = material.ingredientgroups.length > 0 && !!material.ingredientgroups[0].name;
+    if(!hasIngredients) {
+        console.log("WARNING: user tried to create a material with no ingredients");
+        return insert_update_materials(pool, req, recipeId, index + 1, cb);
+    }
+
     // first insert the ingredient groups
     if (material.id > 0) {
         // drop existing material_ingredientgroup connections
@@ -178,7 +185,7 @@ async function insert_update_materials(pool, req, recipeId, index, cb) {
             })
         });
     });
-    insert_update_materials(pool, req, recipeId, index + 1, cb);
+    return insert_update_materials(pool, req, recipeId, index + 1, cb);
 };
 
 

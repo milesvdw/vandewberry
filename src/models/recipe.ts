@@ -37,6 +37,11 @@ export class Recipe {
     }
 
     public Save(): Promise<Recipe> {
+        this.materials = this.materials.filter((mat) => {
+            let hasIngredients = mat.ingredientgroups.length > 0 && !!mat.ingredientgroups[0].name;
+            return hasIngredients;
+        })
+
         let recipe = this.toLowerCaseRecipe();
         return Database.ApiCall('/api/recipes', {
             headers: {
