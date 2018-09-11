@@ -262,6 +262,13 @@ Array.prototype.unique = function () {
 
 var get = (pool) => async (req, res) => {
     try {
+        var recipeIds = (await pool.query("SELECT * FROM (SELECT recipes.id as id from recipes where householdId = ?) as r \
+         UNION (SELECT recipeId as id from household_recipes where householdId = ?)", [req.user.householdId, req.user.householdId])).map((rrow) => rrow.id);
+        if(recipeIds.length === 0) {
+            res.send(ApiResponse(true, []));
+            return;
+        }
+
         var sqlRecipes = await pool.query("SELECT recipes.id AS recipeId, \
         recipes.description AS recipeDescription, \
         recipes.name AS recipeName, \
@@ -277,9 +284,7 @@ var get = (pool) => async (req, res) => {
         LEFT JOIN materials ON materials.recipeId = recipes.id \
         LEFT JOIN materials_ingredientgroups ON materials_ingredientgroups.materialId = materials.id \
         LEFT JOIN ingredientgroups ON materials_ingredientgroups.ingredientGroupId = ingredientgroups.id \
-        WHERE recipes.householdId = ?", [req.user.householdId]);
-        let recipeIds = sqlRecipes.map((r) => r['recipeId']) // non-unique list of recipe ids
-        recipeIds = recipeIds.unique();
+        WHERE recipes.id IN (?)", [recipeIds]);
 
         let finalRecipes = [];
         recipeIds.forEach((rId) => {
