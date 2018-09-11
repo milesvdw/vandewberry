@@ -51,7 +51,7 @@ if (process.env.NODE_ENV === 'production' || testProd) {
 }
 
 var connectionConfig = {
-  connectionLimit: 9,
+  connectionLimit: 5,
   host: process.env.DATABASE_URL,
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
