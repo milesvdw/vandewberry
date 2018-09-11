@@ -214,52 +214,70 @@ var share = (pool) => async (req, res) => {
     res.json(ApiResponse(true, req.body.id));
 }
 
-function constructMaterialFromRows(rows) {
-    material = {}
-    material.id = rows[0]['materials.id']
-    material.quantity = rows[0]['materials.quantity']
-    material.required = rows[0]['materials.required']
-
-    material.ingredientgroups = rows.map((row) => {
-        return { id: row.ingredientgroups.id, name: row.ingredientgroups.name }
-    });
-    return material;
-}
-
 function constructRecipeFromRows(rows) {
+    console.log('rfr')
     //expects a list of rows, with each row having one unique recipe-material-ingredientgroup-ingredient combination
     recipe = {};
-    recipe.id = rows[0]['recipes.id'];
-    recipe.description = rows[0]['recipes.description'] // NOTE: I'm probably sending over duplicate descriptions which could get expensive idk
-    recipe.name = rows[0]['recipes.name']
-    recipe.calories = rows[0]['recipes.calories']
-    recipe.lastEaten = rows[0]['recipes.lastEaten']
-    recipe.householdId = rows[0]['recipes.householdId']
+    recipe.id = rows[0].recipeId;
+    recipe.description = rows[0].recipeDescription // NOTE: I'm probably sending over duplicate descriptions which could get expensive idk
+    recipe.name = rows[0].recipeName
+    recipe.calories = rows[0].recipeCalories
+    recipe.lastEaten = rows[0].lastEaten
+    recipe.householdId = rows[0].householdId
 
-    let materialIds = rows.map((r) => r['materials.id']) // non-unique list of recipe ids
-    materialIds = materialIds.unique();
+    let materialIds = rows.map((r) => r.materialId).unique(); // non-unique list of recipe ids
+    console.log(materialIds)
     recipe.materials = []
     materialIds.forEach((id) =>
         recipe.materials.push(constructMaterialFromRows(rows.filter((row) =>
-            row['materials.id'] === id))))
-
+            row.materialId === id))))
     return recipe;
 }
 
+function constructMaterialFromRows(rows) {
+    console.log('mfr')
+    console.log(rows)
+    material = {}
+    material.id = rows[0].materialId
+    material.quantity = rows[0].materialQuantity
+    material.required = rows[0].materialRequired
+    console.log('mfr2')
+    let ingredientgroupIds = rows.map((r) => r.ingredientGroupId) // non-unique list of recipe ids
+    ingredientgroupIds = ingredientgroupIds.unique();
 
+    material.ingredientGroups = []
+    ingredientgroupIds.forEach((id) =>
+        material.ingredientGroups.push(constructIngredientGroupFromRows(rows.filter((row) =>
+            row.ingredientGroupId === id))))
+    return material;
+}
+
+function constructIngredientGroupFromRows(rows) {
+    console.log('igfr')
+    ingredientGroup = {};
+    ingredientGroup.id = rows[0].ingredientGroupId;
+    ingredientGroup.name = rows[0].ingredientGroupName;
+
+    return ingredientGroup;
+}
+
+Array.prototype.unique = function () {
+    return this.filter((value, index) => this.indexOf(value) === index);
+}
 
 var get = (pool) => async (req, res) => {
     try {
-        var sqlRecipes = await pool.query("SELECT recipes.id as recipeId, \
-        recipes.description as recipeDescription, \
-        recipes.name as recipeName, \
-        recipe.calories as recipeCalories, \
-        recipe.householdId as householdId, \
-        material.id as materialId, \
-        material.quantity as materialQuantity \
-        material.required as materialRequired \
-        ingredientgroups.id as ingredientGroupId \
-        ingredientgroups.name as ingredientGroupName \
+        var sqlRecipes = await pool.query("SELECT recipes.id AS recipeId, \
+        recipes.description AS recipeDescription, \
+        recipes.name AS recipeName, \
+        recipes.calories AS recipeCalories, \
+        recipes.lastEaten AS recipeLastEaten, \
+        recipes.householdId AS householdId, \
+        materials.id AS materialId, \
+        materials.quantity AS materialQuantity, \
+        materials.required AS materialRequired, \
+        ingredientgroups.id AS ingredientGroupId, \
+        ingredientgroups.name AS ingredientGroupName \
         FROM recipes \
         LEFT JOIN materials ON materials.recipeId = recipes.id \
         LEFT JOIN materials_ingredientgroups ON materials_ingredientgroups.materialId = materials.id \
@@ -269,12 +287,13 @@ var get = (pool) => async (req, res) => {
         let recipeIds = sqlRecipes.map((r) => r['recipes.id']) // non-unique list of recipe ids
         recipeIds = recipeIds.unique();
 
+        console.log('pos 2')
         let finalRecipes = [];
         recipeIds.forEach((rId) => {
-            finalRecipes.push(constructRecipeFromRows(sqlRecipes.filter((row) => row['recipes.id'] === rId)))
+            finalRecipes.push(constructRecipeFromRows(sqlRecipes.filter((row) => row['recipes.id'] === rId))) // // TODO: this results in duplicate work as we filter this list several times, should be optimized 
         })
-
-        res.send(ApiResponse(true, recipes));
+        console.log('pos 3')
+        res.send(ApiResponse(true, finalRecipes));
     }
     catch (err) {
         res.send(ApiResponse(true, []));
