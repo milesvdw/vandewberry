@@ -1,5 +1,4 @@
-
-
+// tslint:disable:no-console
 var mysql = require('mysql');
 const ApiResponse = require('./apiResponse').ApiResponse
 
@@ -27,11 +26,12 @@ var post = (pool) => async (req, res) => {
                 console.log("ERROR: tried to update a non-existent ingredient");
                 return;
             }
-            if (existingIngredient[0].householdId != req.user.householdId) {
+            if (existingIngredient[0].householdId !== req.user.householdId) {
                 console.log("ERROR: tried to update another user's ingredient");
                 return;
             }
-            if (existingIngredient.name.trim() !== req.body.name.trim()) {
+
+            if (existingIngredient[0].name.trim() !== req.body.name.trim()) {
                 // decouple this from the old ingredient group and potentially create a new ingredient group for it
                 let existingGroups = await pool.query("SELECT * FROM ingredientgroups WHERE `name` = ?", [req.body.name.trim()]);
                 if (existingGroups.length > 0) {
@@ -44,9 +44,9 @@ var post = (pool) => async (req, res) => {
                         category = ?, \
                         statusID = ?, \
                         expires = ?, \
-                        shelf_life = ?, \
+                        shelf_life = ? \
                         WHERE id = ?",
-                        [insertedIngredientGroupId, req.body.category, req.body.statusID, req.body.expires, req.body.shelf_life, req.body.id]);
+                        [insertedIngredientGroupId, req.body.category, req.body.statusID, req.body.expires ? 1 : 0, req.body.shelf_life, req.body.id]);
                     res.json(ApiResponse(true, req.body.id));
                     return;
                 } else {
@@ -57,9 +57,9 @@ var post = (pool) => async (req, res) => {
                         category = ?, \
                         statusID = ?, \
                         expires = ?, \
-                        shelf_life = ?, \
+                        shelf_life = ? \
                         WHERE id = ?",
-                        [insertedIngredientGroupId, req.body.category, req.body.statusID, req.body.expires, req.body.shelf_life, req.body.id]);
+                        [insertedIngredientGroupId, req.body.category, req.body.statusID, req.body.expires ? 1 : 0, req.body.shelf_life, req.body.id]);
                     res.json(ApiResponse(true, req.body.id));
                     return;
                 }
@@ -69,9 +69,9 @@ var post = (pool) => async (req, res) => {
                     category = ?, \
                     statusID = ?, \
                     expires = ?, \
-                    shelf_life = ?, \
+                    shelf_life = ? \
                     WHERE id = ?",
-                    [req.body.category, req.body.statusID, req.body.expires, req.body.shelf_life, req.body.id]);
+                    [req.body.category, req.body.statusID, req.body.expires ? 1 : 0, req.body.shelf_life, req.body.id]);
                 res.json(ApiResponse(true, req.body.id));
                 return;
             }
@@ -90,9 +90,12 @@ var post = (pool) => async (req, res) => {
                 let insertedIngredientGroupId = (await pool.query("SELECT * from ingredientgroups WHERE `name` = ? LIMIT 1", [req.body.name.trim()]))[0].id;
                 // just update the ingredient's fields
                 pool.getConnection((err, con) => {
+                    console.log(mysql.format("INSERT INTO ingredients (`ingredientGroupId`, `category`, `statusID`, `expires`, `shelf_life`, `householdId`) \
+                    VALUES (?, ?, ?, ?, ?, ?) ",
+                        [insertedIngredientGroupId, req.body.category, req.body.statusID, req.body.expires ? 1 : 0, req.body.shelf_life, req.user.householdId]));
                     con.query("INSERT INTO ingredients (`ingredientGroupId`, `category`, `statusID`, `expires`, `shelf_life`, `householdId`) \
-                    VALUES (?, ?, ?, ?, ?) ",
-                        [insertedIngredientGroupId, req.body.category, req.body.statusID, req.body.expires, req.body.shelf_life, req.user.householdId], (err2, ignore) => {
+                    VALUES (?, ?, ?, ?, ?, ?) ",
+                        [insertedIngredientGroupId, req.body.category, req.body.statusID, req.body.expires ? 1 : 0, req.body.shelf_life, req.user.householdId], (err2, ignore) => {
                             con.query("SELECT LAST_INSERT_ID()", (err3, insertedIdRaw) => {
                                 if (err3) {
                                     console.log("ERROR at selecting last insert id after inserting new ingredient");
@@ -110,9 +113,12 @@ var post = (pool) => async (req, res) => {
                 await pool.query("INSERT INTO ingredientgroups (`name`) VALUES (?)", [req.body.name.trim()]);
                 let insertedIngredientGroupId = (await pool.query("SELECT * from ingredientgroups WHERE `name` = ? LIMIT 1", [req.body.name.trim()]))[0].id;
                 pool.getConnection((err, con) => {
-                        con.query("INSERT INTO ingredients (`ingredientGroupId`, `category`, `statusID`, `expires`, `shelf_life`, `householdId`) \
-                        VALUES (?, ?, ?, ?, ?) ",
-                        [insertedIngredientGroupId, req.body.category, req.body.statusID, req.body.expires, req.body.shelf_life, req.user.householdId], (err2, ignore) => {
+                    console.log(mysql.format("INSERT INTO ingredients (`ingredientGroupId`, `category`, `statusID`, `expires`, `shelf_life`, `householdId`) \
+                    VALUES (?, ?, ?, ?, ?, ?) ",
+                    [insertedIngredientGroupId, req.body.category, req.body.statusID, req.body.expires ? 1 : 0, req.body.shelf_life, req.user.householdId]))
+                    con.query("INSERT INTO ingredients (`ingredientGroupId`, `category`, `statusID`, `expires`, `shelf_life`, `householdId`) \
+                        VALUES (?, ?, ?, ?, ?, ?) ",
+                        [insertedIngredientGroupId, req.body.category, req.body.statusID, req.body.expires ? 1 : 0, req.body.shelf_life, req.user.householdId], (err2, ignore) => {
                             con.query("SELECT LAST_INSERT_ID()", (err3, insertedIdRaw) => {
                                 if (err3) {
                                     console.log("ERROR at selecting last insert id after inserting new ingredient");
@@ -138,6 +144,7 @@ var get = (pool) => async (req, res) => {
     try {
         var ingredients = await pool.query("SELECT ingredients.id as id, ingredientgroups.name as name, category, statusID, expires, shelf_life from ingredients \
         INNER JOIN ingredientgroups ON ingredients.ingredientGroupId = ingredientgroups.id AND householdId = ?", [req.user.householdId]);
+        console.log(ingredients[0]);
         res.send(ApiResponse(true, ingredients));
     }
     catch (err) {
