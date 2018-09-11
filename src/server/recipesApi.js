@@ -250,7 +250,6 @@ function constructMaterialFromRows(rows) {
 }
 
 function constructIngredientGroupFromRows(rows) {
-    console.log('igfr')
     ingredientGroup = {};
     ingredientGroup.id = rows[0].ingredientGroupId;
     ingredientGroup.name = rows[0].ingredientGroupName;
@@ -280,16 +279,13 @@ var get = (pool) => async (req, res) => {
         LEFT JOIN materials_ingredientgroups ON materials_ingredientgroups.materialId = materials.id \
         LEFT JOIN ingredientgroups ON materials_ingredientgroups.ingredientGroupId = ingredientgroups.id \
         WHERE recipes.householdId = ?", [req.user.householdId]);
-        console.log(sqlRecipes);
         let recipeIds = sqlRecipes.map((r) => r['recipes.id']) // non-unique list of recipe ids
         recipeIds = recipeIds.unique();
 
-        console.log('pos 2')
         let finalRecipes = [];
         recipeIds.forEach((rId) => {
             finalRecipes.push(constructRecipeFromRows(sqlRecipes.filter((row) => row['recipes.id'] === rId))) // // TODO: this results in duplicate work as we filter this list several times, should be optimized 
         })
-        console.log('pos 3')
         res.send(ApiResponse(true, finalRecipes));
     }
     catch (err) {
