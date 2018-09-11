@@ -9,9 +9,9 @@ export class Recipe {
     public description: string = "";
     public name: string = "";
     public calories: number = 0;
-    public lastEaten: Date  = new Date(3000,0);
+    public lastEaten: Date = new Date(3000, 0);
     public householdId: number;
-    
+
     public constructor(init?: Partial<Recipe>) {
         Object.assign(this, init);
 
@@ -26,11 +26,11 @@ export class Recipe {
         }
     }
 
-    public lastEatenString(): string{
-        return this.lastEaten.getTime() < Date.now()? this.lastEaten.toDateString(): 'Never';
+    public lastEatenString(): string {
+        return this.lastEaten.getTime() < Date.now() ? this.lastEaten.toDateString() : 'Never';
     }
 
-    public toLowerCaseRecipe(): Recipe{
+    public toLowerCaseRecipe(): Recipe {
         let recipe = this;
         recipe.name = this.name.toLowerCase();
         return recipe;
@@ -51,7 +51,9 @@ export class Recipe {
             body: JSON.stringify(recipe),
             method: 'post',
         }).then(async (id: number) => {
-            recipe.id = id;
+            if (id > 0) {
+                recipe.id = id;
+            }
             return recipe;
         });
     }
