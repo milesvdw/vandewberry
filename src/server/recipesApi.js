@@ -198,6 +198,11 @@ async function insertUpdateMaterials(material, pool, recipeId) {
 
 
 var post = (pool) => async (req, res) => {
+    if(!req.body.name || req.body.name.length < 1) {
+        console.log("User tried to save a recipe with an empty name. Shame on them, their family, and their dog.");
+        res.json(ApiResponse(true, false));
+        return;
+    }
     if (req.body.id > 0) {
         // do an update
         pool.getConnection((err, con) => {
@@ -210,16 +215,6 @@ var post = (pool) => async (req, res) => {
             createRecipe(req, pool, con, res);
         });
     }
-
-    // db.collection('recipes').save(req.body, (getErr, result) => {
-    //     if (result.ops) { // this is in the case of an insert, for some reason updates down return a result.ops
-    //         res.json(ApiResponse(true, result.ops[0]._id));
-    //     } else if (result.result.upserted) {
-    //         res.json(ApiResponse(true, result.result.upserted[0]._id));
-    //     } else {
-    //         res.json(ApiResponse(true, req.body._id));
-    //     }
-    // });
 }
 
 var share = (pool) => async (req, res) => {
