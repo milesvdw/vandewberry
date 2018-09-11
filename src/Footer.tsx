@@ -41,7 +41,7 @@ export class Footer extends React.Component<{}, { title: string, body: string, b
     public render() {
         return (
             <div>
-                <div style={{width:'100vw', position: 'fixed', bottom: '10px', textAlign: 'center' }}>
+                <div style={{width:'100vw', position: 'fixed', bottom: '10px', textAlign: 'right' }}>
                     <Button {...{tooltip: 'Submit a bug for developer review'}}
                         onClick={() => this.setState({bug: true})}
                         className='classy-btn no-outline btn-round btn-press btn-default'>
