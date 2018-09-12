@@ -1,6 +1,8 @@
 // tslint:disable:no-console
 /* tslint:disable:no-string-literal */
 
+const ApiResponse = require('./apiResponse').ApiResponse
+
 function constructRecipeFromRows(rows) {
     //expects a list of rows, with each row having one unique recipe-material-ingredientgroup-ingredient combination
     recipe = {};
@@ -41,6 +43,8 @@ function constructIngredientGroupFromRows(rows) {
 
     return ingredientGroup;
 }
+
+
 
 async function getRecipesByIdList(recipeIds, pool) {
     var sqlRecipes = await pool.query("SELECT recipes.id AS recipeId, \
@@ -233,6 +237,105 @@ async function insertIngredient(user, ingredient) {
     return await insertIngredientValues(ingredientGroupId, ingredient.category, ingredient.statusID, ingredient.expires ? 1 : 0, ingredient.shelf_life, user.householdId);
 }
 
+async function clearOldMaterials(pool, recipeId) {
+    var preexistingMaterials = await pool.query("SELECT * FROM materials WHERE `recipeId` = ?", [recipeId]);
+    if (QueryHadResults(preexistingMaterials)) {
+        var preexistingMaterialIds = preexistingMaterials.map((row) => row.id);
+        await pool.query("DELETE FROM materials_ingredientgroups WHERE `materialId` IN (?)", [preexistingMaterialIds]); // delete old materials from this recipe so we can save fresh
+        await pool.query("DELETE FROM materials WHERE `id` IN (?)", [preexistingMaterialIds]);
+    }
+}
+
+async function createRecipe(recipe, pool, con, res) {
+    con.query("INSERT INTO recipes (`name`, `description`, `calories`, `lastEaten`, `householdId`) \
+    VALUES (?, ?, ?, ?, ?)",
+        [recipe.name, recipe.description, recipe.calories, recipe.lastEaten, recipe.householdId],
+        (err2, ignore) => {
+            if (err2) {
+                console.log("ERROR while inserting recipe");
+                console.log(err2);
+                con.release();
+                return;
+            }
+            con.query("SELECT LAST_INSERT_ID()", async (err3, insertedIdRaw) => {
+                if (err3) {
+                    console.log("ERROR while selecting id of just inserted recipe");
+                    console.log(err3);
+                    con.release();
+                    return;
+                }
+
+                var recipeId = insertedIdRaw[0]['LAST_INSERT_ID()'];
+                con.release();
+
+                await clearOldMaterials(pool, recipeId);
+
+                var promises = recipe.materials.map((mat) => {
+                    return insertUpdateMaterials(mat, pool, recipeId);
+                });
+                await Promise.all(promises);
+                return ApiResponse(true, recipeId)
+            });
+        });
+}
+
+
+function QueryHadResults(query) {
+    return query.length > 0;
+}
+
+async function updateRecipe(req, pool, con, res) {
+
+    var existingRecipe = await pool.query("SELECT * FROM recipes WHERE id = ?", [req.body.id]);
+
+    if (QueryHadResults(existingRecipe)) {
+        if (existingRecipe[0].householdId !== req.user.householdId) {
+            console.log("ERROR user attempted to update a recipe that their household doesn't own");
+            con.release();
+            return;
+        }
+    } else {
+        console.log("ERROR attempted to update a recipe that hasn't been created yet!");
+        con.release();
+        return;
+    }
+
+    con.query("UPDATE recipes SET `name` = ?, `description` = ?, `calories` = ?, `lastEaten` = ? WHERE `id` = ?",
+        [req.body.name, req.body.description, req.body.calories, req.body.lastEaten, req.body.id],
+        async (err, results) => {
+            if (err) {
+                console.log("ERROR while updating existing recipe");
+                console.log(err);
+                con.release();
+            }
+
+            await clearOldMaterials(pool, req.body.id);
+
+            var promises = req.body.materials.map((mat) => {
+                return insertUpdateMaterials(mat, pool, req.body.id);
+            });
+            await Promise.all(promises);
+            res.json(ApiResponse(true, req.body.id))
+
+        })
+}
+
+async function insertUpdateIngredientGroups(ingredientgroup, pool) {
+
+    if (ingredientgroup.name !== "") {
+        let existingGroups = await pool.query("SELECT * FROM ingredientgroups WHERE `name` = ?", [ingredientgroup.name]);
+        if (QueryHadResults(existingGroups)) {
+            // hook the material up to the existing ingredientgroup
+            return existingGroups[0].id;
+        } else {
+            await pool.query("INSERT INTO ingredientgroups (`name`) VALUES (?)", [ingredientgroup.name]);
+            existingGroups = await pool.query("SELECT * FROM ingredientgroups WHERE `name` = ?", [ingredientgroup.name]);
+            return existingGroups[0].id;
+        }
+    }
+    return; // NOTE: this may cause a bug depending on how returning null is handled by promise.all
+}
+
 
 module.exports.constructRecipeFromRows = constructRecipeFromRows;
 module.exports.constructMaterialFromRows = constructMaterialFromRows;
@@ -245,4 +348,8 @@ module.exports.updateIngredientValues = updateIngredientValues;
 module.exports.updateIngredient = updateIngredient;
 module.exports.insertIngredientValues = insertIngredientValues;
 module.exports.insertIngredient = insertIngredient;
-module.exports.getIngredientGroupbyName = getIngredientGroupbyName;
+module.exports.clearOldMaterials = clearOldMaterials;
+module.exports.createRecipe = createRecipe;
+module.exports.QueryHadResults = QueryHadResults;
+module.exports.updateRecipe = updateRecipe;
+module.exports.insertUpdateIngredientGroups = insertUpdateIngredientGroups;
