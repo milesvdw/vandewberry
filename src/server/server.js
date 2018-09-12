@@ -187,7 +187,7 @@ app.post('/api/newIssue',
           responseString += data;
         })
         res2.on("end", function () {
-          console.log(responseString);
+          // console.log(responseString);
         })
       })
       var payload = {
