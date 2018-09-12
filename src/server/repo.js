@@ -138,14 +138,14 @@ async function insertUpdateMaterials(material, pool, recipeId) {
 }
 
 
-async function getExistingIngredientById(id) {
+async function getExistingIngredientById(pool, id) {
     return await pool.query("SELECT ingredients.*, ingredientgroups.name as name FROM ingredients \
             INNER JOIN ingredientgroups \
             ON ingredients.id = ? AND ingredients.ingredientGroupId = ingredientgroups.id", [id]);
 }
 
-async function updateIngredientValues(category, statusID, expires, shelfLife, id, ingredientGroupId) {
-    if (ingredientGroupid) {
+async function updateIngredientValues(pool, category, statusID, expires, shelfLife, id, ingredientGroupId) {
+    if (ingredientGroupId) {
 
         return await pool.query("UPDATE ingredients SET \
                         ingredientGroupId = ?, \
@@ -167,13 +167,13 @@ async function updateIngredientValues(category, statusID, expires, shelfLife, id
     }
 }
 
-async function getIngredientGroupbyName(name) {
+async function getIngredientGroupbyName(pool, name) {
     let existingGroups = await pool.query("SELECT * FROM ingredientgroups WHERE `name` = ? LIMIT 1", [name]);
     return existingGroups;
 }
 
-async function updateIngredient(user, ingredient) {
-    var existingIngredient = await getExistingIngredientByid(ingredient.id)
+async function updateIngredient(pool, user, ingredient) {
+    var existingIngredient = await getExistingIngredientById(pool, ingredient.id)
     if (existingIngredient.length === 0) {
         console.log("ERROR: tried to update a non-existent ingredient");
         return;
@@ -186,30 +186,31 @@ async function updateIngredient(user, ingredient) {
     var ingredientGroupId;
     if (existingIngredient[0].name.trim() !== ingredient.name.trim()) {
         // decouple this from the old ingredient group and potentially create a new ingredient group for it
-        let existingGroups = await getIngredientGroupbyName(ingredient.name.trim());
+        let existingGroups = await getIngredientGroupbyName(pool, ingredient.name.trim());
 
         if (existingGroups.length > 0) {
             ingredientGroupId = existingGroups[0].id;
         } else {
             await pool.query("INSERT INTO ingredientgroups (`name`) VALUES (?)", [ingredient.name.trim()]);
-            ingredientGroupId = (await getIngredientGroupbyName(ingredient.name.trim()))[0].id;
+            ingredientGroupId = (await getIngredientGroupbyName(pool, ingredient.name.trim()))[0].id;
         }
 
-        await updateIngredientValues(ingredient.category, ingredient.statusID, ingredient.expires ? 1 : 0, ingredient.shelf_life, ingredient.id, insertedIngredientGroupId);
+        await updateIngredientValues(pool, ingredient.category, ingredient.statusID, ingredient.expires ? 1 : 0, ingredient.shelf_life, ingredient.id, ingredientGroupId);
     } else {
         // just update the ingredient's fields
-        await updateIngredientValues(ingredient.category, ingredient.statusID, ingredient.expires ? 1 : 0, ingredient.shelf_life, ingredient.id)
+        await updateIngredientValues(pool, ingredient.category, ingredient.statusID, ingredient.expires ? 1 : 0, ingredient.shelf_life, ingredient.id)
 
     }
-    res.json(ApiResponse(true, ingredient.id));
+    return ApiResponse(true, ingredient.id);
 }
 
-async function insertIngredientValues(ingredientGroupId, category, statusID, expires, shelfLife, householdId) {
+async function insertIngredientValues(pool, res, ingredientGroupId, category, statusID, expires, shelfLife, householdId) {
     pool.getConnection((err, con) => {
         con.query("INSERT INTO ingredients (`ingredientGroupId`, `category`, `statusID`, `expires`, `shelf_life`, `householdId`) \
             VALUES (?, ?, ?, ?, ?, ?) ",
             [ingredientGroupId, category, statusID, expires, shelfLife, householdId], (err2, ignore) => {
                 con.query("SELECT LAST_INSERT_ID()", (err3, insertedIdRaw) => {
+                    var ingredientId = insertedIdRaw[0]['LAST_INSERT_ID()'];
                     if (err3) {
                         console.log("ERROR at selecting last insert id after inserting new ingredient");
                         console.log(err3);
@@ -218,23 +219,23 @@ async function insertIngredientValues(ingredientGroupId, category, statusID, exp
                         return;
                     }
                     con.release();
-                    res.json(ApiResponse(true, ingredient.id));
+                    res.json(ApiResponse(true, ingredientId));
                 })
             });
     });
 }
 
-async function insertIngredient(user, ingredient) {
+async function insertIngredient(pool, res, user, ingredient) {
     var ingredientGroupId;
 
-    let existingGroups = await getIngredientGroupbyName(ingredient.name.trim());
+    let existingGroups = await getIngredientGroupbyName(pool, ingredient.name.trim());
     if (existingGroups.length > 0) {
         ingredientGroupId = existingGroups[0].id;
     } else {
         await pool.query("INSERT INTO ingredientgroups (`name`) VALUES (?)", [ingredient.name.trim()]);
-        ingredientGroupId = (await getIngredientGroupbyName(ingredient.name.trim()))[0].id;
+        ingredientGroupId = (await getIngredientGroupbyName(pool, ingredient.name.trim()))[0].id;
     }
-    return await insertIngredientValues(ingredientGroupId, ingredient.category, ingredient.statusID, ingredient.expires ? 1 : 0, ingredient.shelf_life, user.householdId);
+    return await insertIngredientValues(pool, res, ingredientGroupId, ingredient.category, ingredient.statusID, ingredient.expires ? 1 : 0, ingredient.shelf_life, user.householdId);
 }
 
 async function clearOldMaterials(pool, recipeId) {
@@ -246,7 +247,7 @@ async function clearOldMaterials(pool, recipeId) {
     }
 }
 
-async function createRecipe(recipe, pool, con, res) {
+async function createRecipe(recipe, pool, con) {
     con.query("INSERT INTO recipes (`name`, `description`, `calories`, `lastEaten`, `householdId`) \
     VALUES (?, ?, ?, ?, ?)",
         [recipe.name, recipe.description, recipe.calories, recipe.lastEaten, recipe.householdId],
@@ -320,7 +321,7 @@ async function updateRecipe(req, pool, con, res) {
         })
 }
 
-async function insertUpdateIngredientGroups(ingredientgroup, pool) {
+async function insertUpdateIngredientGroups(pool, ingredientgroup, pool) {
 
     if (ingredientgroup.name !== "") {
         let existingGroups = await pool.query("SELECT * FROM ingredientgroups WHERE `name` = ?", [ingredientgroup.name]);
@@ -334,6 +335,16 @@ async function insertUpdateIngredientGroups(ingredientgroup, pool) {
         }
     }
     return; // NOTE: this may cause a bug depending on how returning null is handled by promise.all
+}
+
+async function getRecipeById(pool, recipeId) {
+    return await getRecipesByIdList([recipeId], pool);
+}
+
+async function duplicateRecipeForUser(pool, recipeId, userId) {
+    recipe = await getRecipeById(pool, recipeId);
+    await createRecipe(recipe, pool, con)
+    // TODO
 }
 
 
@@ -353,3 +364,5 @@ module.exports.createRecipe = createRecipe;
 module.exports.QueryHadResults = QueryHadResults;
 module.exports.updateRecipe = updateRecipe;
 module.exports.insertUpdateIngredientGroups = insertUpdateIngredientGroups;
+module.exports.duplicateRecipeForUser = duplicateRecipeForUser;
+module.exports.getRecipeById = getRecipeById;

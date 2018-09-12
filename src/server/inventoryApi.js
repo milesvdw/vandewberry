@@ -20,18 +20,20 @@ var post = (pool) => async (req, res) => {
     }
     if (req.body.id > 0) {
         try {
-            return await Repo.updateIngredient(req.user, req.body);
+            res.send(await Repo.updateIngredient(pool, req.user, req.body));
         }
         catch (err) {
+            console.log(err);
             res.send(ApiResponse(true, false));
             return;
         }
     } else {
         // create a brand-new ingredient
         try {
-            return await Repo.insertIngredient(req.user, req.body)
+            await Repo.insertIngredient(pool, res, req.user, req.body)
         }
         catch (err) {
+            console.log(err);
             res.send(ApiResponse(true, false));
         }
     }
