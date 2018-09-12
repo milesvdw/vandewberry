@@ -37,7 +37,7 @@ Array.prototype.unique = function <T>(): T[] {
 
 
 String.prototype.capitalize = function () {
-    return this.replace(/(\b)+\w/g,
+    return this.replace(/(?!'.*')\b[\w']+\b/g,
         (txt) =>  { 
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
