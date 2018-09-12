@@ -18,7 +18,6 @@ import FaSearch from "react-icons/lib/fa/search";
 import { IRecipeRepo, IIngredientRepo } from "../FoodApp";
 import { Ingredient, STATUS } from "../models/ingredient";
 import { RecipeDetailView } from "./RecipeDetailView";
-import { BeatLoader } from 'react-spinners';
 
 export class RecipesView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { sharing: boolean, editing: boolean, editRecipe: Recipe, shareHousehold: string, searchQuery: string, currentSearchQuery: string }> {
 
@@ -198,15 +197,6 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
 
                                 </Panel.Heading>
                                 <Panel.Body>
-
-                                    <div className='sweet-loading'>
-                                        <BeatLoader
-                                            sizeUnit={"%"}
-                                            size={100}
-                                            color={'#123abc'}
-                                            loading={this.props.repo.state.loading.recipes}
-                                        />
-                                    </div>
                                     {allRecipes}
                                 </Panel.Body>
                             </Panel>
