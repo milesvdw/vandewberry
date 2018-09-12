@@ -175,7 +175,6 @@ checkbox {
 [tooltip]{
   margin:20px;
   position:relative;
-  display: inline-block;
 }
 [tooltip]:hover::after,
 [tooltip]:hover::before {

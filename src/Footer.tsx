@@ -49,11 +49,11 @@ export class Footer extends React.Component<{}, { title: string, body: string, b
                     </Button>
                     <Modal show={this.state.bug} onHide={() => this.setState({ bug: false})}>
                         <Modal.Header>
-                            Bug Report
+                        <Modal.Title className="text-center">Bug Report</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                             <form onSubmit={this.submitBug}>
-                                <FormGroup {...{tooltip: 'A breif title of the bug'}}>
+                                <FormGroup {...{tooltip: 'A brief title of the bug'}}>
                                     <label htmlFor="title">Title</label>
                                     <input type="text" className="form-control" name="title" aria-describedby="titleHelp" placeholder="Title" value={this.state.title} onChange={this.updateFields}/>
                                     <small id="titleHelp" className="form-text text-muted">A simple, descriptive title for the issue.</small>
