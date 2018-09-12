@@ -35,6 +35,9 @@ export class Footer extends React.Component<{}, { title: string, body: string, b
             .then((response: any) => {
                 let answer = response;
                 alert(answer);
+                if(answer === 'Bug Submitted Successfully') {
+                    this.setState({ title: "", body: "", bug: false });
+                }
             });
     }
 
