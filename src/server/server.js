@@ -180,7 +180,7 @@ app.post('/api/newIssue',
           'User-Agent': 'vandewberryBugReporter',
         }
       }
-      console.log(options);
+      // console.log(options);
       var request = https.request(options, function (res2) {
         var responseString = "";
         res2.on("data", function (data) {
