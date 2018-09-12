@@ -169,7 +169,7 @@ app.post('/api/newIssue',
       res.json(ApiResponse(true, 'Missing Field'))
     }
     else {
-      var token = process.env.BUG_TRACKER_TOKEN
+      var token = process.env.BUG_LOGGER_TOKEN;
       var options = {
         host: "api.github.com",
         path: "/repos/milesvdw/vandewberry/issues",
@@ -180,13 +180,14 @@ app.post('/api/newIssue',
           'User-Agent': 'vandewberryBugReporter',
         }
       }
+      console.log(options);
       var request = https.request(options, function (res2) {
         var responseString = "";
         res2.on("data", function (data) {
           responseString += data;
         })
         res2.on("end", function () {
-          // console.log(responseString);
+          console.log(responseString);
         })
       })
       var payload = {
