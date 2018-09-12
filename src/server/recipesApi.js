@@ -68,7 +68,7 @@ async function createRecipe(req, pool, con, res) {
                     return insertUpdateMaterials(mat, pool, recipeId);
                 });
                 await Promise.all(promises);
-                res.json(ApiResponse(true, req.body.id))
+                res.json(ApiResponse(true, recipeId))
             });
         });
 };
@@ -138,7 +138,6 @@ async function linkMaterialIngredientGroups(gid, materialId, con) {
             con.release();
             return;
         }
-        con.release();
     })
 }
 
@@ -189,6 +188,7 @@ async function insertUpdateMaterials(material, pool, recipeId) {
                 await Promise.all(groupIds.map((gid) => {
                     return linkMaterialIngredientGroups(gid, materialId, con)
                 }))
+                con.release();
             })
         })
     });
