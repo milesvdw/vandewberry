@@ -22,8 +22,11 @@ var deleteRecipe = (pool) => async (req, res) => {
         return;
     } else {
         var materialIds = materials.map((mat) => mat.id)
-        await pool.query("DELETE FROM materials_ingredientgroups WHERE materialId IN (?)", [materialIds]);
-        await pool.query("DELETE FROM materials WHERE `id` IN (?)", [materialIds]);
+        if (materialIds.length > 0) {
+
+            await pool.query("DELETE FROM materials_ingredientgroups WHERE materialId IN (?)", [materialIds]);
+            await pool.query("DELETE FROM materials WHERE `id` IN (?)", [materialIds]);
+        }
         await pool.query("DELETE FROM household_recipes WHERE recipeId = ?", [recipe.id]);
         await pool.query("DELETE FROM recipes WHERE `id` = ?", [req.body.id]);
         res.json(ApiResponse(true, true))
@@ -81,7 +84,7 @@ var get = (pool) => async (req, res) => {
             return;
         }
 
-        return res.send(await Repo.getRecipesByIdList(recipeIds, pool));
+        return res.send(ApiResponse(true, await Repo.getRecipesByIdList(recipeIds, pool)));
     }
     catch (err) {
         console.log(err);
