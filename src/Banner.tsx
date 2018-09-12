@@ -4,9 +4,19 @@ import Navbar from "react-bootstrap/lib/Navbar";
 import Nav from "react-bootstrap/lib/Nav";
 import NavItem from "react-bootstrap/lib/NavItem";
 
-export class Banner extends React.Component<{ user: string, authenticated: boolean, logout: (event: any) => void }> {
-    constructor(props: { user: string, authenticated: boolean, logout: (event: any) => void }) {
+export class Banner extends React.Component<{ authenticated: boolean, logout: (event: any) => void }, {user: string}> {
+    constructor(props: { authenticated: boolean, logout: (event: any) => void }) {
         super(props);
+        this.state = {user: ''}
+        this.getUser = this.getUser.bind(this);
+    }
+
+    private async getUser() {
+        await fetch('/api/getUser', {credentials: 'include'}).then((data: any) =>
+            data.json()
+        ).then((data: any) =>{
+            this.setState({user: data.payload})
+        });
     }
 
     public render() {
@@ -18,9 +28,10 @@ export class Banner extends React.Component<{ user: string, authenticated: boole
             navItems.push(<NavItem key="createAccount" eventKey={1} href="#createAccount">Create Account</NavItem>);
         }
 
+        this.state.user === '' && this.getUser();
         return (
             <Navbar>
-                { this.props.authenticated && <p className="navbar-text" style={{marginRight: "10px"}} >Welcome {this.props.user}!</p> }
+                { this.props.authenticated && <p className="navbar-text" style={{marginRight: "10px"}} >Welcome {this.state.user}!</p> }
                 <Nav>
                     {navItems}
 

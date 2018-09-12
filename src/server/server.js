@@ -162,6 +162,9 @@ app.get('/api/householdMembers', passport.authenticationMiddleware(), async (req
 app.post('/api/login', passport.authenticate('local'), UsersApi.login(pool));
 app.post('/api/createAccount', UsersApi.createAccount(pool));
 app.get('/api/logout', UsersApi.logout(pool));
+app.get('/api/getUser', authenticationMiddleware(), (req, res, next) => {
+  res.json(ApiResponse(true, req.user.username));
+});
 
 app.post('/api/newIssue',
   (req, res) => {
