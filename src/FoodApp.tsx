@@ -7,7 +7,7 @@ import { RecipesView } from "./views/recipesview";
 import { InventoryView } from "./views/inventoryview";
 
 export interface IRecipeRepo {
-    state: { recipes: Recipe[] };
+    state: { recipes: Recipe[], loading: { recipes: boolean, ingredients: boolean } };
     deleteRecipe(recipe: Recipe): void;
     shareRecipe(recipe: Recipe, household: string): void;
     saveRecipe(recipe: Recipe): void;
@@ -24,11 +24,11 @@ export interface IIngredientRepo {
     refresh(): void;
 }
 
-export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredients: Ingredient[] }> implements IRecipeRepo, IIngredientRepo {
+export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredients: Ingredient[], loading: { recipes: boolean, ingredients: boolean } }> implements IRecipeRepo, IIngredientRepo {
     constructor(props: {}) {
         super(props);
-        
-        this.state = { recipes: [], ingredients: [] };
+
+        this.state = { recipes: [], ingredients: [], loading: { recipes: true, ingredients: true } };
 
         this.deleteRecipe = this.deleteRecipe.bind(this);
         this.deleteIngredient = this.deleteIngredient.bind(this);
@@ -48,6 +48,7 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
                 this.setState({
                     recipes: data.map((item: any) => new Recipe(item))
                 });
+                this.state.loading.recipes = false;
             });
 
         Database.GetInventory()
@@ -57,6 +58,7 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
                         return a.name.localeCompare(b.name);
                     })
                 });
+                this.state.loading.ingredients = false;
             });
     }
 

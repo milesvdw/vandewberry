@@ -1,4 +1,4 @@
-
+// tslint:disable:no-console
 
 const Repo = require('./repo');
 const bcrypt = require('bcryptjs')
