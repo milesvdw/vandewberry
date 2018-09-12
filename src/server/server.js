@@ -180,14 +180,14 @@ app.post('/api/newIssue',
           'User-Agent': 'vandewberryBugReporter',
         }
       }
-      console.log(options);
+      // console.log(options);
       var request = https.request(options, function (res2) {
         var responseString = "";
         res2.on("data", function (data) {
           responseString += data;
         })
         res2.on("end", function () {
-          console.log(responseString);
+          // console.log(responseString);
         })
       })
       var payload = {
