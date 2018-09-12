@@ -68,7 +68,7 @@ async function getRecipesByIdList(recipeIds, pool) {
     recipeIds.forEach((rId) => {
         finalRecipes.push(constructRecipeFromRows(sqlRecipes.filter((row) => row['recipeId'] === rId))) // // TODO: this results in duplicate work as we filter this list several times, should be optimized 
     })
-    return ApiResponse(true, finalRecipes);
+    return finalRecipes;
 }
 
 async function linkMaterialIngredientGroups(gid, materialId, con) {
@@ -87,13 +87,6 @@ async function insertUpdateMaterials(material, pool, recipeId) {
     if (!hasIngredients) {
         console.log("WARNING: user tried to create a material with no ingredients");
         return;
-    }
-
-    // first insert the ingredient groups
-    if (material.id > 0) {
-        // drop existing material_ingredientgroup connections
-        await pool.query("DELETE FROM materials_ingredientgroups WHERE materialId = ?", [material.id]);
-        await pool.query("DELETE FROM materials WHERE id = ?", [material.id]);
     }
 
     var promises = material.ingredientgroups.map((ig) => {
@@ -269,8 +262,6 @@ async function createRecipe(recipe, pool, con) {
                 var recipeId = insertedIdRaw[0]['LAST_INSERT_ID()'];
                 con.release();
 
-                await clearOldMaterials(pool, recipeId);
-
                 var promises = recipe.materials.map((mat) => {
                     return insertUpdateMaterials(mat, pool, recipeId);
                 });
@@ -321,7 +312,7 @@ async function updateRecipe(req, pool, con, res) {
         })
 }
 
-async function insertUpdateIngredientGroups(pool, ingredientgroup, pool) {
+async function insertUpdateIngredientGroups(ingredientgroup, pool) {
 
     if (ingredientgroup.name !== "") {
         let existingGroups = await pool.query("SELECT * FROM ingredientgroups WHERE `name` = ?", [ingredientgroup.name]);
@@ -338,15 +329,14 @@ async function insertUpdateIngredientGroups(pool, ingredientgroup, pool) {
 }
 
 async function getRecipeById(pool, recipeId) {
-    return await getRecipesByIdList([recipeId], pool);
+    var results = await getRecipesByIdList([recipeId], pool);
+    if (results.length > 0) {
+        return results[0];
+    } else {
+        console.log("WARNING: someone tried to load a non-existent recipe");
+        return null;
+    }
 }
-
-async function duplicateRecipeForUser(pool, recipeId, userId) {
-    recipe = await getRecipeById(pool, recipeId);
-    await createRecipe(recipe, pool, con)
-    // TODO
-}
-
 
 module.exports.constructRecipeFromRows = constructRecipeFromRows;
 module.exports.constructMaterialFromRows = constructMaterialFromRows;
@@ -364,5 +354,4 @@ module.exports.createRecipe = createRecipe;
 module.exports.QueryHadResults = QueryHadResults;
 module.exports.updateRecipe = updateRecipe;
 module.exports.insertUpdateIngredientGroups = insertUpdateIngredientGroups;
-module.exports.duplicateRecipeForUser = duplicateRecipeForUser;
 module.exports.getRecipeById = getRecipeById;
