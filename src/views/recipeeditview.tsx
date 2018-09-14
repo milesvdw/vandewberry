@@ -142,10 +142,9 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
                         <label>Name</label>
                     </Col>
                 </Row>
-                {materials}
                 <Row>
                     <Col>
-                        <Button style={{ marginTop: '3px', marginRight: '17px' }}
+                        <Button style={{ marginBottom: '3px', marginRight: '18px' }}
                             bsSize='xsmall'
                             onClick={() => {
                                 let recipe = this.state.recipe;
@@ -158,6 +157,7 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
                         </Button>
                     </Col>
                 </Row>
+                {materials}
                 <Row>
                     <br />
                 </Row>
