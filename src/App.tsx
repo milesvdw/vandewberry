@@ -11,6 +11,8 @@ import { IApiResponse } from './Database';
 // import { PhotosApp } from './views/photosapp';
 import { CreateAccount } from './CreateAccount';
 import { Footer } from './Footer';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 class App extends React.Component<{}, { error: boolean, authenticated: boolean, user: string }> {
   constructor(props: {}) {
@@ -19,6 +21,7 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
 
     this.authenticate = this.authenticate.bind(this);
     this.logout = this.logout.bind(this);
+    this.notify = this.notify.bind(this);
 
     fetch('/api/checkSession', { credentials: 'include' })
       .then((data: any) => {
@@ -29,7 +32,10 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
           this.authenticate(response.payload);
         }
       });
+  }
 
+  private notify() {
+    toast.success('Wow so easy !', {position: toast.POSITION.BOTTOM_CENTER});
   }
 
   private logout(event: any) {
@@ -37,7 +43,6 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
     fetch('/api/logout', { credentials: 'include' }).then(() => {
       this.setState({ authenticated: false, user: "" });
     });
-
   }
 
   private authenticate(user: string) {
@@ -70,6 +75,8 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
     return (
       <div>
         <Banner authenticated={this.state.authenticated} logout={this.logout} />
+        <button onClick={this.notify}> Haha! </button>
+        <ToastContainer />
         <HashRouter>
           <Switch>
             {this.state.authenticated && showIfLoggedIn}

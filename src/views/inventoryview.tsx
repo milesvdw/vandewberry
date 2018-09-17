@@ -24,6 +24,7 @@ import FaSearch from "react-icons/lib/fa/search";
 import { IIngredientRepo, IRecipeRepo } from "../FoodApp";
 import { Ingredient, STATUS } from "../models/ingredient";
 import { IngredientEditView } from "./ingredienteditview";
+import { toast } from 'react-toastify';
 
 // NOTE: mode should be 'editing' 'deleting' or 'choosingEdit'
 export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { editIngredient: Ingredient, mode: string, groupByCategory: boolean, searchQuery: string }> {
@@ -59,6 +60,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                     bsSize='xsmall'
                     onClick={() => {
                         this.props.repo.purchaseIngredient(ingredient)
+                        toast.success('Ingredient moved to inventory.')
                     }}
                     className="pull-left btn-circle classy-btn">
                     <FaPlus size={10} />
@@ -72,6 +74,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                     bsSize='xsmall'
                     onClick={() => {
                         this.props.repo.archiveIngredient(ingredient)
+                        toast.success('Ingredient moved to archive.')
                     }}
                     className="pull-right btn-circle classy-btn">
                     <FaFolder size={10} />
@@ -88,6 +91,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                     bsSize='xsmall'
                     onClick={() => {
                         this.props.repo.useUpIngredient(ingredient)
+                        toast.success('Ingredient moved to shopping cart.')
                     }}
                     className="pull-left btn-circle classy-btn">
                     <FaShoppingCart size={10} />
@@ -105,7 +109,8 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
             this.state.mode === 'deleting' && <Button style={{ marginTop: '0px', marginRight: '2px' }}
                 bsSize='xsmall'
                 onClick={() => {
-                    this.props.repo.deleteIngredient(ingredient)
+                    if (confirm('Delete this ingredient?')) { this.props.repo.deleteIngredient(ingredient) }
+                    toast.success('Ingredient deleted.')
                 }}
                 className="pull-right btn-circle classy-btn">
                 <FaTrash size={10} />
@@ -137,6 +142,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                     bsSize='xsmall'
                     onClick={() => {
                         this.props.repo.useUpIngredient(ingredient)
+                        toast.success('Ingredient moved to shopping cart.')
                     }}
                     className="pull-right btn-circle classy-btn">
                     <FaShoppingCart size={10} />

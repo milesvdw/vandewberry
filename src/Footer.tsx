@@ -2,6 +2,7 @@ import * as React from "react";
 import { Database } from "./Database";
 import { FormGroup, Modal } from "react-bootstrap";
 import Button from "react-bootstrap/lib/Button";
+import { toast } from 'react-toastify';
 
 export class Footer extends React.Component<{}, { title: string, body: string, bug: boolean }> {
     constructor(props: {}) {
@@ -34,7 +35,7 @@ export class Footer extends React.Component<{}, { title: string, body: string, b
         })
             .then((response: any) => {
                 let answer = response;
-                alert(answer);
+                toast.success(answer);
                 if(answer === 'Bug Submitted Successfully') {
                     this.setState({ title: "", body: "", bug: false });
                 }

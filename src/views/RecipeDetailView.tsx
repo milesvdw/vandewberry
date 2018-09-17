@@ -15,12 +15,13 @@ import FaShareAlt from "react-icons/lib/fa/share-alt";
 import { IRecipeRepo, IIngredientRepo } from "../FoodApp";
 import { Ingredient, STATUS } from "../models/ingredient";
 import { compareIngredients } from "../utils/utils";
+import {  toast } from 'react-toastify';
 
 export class RecipeDetailView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo, editRecipe: (recipe: Recipe) => void, shareRecipe: (recipe: Recipe) => void, recipe: Recipe }> {
 
     public constructor(props: { repo: IIngredientRepo & IRecipeRepo, editRecipe: (recipe: Recipe) => void, shareRecipe: (recipe: Recipe) => void, recipe: Recipe }) {
         super(props);
-        
+
         this.displayMaterials = this.displayMaterials.bind(this);
         this.displayRecipeButtons = this.displayRecipeButtons.bind(this);
         this.addIngredientsToCart = this.addIngredientsToCart.bind(this);
@@ -81,7 +82,7 @@ export class RecipeDetailView extends React.Component<{ repo: IIngredientRepo & 
             }
         });
     }
-    
+
     private displayRecipeButtons(recipe: Recipe) {
 
         return (
@@ -94,23 +95,25 @@ export class RecipeDetailView extends React.Component<{ repo: IIngredientRepo & 
                     <FaPencil />
                 </button>
                 <button className='btn-row'
-                    onClick={() => { this.addIngredientsToCart(recipe.materials) }}
-                >
+                    onClick={() => { 
+                        this.addIngredientsToCart(recipe.materials) 
+                        toast.success('Missing recipe items added to shopping cart.')
+                    }}>
                     <FaShoppingCart />
                 </button>
                 <button className='btn-row'
                     onClick={() => {
                         this.props.shareRecipe(recipe)
+                        toast.success('Recipe shared.')
                     }}>
-                    <FaShareAlt
-                    />
+                    <FaShareAlt />
                 </button>
                 <button className='btn-row'
                     onClick={() => {
                         if (confirm('Delete this recipe?')) { this.props.repo.deleteRecipe(recipe) }
+                        toast.success('Recipe deleted.')
                     }}>
-                    <FaTimesCircle
-                    />
+                    <FaTimesCircle />
                 </button>
             </li>
         )
