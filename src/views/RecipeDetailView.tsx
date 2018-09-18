@@ -104,7 +104,6 @@ export class RecipeDetailView extends React.Component<{ repo: IIngredientRepo & 
                 <button className='btn-row'
                     onClick={() => {
                         this.props.shareRecipe(recipe)
-                        toast.success('Recipe shared.')
                     }}>
                     <FaShareAlt />
                 </button>

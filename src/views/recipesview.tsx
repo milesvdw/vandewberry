@@ -18,6 +18,7 @@ import FaSearch from "react-icons/lib/fa/search";
 import { IRecipeRepo, IIngredientRepo } from "../FoodApp";
 import { Ingredient, STATUS } from "../models/ingredient";
 import { RecipeDetailView } from "./RecipeDetailView";
+import { toast } from "react-toastify"
 
 export class RecipesView extends React.Component<{ repo: IIngredientRepo & IRecipeRepo }, { sharing: boolean, editing: boolean, editRecipe: Recipe, shareHousehold: string, searchQuery: string, currentSearchQuery: string }> {
 
@@ -137,6 +138,11 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                         </Modal.Header>
                         <Modal.Body>
                             <Row>
+                                <div style={{paddingLeft: '15px', paddingBottom: '15px'}}>
+                                    Enter the household name of the individual you wish to share a recipe with.
+                                </div>
+                            </Row>
+                            <Row>
                                 <Col sm={6} id='new_recipe'>
                                     <input type='text' name='shareHousehold' className='form-control' value={this.state.shareHousehold} onChange={this.updateShareHousehold} />
 
@@ -146,6 +152,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                                         onClick={() => {
                                             this.props.repo.shareRecipe(this.state.editRecipe, this.state.shareHousehold);
                                             this.setState({ sharing: false })
+                                            toast.success('Recipe shared.')
                                         }}> Save</Button>
                                 </Col>
                             </Row>
