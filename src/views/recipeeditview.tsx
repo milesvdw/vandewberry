@@ -115,16 +115,6 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
                 <Row>
                     <Col sm={12}>
                         <FormGroup>
-                            <label htmlFor="description">
-                                Recipe Description/Instructions
-                            </label>
-                            <textarea name='description' className='form-control' value={this.state.recipe.description} onChange={this.updateFields} />
-                        </FormGroup>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col sm={12}>
-                        <FormGroup>
                             <label>
                                 Recipe Ingredients (commas to separate possible substitution):
                             </label>
@@ -160,6 +150,16 @@ export class RecipeEditView extends React.Component<{ recipe: Recipe, repo: IRec
                 {materials}
                 <Row>
                     <br />
+                </Row>
+                <Row>
+                    <Col sm={12}>
+                        <FormGroup>
+                            <label htmlFor="description">
+                                Recipe Description/Instructions
+                            </label>
+                            <textarea name='description' className='form-control' value={this.state.recipe.description} onChange={this.updateFields} />
+                        </FormGroup>
+                    </Col>
                 </Row>
                 <Row>
                     <Col sm={12}>

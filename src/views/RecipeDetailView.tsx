@@ -145,10 +145,10 @@ export class RecipeDetailView extends React.Component<{ repo: IIngredientRepo & 
                                         Last Eaten: {this.props.recipe.lastEatenString()}
                                     </button>
                                 </li>
+                                {materials}
                                 <li className="list-group-item list-group-item-info">
                                     {this.props.recipe.description}
                                 </li>
-                                {materials}
                             </ul>
                         </div>
                     </Panel.Collapse>

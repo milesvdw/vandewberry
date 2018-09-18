@@ -243,8 +243,11 @@ checkbox {
   line-height: 1.42857;
 }
 
-.classy-btn {
+.classy-margin {
   margin-left: 15px;
+}
+
+.classy-btn {
   background-color: #353D45;
   color: #EFEFEF;
   border: none;
