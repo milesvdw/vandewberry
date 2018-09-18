@@ -11,7 +11,7 @@ import { IApiResponse } from './Database';
 // import { PhotosApp } from './views/photosapp';
 import { CreateAccount } from './CreateAccount';
 import { Footer } from './Footer';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 class App extends React.Component<{}, { error: boolean, authenticated: boolean, user: string }> {
