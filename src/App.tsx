@@ -34,10 +34,6 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
       });
   }
 
-  private notify() {
-    toast.success('Wow so easy !', {position: toast.POSITION.BOTTOM_CENTER});
-  }
-
   private logout(event: any) {
     event.stopPropagation();
     fetch('/api/logout', { credentials: 'include' }).then(() => {
@@ -75,7 +71,6 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
     return (
       <div>
         <Banner authenticated={this.state.authenticated} logout={this.logout} />
-        <button onClick={this.notify}> Haha! </button>
         <ToastContainer />
         <HashRouter>
           <Switch>
