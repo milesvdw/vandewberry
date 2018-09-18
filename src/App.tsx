@@ -21,7 +21,6 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
 
     this.authenticate = this.authenticate.bind(this);
     this.logout = this.logout.bind(this);
-    this.notify = this.notify.bind(this);
 
     fetch('/api/checkSession', { credentials: 'include' })
       .then((data: any) => {
