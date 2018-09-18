@@ -110,7 +110,7 @@ export class RecipeDetailView extends React.Component<{ repo: IIngredientRepo & 
                 <button className='btn-row'
                     onClick={() => {
                         if (confirm('Delete this recipe?')) { this.props.repo.deleteRecipe(recipe) }
-                        toast.success('Recipe deleted.')
+                        toast.success(recipe.name.capitalize() + ' deleted.')
                     }}>
                     <FaTimesCircle />
                 </button>

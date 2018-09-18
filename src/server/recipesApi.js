@@ -51,7 +51,7 @@ var post = (pool) => async (req, res) => {
     else {
         // do an insert
         pool.getConnection(async (err, con) => {
-            res.send(await Repo.createRecipe(req.body, pool, con));
+            await Repo.createRecipe(req.body, pool, con, res);
         });
     }
 }
