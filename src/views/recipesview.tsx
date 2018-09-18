@@ -180,7 +180,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                                         onClick={() => {
                                             this.setState({ editRecipe: new Recipe(), editing: true });
                                         }}
-                                        className="pull-right btn-circle classy-btn">
+                                        className="pull-right btn-circle classy-btn classy-margin">
                                         <FaPlus size={15} />
                                     </Button>
                                     <Button style={{ marginTop: '3px' }}
