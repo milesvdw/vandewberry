@@ -17,8 +17,8 @@ var deleteRecipe = (pool) => async (req, res) => {
     AND recipes.id = ?", [req.body.id]);
 
     if (recipe.householdId !== req.user.householdId) {
-        console.log("ERROR: attempted to delete a recipe that the user doesn't own");
-        res.json(ApiResponse(true, false));
+        await pool.query("DELETE FROM household_recipes WHERE recipeId = ? AND householdId = ?", [req.body.id, req.user.householdId])
+        res.json(ApiResponse(true, true));
         return;
     } else {
         var materialIds = materials.map((mat) => mat.id)
