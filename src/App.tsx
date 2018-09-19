@@ -14,10 +14,10 @@ import { Footer } from './Footer';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
-class App extends React.Component<{}, { error: boolean, authenticated: boolean, user: string }> {
+class App extends React.Component<{}, { error: boolean, authenticated?: boolean, user: string }> {
   constructor(props: {}) {
     super(props);
-    this.state = { error: false, authenticated: false, user: "" }
+    this.state = { error: false, user: "" }
 
     this.authenticate = this.authenticate.bind(this);
     this.logout = this.logout.bind(this);
@@ -29,6 +29,8 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
       .then((response: IApiResponse) => {
         if (response.authenticated) {
           this.authenticate(response.payload);
+        } else {
+          this.setState({ authenticated: false })
         }
       });
   }
@@ -69,13 +71,12 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
 
     return (
       <div>
-        <Banner authenticated={this.state.authenticated} logout={this.logout} />
+        <Banner authenticated={!!this.state.authenticated} logout={this.logout} />
         <ToastContainer />
         <HashRouter>
           <Switch>
             {this.state.authenticated && showIfLoggedIn}
-
-            {!this.state.authenticated &&
+            {this.state.authenticated !== undefined && !this.state.authenticated &&
               [<Route key="createAccountroute" path="/createAccount"
                 component={() =>
                   <CreateAccount authenticate={this.authenticate} />
@@ -89,7 +90,7 @@ class App extends React.Component<{}, { error: boolean, authenticated: boolean, 
             }
           </Switch>
         </HashRouter>
-        <Footer/>
+        <Footer />
       </div>
     );
   }
