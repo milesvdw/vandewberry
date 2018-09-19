@@ -110,7 +110,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                 bsSize='xsmall'
                 onClick={() => {
                     if (confirm('Delete this ingredient?')) { this.props.repo.deleteIngredient(ingredient) }
-                    toast.success('Ingredient deleted.')
+                    toast.success(ingredient.name.capitalize() + ' deleted.')
                 }}
                 className="pull-right btn-circle classy-btn">
                 <FaTrash size={10} />

@@ -240,7 +240,7 @@ async function clearOldMaterials(pool, recipeId) {
     }
 }
 
-async function createRecipe(recipe, pool, con) {
+async function createRecipe(recipe, pool, con, res) {
     con.query("INSERT INTO recipes (`name`, `description`, `calories`, `lastEaten`, `householdId`) \
     VALUES (?, ?, ?, ?, ?)",
         [recipe.name, recipe.description, recipe.calories, recipe.lastEaten, recipe.householdId],
@@ -266,7 +266,8 @@ async function createRecipe(recipe, pool, con) {
                     return insertUpdateMaterials(mat, pool, recipeId);
                 });
                 await Promise.all(promises);
-                return ApiResponse(true, recipeId)
+                res.send(ApiResponse(true, recipeId));
+                return;
             });
         });
 }
