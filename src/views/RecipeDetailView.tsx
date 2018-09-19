@@ -3,6 +3,7 @@ import * as React from "react";
 
 import Row from "react-bootstrap/lib/Row";
 import Panel from "react-bootstrap/lib/Panel";
+import * as Utils from "../utils/utils";
 
 import { Recipe } from "../models/recipe";
 import { Material } from "../models/material";
@@ -60,8 +61,11 @@ export class RecipeDetailView extends React.Component<{ repo: IIngredientRepo & 
         //   find the subset of the material's ingredients have an existing archived match in the database
         //   grab the first of these, 
 
+        let inventoryIngredients = this.props.repo.state.ingredients.filter((i: Ingredient) => i.statusID === STATUS.SHOPPING)
         let inventoryOrShopping = this.props.repo.state.ingredients.filter((i: Ingredient) => i.statusID !== STATUS.ARCHIVED);
         let archivedIngredients = this.props.repo.state.ingredients.filter((i: Ingredient) => i.statusID === STATUS.ARCHIVED);
+
+        let updatedRequiredMaterials = materials.filter((m: Material) => m.isAvailable(inventoryIngredients))
 
         let neededMaterials = materials.filter((m: Material) => !m.isAvailable(inventoryOrShopping));
 
@@ -73,14 +77,53 @@ export class RecipeDetailView extends React.Component<{ repo: IIngredientRepo & 
 
             if (firstExistingMatch) {
                 firstExistingMatch.statusID = STATUS.SHOPPING;
+                firstExistingMatch.shoppingQuantity = m.quantity;
                 this.props.repo.saveIngredient(firstExistingMatch);
             } else {
                 let ingredient = new Ingredient(m.ingredientgroups[0]); // TODO we need to separate the Ingredients from IngredientGroups in a meaningful way
                 ingredient.id = undefined;
                 ingredient.statusID = STATUS.SHOPPING;
+                ingredient.shoppingQuantity = m.quantity;
                 this.props.repo.saveIngredient(ingredient);
             }
         });
+
+        updatedRequiredMaterials.forEach((m: Material) => {
+            let match = inventoryIngredients.find((si: Ingredient) => m.ingredientgroups.some((i: Ingredient) => compareIngredients(i, si))) || new Ingredient(); // This is always guaranteed to find a match
+            
+            let newQuantity = RecipeDetailView.combineQuantitiesIfPossible(match.shoppingQuantity, m.quantity); 
+            if(match.shoppingQuantity !== newQuantity) {
+                match.shoppingQuantity = newQuantity;
+                this.props.repo.saveIngredient(match);
+            }
+        });
+    }
+
+    private static combineQuantitiesIfPossible(q1: string, q2: string) { // TODO: this util function probably belongs somewhere else
+        let q1Number = parseInt(q1, 10);
+        let q2Number = parseInt(q2, 10);
+        
+        if(q1Number && q2Number) {
+            // both quantities were numbers, so let's see if the rest of the strings match, give or take an 's'
+            let q1Sub = q1.substr(q1Number.toString().length);
+            let q2Sub = q2.substr(q2Number.toString().length);
+            if(Utils.compareIngredientNames(q1Sub, q2Sub)) {
+                return q1Number + q2Number + q1Sub;
+            }
+        } else {
+            if(!Utils.compareIngredientNames(q1, q2)) {
+                if(q1 === "") {
+                    return q2;
+                }
+                else if(q2 === "")  {
+                    return q1;
+                }
+                else {
+                    return q1 + " and " + q2;
+                }
+            }
+        }
+        return q1;
     }
 
     private displayRecipeButtons(recipe: Recipe) {

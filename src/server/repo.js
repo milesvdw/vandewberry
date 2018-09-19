@@ -163,7 +163,7 @@ async function updateIngredientValues(pool, category, statusID, expires, shelfLi
 }
 
 async function getIngredientGroupbyName(pool, name) {
-    let existingGroups = await pool.query("SELECT * FROM ingredientgroups WHERE `name` = ? LIMIT 1", [name]);
+    let existingGroups = await pool.query("SELECT * FROM ingredientgroups WHERE `name` = ?", [name]);
     return existingGroups;
 }
 

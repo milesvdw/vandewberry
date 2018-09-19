@@ -6,9 +6,12 @@ export function fuzzyCompare(str1: string, str2: string, fuzz: string) {
 }
 
 export function compareIngredients(a: IngredientGroup, b: Ingredient): boolean {
-    if(!a.name) debugger;
-    let str1 = a.name.replace(' ', '').toLowerCase();
-    let str2 = b.name.replace(' ', '').toLowerCase();
+    return compareIngredientNames(a.name, b.name);
+}
+
+export function compareIngredientNames(a: string, b: string): boolean {
+    let str1 = a.replace(' ', '').toLowerCase();
+    let str2 = b.replace(' ', '').toLowerCase();
     return fuzzyCompare(str1, str2, 's') || fuzzyCompare(str1, str2, 'es') || fuzzyCompare(str1, str2, 'cooked');
 }
 
@@ -38,6 +41,7 @@ Array.prototype.unique = function <T>(): T[] {
 
 String.prototype.capitalize = function () {
     return this.replace(/(?!'.*')\b[\w']+\b/g,
-        (txt) =>  { 
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+        (txt) => {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
 }
