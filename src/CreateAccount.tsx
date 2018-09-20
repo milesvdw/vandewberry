@@ -4,8 +4,9 @@ import { Redirect } from "react-router-dom";
 
 import Panel from "react-bootstrap/lib/Panel";
 import Button from "react-bootstrap/lib/Button";
+import { User } from "src/models/User";
 
-export class CreateAccount extends React.Component<{ authenticate: (user: string) => void }, { error: boolean, username: string, password: string, household: string, authenticated: boolean }> {
+export class CreateAccount extends React.Component<{ authenticate: (user: User) => void }, { error: boolean, username: string, password: string, household: string, authenticated: boolean }> {
     constructor(props: { authenticate: () => void }) {
         super(props);
         this.state = { error: false, username: "", password: "", authenticated: false, household: "" }

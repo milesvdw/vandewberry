@@ -13,14 +13,17 @@ import { CreateAccount } from './CreateAccount';
 import { Footer } from './Footer';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
+import { User } from 'src/models/User';
+import { Tutorial } from 'src/models/Tutorial';
 
-class App extends React.Component<{}, { error: boolean, authenticated?: boolean, user: string }> {
+class App extends React.Component<{}, { error: boolean, authenticated?: boolean, user: User }> {
   constructor(props: {}) {
     super(props);
-    this.state = { error: false, user: "" }
+    this.state = { error: false, user: new User() }
 
     this.authenticate = this.authenticate.bind(this);
     this.logout = this.logout.bind(this);
+    this.renderTutorial = this.renderTutorial.bind(this);
 
     fetch('/api/checkSession', { credentials: 'include' })
       .then((data: any) => {
@@ -38,11 +41,11 @@ class App extends React.Component<{}, { error: boolean, authenticated?: boolean,
   private logout(event: any) {
     event.stopPropagation();
     fetch('/api/logout', { credentials: 'include' }).then(() => {
-      this.setState({ authenticated: false, user: "" });
+      this.setState({ authenticated: false, user: new User() });
     });
   }
 
-  private authenticate(user: string) {
+  private authenticate(user: User) {
     this.setState({ authenticated: true, user });
     this.foodApp && this.foodApp.refresh();
     // this.photoApp && this.photoApp.refresh();
@@ -55,9 +58,17 @@ class App extends React.Component<{}, { error: boolean, authenticated?: boolean,
 
 
 
-
+  private renderTutorial(t: Tutorial) {
+    return <img src={t.imagePaths[t.currentImage]} className="tutorial-image" />
+  }
 
   public render() {
+
+    let hasTutorials = this.state.user.preferences.activeTutorials.length > 0;
+
+    if(hasTutorials) {
+      return this.renderTutorial(this.state.user.preferences.activeTutorials[0] as any); // TODO: only show the tutorial when the user arrives on the relevant page?
+    }
 
     let showIfLoggedIn = (
       <div>

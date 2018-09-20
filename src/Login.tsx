@@ -4,11 +4,12 @@ import { Redirect } from "react-router-dom";
 
 import Panel from "react-bootstrap/lib/Panel";
 import Button from "react-bootstrap/lib/Button";
+import { User } from "src/models/User";
 
-export class Login extends React.Component<{ authenticate: (user: string) => void }, { error: boolean, username: string, password: string, authenticated: boolean }> {
+export class Login extends React.Component<{ authenticate: (user: User) => void }, { error: boolean, user: User, password: string, authenticated: boolean }> {
     constructor(props: { authenticate: () => void }) {
         super(props);
-        this.state = { error: false, username: "", password: "", authenticated: false }
+        this.state = { error: false, user: new User(), password: "", authenticated: false }
 
         this.updateFields = this.updateFields.bind(this);
         this.attemptLogin = this.attemptLogin.bind(this);
@@ -24,12 +25,12 @@ export class Login extends React.Component<{ authenticate: (user: string) => voi
     private attemptLogin(event: any) {
         event.preventDefault()
 
-        Database.Login(this.state.username, this.state.password).then((authenticated: boolean) => {
+        Database.Login(this.state.user.name, this.state.password).then((authenticated: boolean) => {
             if (!authenticated) {
                 return this.setState({ error: true })
             } else {
                 this.setState({ authenticated: true })
-                this.props.authenticate(this.state.username)
+                this.props.authenticate(this.state.user)
                 window.location.hash = "/home";
             }
         });
@@ -48,7 +49,7 @@ export class Login extends React.Component<{ authenticate: (user: string) => voi
                             <label htmlFor="username">
                                 Username
                             </label>
-                            <input type='text' name='username' className='form-control' value={this.state.username} onChange={this.updateFields} />
+                            <input type='text' name='username' className='form-control' value={this.state.user.name} onChange={this.updateFields} />
                             <label htmlFor="password">
                                 Password
                             </label>

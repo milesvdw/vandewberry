@@ -197,7 +197,7 @@ app.post('/api/newIssue',
           responseString += data;
         })
         res2.on("end", function () {
-          // console.log(responseString);
+          // console.log(responseString); 
         })
       })
       var payload = {
@@ -212,7 +212,7 @@ app.post('/api/newIssue',
 );
 
 app.get('/api/checkSession', authenticationMiddleware(), (req, res, next) => {
-  res.json(ApiResponse(true, req.user.user));
+  res.json(ApiResponse(true, { name: req.user.user, preferences: req.user.}req.user.user));
 })
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
