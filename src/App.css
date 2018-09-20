@@ -344,3 +344,7 @@ div.clearfix li:active{
 .groupBox {
   border: 5px;
 }
+
+.btn {
+  white-space: normal;
+}
