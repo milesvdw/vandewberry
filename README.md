@@ -20,6 +20,11 @@ for a few days just so that folks
 can see what's going in and 
 get a handle on things.
 
+A good naming convention for PR Branches is:
+[Issue Type]-[Issue Number]-[Short Description if you want]
+e.g.
+FEATURE-25-DoCoolStuff
+
 ## Deploying To Production
 
 1. Merge master into prod:
