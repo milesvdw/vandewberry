@@ -67,7 +67,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                 </Button>}
                 {this.renderDeleteButton(ingredient)}
                 {this.renderEditButton(ingredient)}
-                {ingredient.name}
+                {ingredient.shoppingQuantity + " " + ingredient.name}
 
 
                 {this.showTransferButtons() && <Button style={{ marginTop: '0px', marginRight: '2px' }}
@@ -142,7 +142,7 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
                     bsSize='xsmall'
                     onClick={() => {
                         this.props.repo.useUpIngredient(ingredient)
-                        toast.success('Ingredient moved to shopping cart.')
+                        toast.success(ingredient.name.capitalize() + ' moved to shopping cart.')
                     }}
                     className="pull-right btn-circle classy-btn">
                     <FaShoppingCart size={10} />

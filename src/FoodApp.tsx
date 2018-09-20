@@ -4,7 +4,7 @@ import { Recipe } from "./models/recipe";
 import * as React from "react";
 import { Database } from "./Database";
 import { RecipesView } from "./views/recipesview";
-import { InventoryView } from "./views/inventoryview";
+import { InventoryView } from "./views/InventoryView";
 
 export interface IRecipeRepo {
     state: { recipes: Recipe[], loading: { recipes: boolean, ingredients: boolean } };
@@ -149,7 +149,7 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
             return a.name.localeCompare(b.name);
         })
 
-        this.setState({ ingredients });
+        this.setState({ ingredients }); // TODO: consider the wierd race condition this might cause in the UI
     }
 
     public async purchaseIngredient(ingredient: Ingredient) {
@@ -159,6 +159,7 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
 
     public async useUpIngredient(ingredient: Ingredient) {
         ingredient.statusID = STATUS.SHOPPING;
+        ingredient.shoppingQuantity = "";
         this.saveIngredient(ingredient);
     }
 
