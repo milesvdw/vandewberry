@@ -48,6 +48,13 @@ if (process.env.NODE_ENV === 'production' || testProd) {
   app.use(express.static('build'));
   app.use(express.static('public'));
   port = process.env.PORT || 5000;
+
+  app.use((req, res, next) => {
+    if (!req.secure) {
+      return res.redirect('https://' + req.header('host') + req.url);
+    }
+    next();
+  });
 }
 
 var connectionConfig = {
