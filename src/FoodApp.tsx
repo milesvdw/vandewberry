@@ -153,6 +153,8 @@ export class FoodApp extends React.Component<{}, { recipes: Recipe[], ingredient
     }
 
     public async purchaseIngredient(ingredient: Ingredient) {
+        let d = new Date();
+        ingredient.last_purchased = d.getTime();
         ingredient.statusID = STATUS.INVENTORY;
         this.saveIngredient(ingredient);
     }

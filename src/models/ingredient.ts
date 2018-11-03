@@ -10,7 +10,7 @@ export class Ingredient {
     public id?: number;
     public name: string = "";
     public category: string = "";
-    public last_purchased: any; // TODO: figure out what this should be
+    public last_purchased: number = 0;
     public expires: boolean;
     public shelf_life: number;
     public statusID: number = STATUS.ARCHIVED;

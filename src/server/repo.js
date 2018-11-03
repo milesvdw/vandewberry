@@ -144,21 +144,23 @@ async function updateIngredientValues(pool, category, statusID, expires, shelfLi
                         ingredientGroupId = ?, \
                         category = ?, \
                         statusID = ?, \
+                        last_purchased = ?, \
                         expires = ?, \
                         shelf_life = ?, \
                         shoppingQuantity = ? \
                         WHERE id = ?",
-            [ingredientGroupId, category, statusID, expires, shelfLife, shoppingQuantity, id]);
+            [ingredientGroupId, category, statusID, last_purchased, expires, shelfLife, shoppingQuantity, id]);
     }
     else {
         return await pool.query("UPDATE ingredients SET \
             category = ?, \
             statusID = ?, \
+            last_purchased = ?, \
             expires = ?, \
             shelf_life = ?, \
             shoppingQuantity = ? \
             WHERE id = ?",
-            [category, statusID, expires, shelfLife, shoppingQuantity, id]);
+            [category, statusID, last_purchased, expires, shelfLife, shoppingQuantity, id]);
     }
 }
 

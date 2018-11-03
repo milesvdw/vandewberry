@@ -132,8 +132,22 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
     }
 
     private renderInventoryRow(ingredient: Ingredient) {
+        let ingredientExpMarker = "";
+        if(ingredient.expires){
+            let d = new Date();
+            let conversion = 24*60*60*1000;
+            let shelf_life = ingredient.shelf_life || 0;
+            if(ingredient.last_purchased+conversion*(shelf_life+2) < d.getTime()){
+                console.log(ingredient.name + ": " + ingredient.last_purchased + "..." + ingredient.shelf_life)
+                ingredientExpMarker = 'list-group-item-warning';
+            }
+            if(ingredient.last_purchased+conversion*(shelf_life) < d.getTime()){
+                ingredientExpMarker = 'list-group-item-danger';
+            }
+        }
+        
         return (<Row key={ingredient.id}>
-            <span className="btn btn-block btn-secondary">
+            <span className={"btn btn-block btn-secondary " + ingredientExpMarker}>
 
                 {ingredient.name}
                 {this.renderDeleteButton(ingredient)}
