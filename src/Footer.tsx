@@ -46,7 +46,7 @@ export class Footer extends React.Component<{}, { title: string, body: string, b
         return (
             <div style={{ position: 'fixed', textAlign: 'right', bottom: '0px', right: '0px' }}>
                 <Button {...{ tooltip: 'Submit a bug for developer review' }}
-                    style={{margin: '10px'}}
+                    style={{margin: '10px', textShadow: 'none'}}
                     onClick={() => this.setState({ bug: true })}
                     className='classy-btn no-outline btn-round btn-press btn-default'>
                     Bug Report
@@ -70,7 +70,7 @@ export class Footer extends React.Component<{}, { title: string, body: string, b
                             <FormGroup>
                                 <Button {...{ tooltip: 'Submit Bug for review on Github' }} type="submit"
                                     className='classy-btn no-outline btn-round btn-press btn-default'
-                                    /*style={{ position: 'absolute', right: '20px', fontSize: '14px', textShadow: 'none', bottom: '20px'}}*/>
+                                    style={{ textShadow: 'none'}}>
                                     Submit Bug
                                 </Button>
                             </FormGroup>
