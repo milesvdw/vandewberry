@@ -341,6 +341,28 @@ async function getRecipeById(pool, recipeId) {
     }
 }
 
+async function getUserByUsername (pool, username) {
+    var users = await pool.query("SELECT * from users WHERE username = ?", [username]);
+    if(users.length === 1) {
+        users[0].tutorials = await pool.query("SELECT * from user_tutorials left join tutorials on user_tutorials.userId = ? and user_tutorials.tutorialId = tutorials.id", [users[0].id]);
+        return users;
+    }
+    else {
+        return;
+    }
+}
+
+async function getUserById (pool, id) {
+    var users = await pool.query("SELECT * from users WHERE id = ?", [id]);
+    if(users.length === 1) {
+        users[0].tutorials = await pool.query("SELECT * from user_tutorials left join tutorials on user_tutorials.userId = ? and user_tutorials.tutorialId = tutorials.id", [id]);
+        return users;
+    }
+    else {
+        return;
+    }
+}
+
 module.exports.constructRecipeFromRows = constructRecipeFromRows;
 module.exports.constructMaterialFromRows = constructMaterialFromRows;
 module.exports.constructIngredientGroupFromRows = constructIngredientGroupFromRows;
@@ -358,3 +380,5 @@ module.exports.QueryHadResults = QueryHadResults;
 module.exports.updateRecipe = updateRecipe;
 module.exports.insertUpdateIngredientGroups = insertUpdateIngredientGroups;
 module.exports.getRecipeById = getRecipeById;
+module.exports.getUserByUsername = getUserByUsername
+module.exports.getUserById = getUserById

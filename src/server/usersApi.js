@@ -6,7 +6,7 @@ var mysql = require('mysql');
 const ApiResponse = require('./apiResponse').ApiResponse
 
 var login = (pool) => (req, res) => {
-    res.send(ApiResponse(true, null))
+    res.send(ApiResponse(true, req.user))
 }
 
 var createAccount = (pool) => async (req, res) => {

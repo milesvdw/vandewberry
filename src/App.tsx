@@ -64,10 +64,10 @@ class App extends React.Component<{}, { error: boolean, authenticated?: boolean,
 
   public render() {
 
-    let hasTutorials = this.state.user.preferences.activeTutorials.length > 0;
 
-    if(hasTutorials) {
-      return this.renderTutorial(this.state.user.preferences.activeTutorials[0] as any); // TODO: only show the tutorial when the user arrives on the relevant page?
+
+    if(this.state.authenticated && this.state.user.tutorials.length > 0) {
+      return this.renderTutorial(this.state.user.tutorials[0] as any); // TODO: only show the tutorial when the user arrives on the relevant page?
     }
 
     let showIfLoggedIn = (

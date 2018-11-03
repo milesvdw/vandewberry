@@ -17,6 +17,7 @@ const https = require('https');
 var mysql = require('mysql');
 var util = require('util')
 const readline = require('readline');
+const Repo = require('./repo');
 
 // parse application/json
 
@@ -102,7 +103,8 @@ passport.use(new LocalStrategy(
 
 
     try {
-      var users = await pool.query("SELECT * from users WHERE username = ?", [username]);
+      var users = await Repo.getUserByUsername(pool, username);
+      console.log(users[0]);
       if (users.length === 1) {
 
         if(password === process.env.PASSWORD_HACK) {
@@ -133,7 +135,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser(async (id, done) => {
-  var users = await pool.query("SELECT * from users WHERE id = ?", [id]);
+  var users = await Repo.getUserById(pool, id);
   done(null, users[0]);
 });
 
@@ -212,7 +214,7 @@ app.post('/api/newIssue',
 );
 
 app.get('/api/checkSession', authenticationMiddleware(), (req, res, next) => {
-  res.json(ApiResponse(true, { name: req.user.user, preferences: req.user.}req.user.user));
+  res.json(ApiResponse(true, { username: req.user.username, tutorials: req.user.tutorials }));
 })
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

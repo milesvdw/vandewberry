@@ -1,10 +1,10 @@
 
 export class Tutorial {
-    id: number
-    nickname: string
-    imagePaths: string[]
-    page: string
+    public id: number
+    public nickname: string
+    public imagePaths: string[]
+    public page: string
     
     // UI-only properties - these aren't stored in the database
-    currentImage: number
+    public currentImage: number
 }

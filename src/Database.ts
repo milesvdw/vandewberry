@@ -55,7 +55,7 @@ export class Database {
             });
     }
 
-    public static Login(username: string, password: string): Promise<boolean> {
+    public static Login(username: string, password: string): Promise<IApiResponse> {
         let url: string = "/api/login";
         return fetch(url, {
             headers: {
@@ -70,14 +70,14 @@ export class Database {
                 return data.json();
             }).then((response: IApiResponse) => {
                 if (response.authenticated) {
-                    return true;
+                    return response;
                 } else {
                     window.location.hash = '/login'
-                    return false;
+                    return response;
                 }
             }, () => {
                 window.location.hash = '/login'
-                return false;
+                return {authenticated: false, payload: null};
             })
     }
 
