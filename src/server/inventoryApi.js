@@ -42,7 +42,7 @@ var post = (pool) => async (req, res) => {
 var get = (pool) => async (req, res) => {
     try {
         // TODO move this call to the repo
-        var ingredients = await pool.query("SELECT ingredients.id as id, ingredientgroups.name as name, category, statusID, expires, shelf_life, shoppingQuantity from ingredients \
+        var ingredients = await pool.query("SELECT ingredients.id as id, ingredientgroups.name as name, category, statusID, last_purchased, expires, shelf_life, shoppingQuantity from ingredients \
         INNER JOIN ingredientgroups ON ingredients.ingredientGroupId = ingredientgroups.id AND householdId = ?", [req.user.householdId]);
         res.send(ApiResponse(true, ingredients));
     }
