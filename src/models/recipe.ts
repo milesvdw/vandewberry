@@ -58,7 +58,7 @@ export class Recipe {
         });
     }
 
-    public Share(household: string): Promise<Recipe> {
+    public Share(household: string): Promise<boolean> {
         let recipe = this.toLowerCaseRecipe();
         (recipe as any).household = household; // hack to add on something to the request that maybe shouldn't be there
         return Database.ApiCall('/api/recipes/share', {

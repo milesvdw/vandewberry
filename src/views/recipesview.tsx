@@ -31,9 +31,10 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
         this.getAllSearchedRecipes = this.getAllSearchedRecipes.bind(this);
         this.searchRecipes = this.searchRecipes.bind(this);
         this.searchCurrentRecipes = this.searchCurrentRecipes.bind(this);
-        this.shareRecipe = this.shareRecipe.bind(this);
+        this.showShareRecipe = this.showShareRecipe.bind(this);
         this.editRecipe = this.editRecipe.bind(this);
         this.updateShareHousehold = this.updateShareHousehold.bind(this);
+        this.shareRecipe = this.shareRecipe.bind(this);
     }
 
     private currentSearchInput: any;
@@ -43,7 +44,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
     private editRecipe(recipe: Recipe) {
         this.setState({ editRecipe: recipe, editing: true })
     }
-    private shareRecipe(recipe: Recipe) {
+    private showShareRecipe(recipe: Recipe) {
         this.setState({ editRecipe: recipe, sharing: true })
     }
 
@@ -58,7 +59,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                 return recipe1.name.localeCompare(recipe2.name);
             })
             .map((recipe: Recipe) => {
-                return <RecipeDetailView key={recipe.id} repo={this.props.repo} recipe={recipe} shareRecipe={this.shareRecipe} editRecipe={this.editRecipe} />
+                return <RecipeDetailView key={recipe.id} repo={this.props.repo} recipe={recipe} shareRecipe={this.showShareRecipe} editRecipe={this.editRecipe} />
             });
     }
 
@@ -101,6 +102,19 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
 
     private searchCurrentRecipes(event: any) {
         this.setState({ currentSearchQuery: event.target.value });
+    }
+
+    // 
+    // result ? toast.success('Recipe shared.') : toast.error('Failed to share recipe. Check household name.')
+    private async shareRecipe() {
+        let succeeded = await this.props.repo.shareRecipe(this.state.editRecipe, this.state.shareHousehold);
+        this.setState({ sharing: false })
+        if(succeeded) {
+            toast.success('Recipe shared.')
+        }
+        else {
+            toast.error('Failed to share recipe. Check household name.')
+        }
     }
 
     public render() {
@@ -149,11 +163,7 @@ export class RecipesView extends React.Component<{ repo: IIngredientRepo & IReci
                                 </Col>
                                 <Col sm={6}>
                                     <Button bsSize='large' bsStyle='info' className='pull-right'
-                                        onClick={() => {
-                                            this.props.repo.shareRecipe(this.state.editRecipe, this.state.shareHousehold);
-                                            this.setState({ sharing: false })
-                                            toast.success('Recipe shared.')
-                                        }}> Save</Button>
+                                        onClick={this.shareRecipe}> Save</Button>
                                 </Col>
                             </Row>
                         </Modal.Body>

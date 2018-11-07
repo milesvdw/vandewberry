@@ -68,7 +68,7 @@ var share = (pool) => async (req, res) => {
     var householdId = results[0].id
 
     await pool.query("INSERT INTO household_recipes (`householdId`, `recipeId`) VALUES (?, ?)", [householdId, req.body.id])
-    res.json(ApiResponse(true, req.body.id));
+    res.json(ApiResponse(true, true));
 }
 
 Array.prototype.unique = function () {
