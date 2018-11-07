@@ -131,20 +131,25 @@ export class InventoryView extends React.Component<{ repo: IIngredientRepo & IRe
         )
     }
 
-    private renderInventoryRow(ingredient: Ingredient) {
-        let ingredientExpMarker = "";
+    private willExpire(ingredient: Ingredient) {
         if(ingredient.expires){
             let d = new Date();
-            let conversion = 24*60*60*1000;
+            let conversion = 24*60*60*1000; // Converts days to milliseconds
             let shelf_life = ingredient.shelf_life || 0;
-            if(ingredient.last_purchased+conversion*(shelf_life-2) < d.getTime()){
-                ingredientExpMarker = 'list-group-item-warning';
-            }
+            // Check to see if the current date is past the expected expiriation date,
             if(ingredient.last_purchased+conversion*(shelf_life) < d.getTime()){
-                ingredientExpMarker = 'list-group-item-danger';
+                return 'list-group-item-danger';
+            }
+            // Then, if it is within 2 days of the expiration date
+            if(ingredient.last_purchased+conversion*(shelf_life-2) < d.getTime()){
+                return 'list-group-item-warning';
             }
         }
-        
+        return '';
+    }
+
+    private renderInventoryRow(ingredient: Ingredient) {
+        let ingredientExpMarker = this.willExpire(ingredient);
         return (<Row key={ingredient.id}>
             <span className={"btn btn-block btn-secondary " + ingredientExpMarker}>
 
