@@ -137,7 +137,7 @@ async function getExistingIngredientById(pool, id) {
             ON ingredients.id = ? AND ingredients.ingredientGroupId = ingredientgroups.id", [id]);
 }
 
-async function updateIngredientValues(pool, category, statusID, expires, shelfLife, shoppingQuantity, id, ingredientGroupId) {
+async function updateIngredientValues(pool, category, statusID, lastPurchased, expires, shelfLife, shoppingQuantity, id, ingredientGroupId) {
     if (ingredientGroupId) {
 
         return await pool.query("UPDATE ingredients SET \
@@ -149,7 +149,7 @@ async function updateIngredientValues(pool, category, statusID, expires, shelfLi
                         shelf_life = ?, \
                         shoppingQuantity = ? \
                         WHERE id = ?",
-            [ingredientGroupId, category, statusID, last_purchased, expires, shelfLife, shoppingQuantity, id]);
+            [ingredientGroupId, category, statusID, lastPurchased, expires, shelfLife, shoppingQuantity, id]);
     }
     else {
         return await pool.query("UPDATE ingredients SET \
@@ -160,7 +160,7 @@ async function updateIngredientValues(pool, category, statusID, expires, shelfLi
             shelf_life = ?, \
             shoppingQuantity = ? \
             WHERE id = ?",
-            [category, statusID, last_purchased, expires, shelfLife, shoppingQuantity, id]);
+            [category, statusID, lastPurchased, expires, shelfLife, shoppingQuantity, id]);
     }
 }
 
@@ -192,20 +192,20 @@ async function updateIngredient(pool, user, ingredient) {
             ingredientGroupId = (await getIngredientGroupbyName(pool, ingredient.name.trim()))[0].id;
         }
 
-        await updateIngredientValues(pool, ingredient.category, ingredient.statusID, ingredient.expires ? 1 : 0, ingredient.shelf_life, ingredient.shoppingQuantity, ingredient.id, ingredientGroupId);
+        await updateIngredientValues(pool, ingredient.category, ingredient.statusID, ingredient.last_purchased, ingredient.expires ? 1 : 0, ingredient.shelf_life, ingredient.shoppingQuantity, ingredient.id, ingredientGroupId);
     } else {
         // just update the ingredient's fields
-        await updateIngredientValues(pool, ingredient.category, ingredient.statusID, ingredient.expires ? 1 : 0, ingredient.shelf_life, ingredient.shoppingQuantity, ingredient.id)
+        await updateIngredientValues(pool, ingredient.category, ingredient.statusID, ingredient.last_purchased, ingredient.expires ? 1 : 0, ingredient.shelf_life, ingredient.shoppingQuantity, ingredient.id)
 
     }
     return ApiResponse(true, ingredient.id);
 }
 
-async function insertIngredientValues(pool, res, ingredientGroupId, category, statusID, expires, shelfLife, shoppingQuantity, householdId) {
+async function insertIngredientValues(pool, res, ingredientGroupId, category, statusID, lastPurchased, expires, shelfLife, shoppingQuantity, householdId) {
     pool.getConnection((err, con) => {
-        con.query("INSERT INTO ingredients (`ingredientGroupId`, `category`, `statusID`, `expires`, `shelf_life`, `shoppingQuantity`, `householdId`) \
+        con.query("INSERT INTO ingredients (`ingredientGroupId`, `category`, `statusID`, `last_purchased`, `expires`, `shelf_life`, `shoppingQuantity`, `householdId`) \
             VALUES (?, ?, ?, ?, ?, ?, ?) ",
-            [ingredientGroupId, category, statusID, expires, shelfLife, shoppingQuantity, householdId], (err2, ignore) => {
+            [ingredientGroupId, category, statusID, lastPurchased, expires, shelfLife, shoppingQuantity, householdId], (err2, ignore) => {
                 con.query("SELECT LAST_INSERT_ID()", (err3, insertedIdRaw) => {
                     var ingredientId = insertedIdRaw[0]['LAST_INSERT_ID()'];
                     if (err3) {
@@ -232,7 +232,7 @@ async function insertIngredient(pool, res, user, ingredient) {
         await pool.query("INSERT INTO ingredientgroups (`name`) VALUES (?)", [ingredient.name.trim()]);
         ingredientGroupId = (await getIngredientGroupbyName(pool, ingredient.name.trim()))[0].id;
     }
-    return await insertIngredientValues(pool, res, ingredientGroupId, ingredient.category, ingredient.statusID, ingredient.expires ? 1 : 0, ingredient.shelf_life, ingredient.shoppingQuantity, user.householdId);
+    return await insertIngredientValues(pool, res, ingredientGroupId, ingredient.category, ingredient.statusID, ingredient.last_purchased, ingredient.expires ? 1 : 0, ingredient.shelf_life, ingredient.shoppingQuantity, user.householdId);
 }
 
 async function clearOldMaterials(pool, recipeId) {
