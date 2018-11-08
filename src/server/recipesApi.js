@@ -58,9 +58,9 @@ var post = (pool) => async (req, res) => {
 
 var share = (pool) => async (req, res) => {
     // TODO: update the post to this endpoint to only send a household and a recipeId, all else is wasted bandwidth
-    console.log(req);
+    var householdId = '';
     var householdResults = await pool.query("SELECT * FROM households WHERE name = ?", [req.body.shareTarget])
-    var targetid = '';
+
     if (householdResults.length === 0) {
         var userResults = await pool.query("SELECT * FROM users WHERE username = ?", [req.body.shareTarget])
 
@@ -68,12 +68,12 @@ var share = (pool) => async (req, res) => {
             console.log("user tried to share recipe with non-existent household/user");
             res.json(ApiResponse(true, false));
         }
-        targetid = userResults[0].householdId;
+        householdId = userResults[0].householdId;
     }
     else {
-        targetid = householdResults[0].id;
+        householdId = householdResults[0].id;
     }
-    await pool.query("INSERT INTO household_recipes (`householdId`, `recipeId`) VALUES (?, ?)", [targetid, req.body.id])
+    await pool.query("INSERT INTO household_recipes (`householdId`, `recipeId`) VALUES (?, ?)", [householdId, req.body.id])
     res.json(ApiResponse(true, true));
 }
 
