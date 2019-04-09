@@ -35,7 +35,10 @@ export class Footer extends React.Component<{}, { title: string, body: string, b
         })
             .then((response: any) => {
                 let answer = response;
-                toast.success(answer);
+                if (answer === 'Missing Field') {
+                    toast.warn(answer);
+                }
+                else { toast.success(answer); }
                 if (answer === 'Bug Submitted Successfully') {
                     this.setState({ title: "", body: "", bug: false });
                 }
