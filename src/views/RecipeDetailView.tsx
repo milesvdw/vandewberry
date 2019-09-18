@@ -80,10 +80,12 @@ export class RecipeDetailView extends React.Component<{ repo: IIngredientRepo & 
                 firstExistingMatch.shoppingQuantity = m.quantity;
                 this.props.repo.saveIngredient(firstExistingMatch);
             } else {
-                let ingredient = new Ingredient(m.ingredientgroups[0]); // TODO we need to separate the Ingredients from IngredientGroups in a meaningful way
+                let ingredient = new Ingredient();
+                ingredient.name = m.ingredientgroups[0].name; // TODO we need to separate the Ingredients from IngredientGroups in a meaningful way
                 ingredient.id = undefined;
                 ingredient.statusID = STATUS.SHOPPING;
                 ingredient.shoppingQuantity = m.quantity;
+                ingredient.householdId = this.props.repo.state.ingredients[0].householdId;
                 this.props.repo.saveIngredient(ingredient);
             }
         });

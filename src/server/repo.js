@@ -203,9 +203,18 @@ async function updateIngredient(pool, user, ingredient) {
 
 async function insertIngredientValues(pool, res, ingredientGroupId, category, statusID, lastPurchased, expires, shelfLife, shoppingQuantity, householdId) {
     pool.getConnection((err, con) => {
-        con.query("INSERT INTO ingredients (`ingredientGroupId`, `category`, `statusID`, `last_purchased`, `expires`, `shelf_life`, `shoppingQuantity`, `householdId`) \
-            VALUES (?, ?, ?, ?, ?, ?, ?) ",
-            [ingredientGroupId, category, statusID, lastPurchased, expires, shelfLife, shoppingQuantity, householdId], (err2, ignore) => {
+        let queryString;
+        let values;
+        if(shelfLife) {
+            queryString = "INSERT INTO ingredients (`ingredientGroupId`, `category`, `statusID`, `last_purchased`, `expires`, `shelf_life`, `shoppingQuantity`, `householdId`) \
+            VALUES (?, ?, ?, ?, ?, ?, ?) ";
+            values = [ingredientGroupId, category, statusID, lastPurchased, expires, shelfLife, shoppingQuantity, householdId];
+        } else {
+            queryString = "INSERT INTO ingredients (`ingredientGroupId`, `category`, `statusID`, `last_purchased`, `expires`, `shoppingQuantity`, `householdId`) \
+            VALUES (?, ?, ?, ?, ?, ?, ?) ";
+            values = [ingredientGroupId, category, statusID, lastPurchased, expires, shoppingQuantity, householdId];
+        }
+        con.query(queryString, values, (err2, ignore) => {
                 con.query("SELECT LAST_INSERT_ID()", (err3, insertedIdRaw) => {
                     var ingredientId = insertedIdRaw[0]['LAST_INSERT_ID()'];
                     if (err3) {
